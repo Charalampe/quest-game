@@ -14,8 +14,8 @@ export class TitleScene extends Phaser.Scene {
         // Stars
         for (let i = 0; i < 40; i++) {
             const x = Phaser.Math.Between(0, width);
-            const y = Phaser.Math.Between(0, height - 60);
-            const star = this.add.rectangle(x, y, 1, 1, 0xffffff);
+            const y = Phaser.Math.Between(0, height - 180);
+            const star = this.add.rectangle(x, y, 2, 2, 0xffffff);
             this.tweens.add({
                 targets: star,
                 alpha: { from: 0.3, to: 1 },
@@ -27,19 +27,19 @@ export class TitleScene extends Phaser.Scene {
         }
 
         // Title text
-        const title = this.add.text(width / 2, 50, 'The Locket\n  of Worlds', {
-            fontSize: '20px',
+        const title = this.add.text(width / 2, 150, 'The Locket\n  of Worlds', {
+            fontSize: '60px',
             fontFamily: 'monospace',
             color: '#ccaaff',
             align: 'center',
-            lineSpacing: 4
+            lineSpacing: 12
         }).setOrigin(0.5);
 
         // Locket icon
-        const locket = this.add.image(width / 2, 100, 'item_locket').setScale(2);
+        const locket = this.add.image(width / 2, 300, 'item_locket').setScale(6);
         this.tweens.add({
             targets: locket,
-            y: 104,
+            y: 312,
             duration: 1500,
             yoyo: true,
             repeat: -1,
@@ -47,7 +47,7 @@ export class TitleScene extends Phaser.Scene {
         });
 
         // Glow effect on locket
-        const glow = this.add.circle(width / 2, 100, 16, 0xffd700, 0.2);
+        const glow = this.add.circle(width / 2, 300, 48, 0xffd700, 0.2);
         this.tweens.add({
             targets: glow,
             scaleX: 1.5,
@@ -60,19 +60,19 @@ export class TitleScene extends Phaser.Scene {
         });
 
         // Subtitle
-        this.add.text(width / 2, 130, "A Mystery Across the World", {
-            fontSize: '8px',
+        this.add.text(width / 2, 390, "A Mystery Across the World", {
+            fontSize: '24px',
             fontFamily: 'monospace',
             color: '#8866cc'
         }).setOrigin(0.5);
 
         // Menu buttons
-        this.createButton(width / 2, 170, 'New Game', () => this.startNewGame());
-        this.createButton(width / 2, 196, 'Continue', () => this.continueGame());
+        this.createButton(width / 2, 510, 'New Game', () => this.startNewGame());
+        this.createButton(width / 2, 588, 'Continue', () => this.continueGame());
 
         // Version text
-        this.add.text(width / 2, height - 10, 'v1.0', {
-            fontSize: '6px',
+        this.add.text(width / 2, height - 30, 'v1.0', {
+            fontSize: '18px',
             fontFamily: 'monospace',
             color: '#444466'
         }).setOrigin(0.5);
@@ -82,20 +82,25 @@ export class TitleScene extends Phaser.Scene {
     }
 
     createButton(x, y, label, callback) {
-        const bg = this.add.image(x, y, 'button_bg').setInteractive({ useHandCursor: true });
+        const bg = this.add.rectangle(x, y, 360, 60, 0x2d1b69)
+            .setInteractive({ useHandCursor: true });
+        bg.setStrokeStyle(2, 0x8866cc);
+
         const text = this.add.text(x, y, label, {
-            fontSize: '10px',
+            fontSize: '30px',
             fontFamily: 'monospace',
             color: '#ccaaff'
         }).setOrigin(0.5);
 
         bg.on('pointerover', () => {
-            bg.setTexture('button_hover');
+            bg.setFillStyle(0x4a2d8e);
+            bg.setStrokeStyle(2, 0xccaaff);
             text.setColor('#ffffff');
         });
 
         bg.on('pointerout', () => {
-            bg.setTexture('button_bg');
+            bg.setFillStyle(0x2d1b69);
+            bg.setStrokeStyle(2, 0x8866cc);
             text.setColor('#ccaaff');
         });
 

@@ -69,9 +69,9 @@ async function test(name, fn) {
                 isRunning: window.game.isRunning
             };
         });
-        // Internal resolution is 320x240, displayed at 960x720
-        if (info.canvasW !== 320 || info.canvasH !== 240) throw new Error(`Canvas: ${info.canvasW}x${info.canvasH}`);
-        log(`  Canvas: ${info.canvasW}x${info.canvasH} displayed at ${info.styleW}x${info.styleH}`);
+        // Native resolution is 960x720 for crisp text rendering
+        if (info.canvasW !== 960 || info.canvasH !== 720) throw new Error(`Canvas: ${info.canvasW}x${info.canvasH}`);
+        log(`  Canvas: ${info.canvasW}x${info.canvasH}`);
     });
 
     // --- TEST 5: Boot scene completes and Title scene loads ---

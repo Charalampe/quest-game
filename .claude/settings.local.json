@@ -9,7 +9,8 @@
       "Bash(node test_game.mjs:*)",
       "Bash(node test_diag.mjs:*)",
       "Bash(node:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(cd:*)"
     ]
   }
 }

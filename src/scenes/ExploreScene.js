@@ -41,7 +41,8 @@ export class ExploreScene extends Phaser.Scene {
         this.player = new Player(this, startX, startY);
         this.player.setDepth(5);
 
-        // Camera follows player
+        // Camera follows player (zoom 3 for pixel art)
+        this.cameras.main.setZoom(3);
         this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
         this.cameras.main.setBounds(0, 0, cityData.width * 16, cityData.height * 16);
         this.physics.world.setBounds(0, 0, cityData.width * 16, cityData.height * 16);
@@ -92,11 +93,9 @@ export class ExploreScene extends Phaser.Scene {
             dialogManager: this.dialogManager,
             questManager: this.questManager,
             inventoryManager: this.inventoryManager,
-            cityName: cityData.name
+            cityName: cityData.name,
+            cityDescription: cityData.description
         });
-
-        // City name display
-        this.showCityName(cityData.name, cityData.description);
 
         // Check for quest triggers on entering city
         this.questManager.onEnterCity(this.cityId);
@@ -405,33 +404,6 @@ export class ExploreScene extends Phaser.Scene {
         });
     }
 
-    showCityName(name, description) {
-        const cam = this.cameras.main;
-        const text = this.add.text(cam.midPoint.x, 20, name, {
-            fontSize: '14px',
-            fontFamily: 'monospace',
-            color: '#ffffff',
-            backgroundColor: '#1a1a2ecc',
-            padding: { x: 8, y: 4 }
-        }).setOrigin(0.5).setScrollFactor(0).setDepth(100);
-
-        const subText = this.add.text(cam.midPoint.x, 38, description, {
-            fontSize: '8px',
-            fontFamily: 'monospace',
-            color: '#ccaaff',
-            backgroundColor: '#1a1a2ecc',
-            padding: { x: 6, y: 2 }
-        }).setOrigin(0.5).setScrollFactor(0).setDepth(100);
-
-        this.tweens.add({
-            targets: [text, subText],
-            alpha: 0,
-            delay: 2500,
-            duration: 500,
-            onComplete: () => { text.destroy(); subText.destroy(); }
-        });
-    }
-
     update() {
         this.player.update();
 
@@ -450,11 +422,24 @@ export class ExploreScene extends Phaser.Scene {
             this.exitTriggered = false;
         }
 
-        // Update NPC interaction indicators
+        // Update NPC interaction indicators and UI labels
         const facingPoint = this.player.getFacingPoint(12);
+        const cam = this.cameras.main;
+        const npcLabels = [];
         for (const npc of this.npcs) {
             const dist = Phaser.Math.Distance.Between(facingPoint.x, facingPoint.y, npc.x, npc.y);
-            npc.setInteractable(dist < 16);
+            const canInteract = dist < 16;
+            npc.setInteractable(canInteract);
+            if (canInteract) {
+                // Convert world position to screen position for UIScene (zoom 1)
+                const screenX = (npc.x - cam.worldView.x) * cam.zoom;
+                const screenY = (npc.y - cam.worldView.y) * cam.zoom + 30;
+                npcLabels.push({ name: npc.npcData.name, screenX, screenY });
+            }
+        }
+        const uiScene = this.scene.get('UI');
+        if (uiScene && uiScene.updateNPCLabels) {
+            uiScene.updateNPCLabels(npcLabels);
         }
     }
 }

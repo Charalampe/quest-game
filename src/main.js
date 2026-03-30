@@ -6,9 +6,8 @@ import { UIScene } from './scenes/UIScene.js';
 
 const config = {
     type: Phaser.AUTO,
-    width: 320,
-    height: 240,
-    zoom: 3,
+    width: 960,
+    height: 720,
     pixelArt: true,
     roundPixels: true,
     parent: document.body,

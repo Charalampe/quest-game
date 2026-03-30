@@ -8,47 +8,49 @@ export class UIScene extends Phaser.Scene {
         this.questManager = data.questManager;
         this.inventoryManager = data.inventoryManager;
         this.cityName = data.cityName;
+        this.cityDescription = data.cityDescription;
         this.inventoryVisible = false;
         this.questLogVisible = false;
+        this.npcLabelPool = [];
     }
 
     create() {
         const { width, height } = this.cameras.main;
 
         // === HUD BAR (top) ===
-        this.hudBar = this.add.rectangle(width / 2, 6, width, 12, 0x1a1a2e, 0.8);
-        this.hudCityText = this.add.text(4, 2, this.cityName || '', {
-            fontSize: '7px', fontFamily: 'monospace', color: '#ccaaff'
+        this.hudBar = this.add.rectangle(width / 2, 18, width, 36, 0x1a1a2e, 0.8);
+        this.hudCityText = this.add.text(12, 6, this.cityName || '', {
+            fontSize: '21px', fontFamily: 'monospace', color: '#ccaaff'
         });
-        this.hudHints = this.add.text(width - 4, 2, 'I:Items Q:Quests M:Map', {
-            fontSize: '6px', fontFamily: 'monospace', color: '#666688'
+        this.hudHints = this.add.text(width - 12, 6, 'I:Items Q:Quests M:Map', {
+            fontSize: '18px', fontFamily: 'monospace', color: '#666688'
         }).setOrigin(1, 0);
 
         // === DIALOG BOX ===
         this.dialogContainer = this.add.container(0, 0).setVisible(false).setDepth(50);
 
-        this.dialogBg = this.add.rectangle(width / 2, height - 32, width - 16, 56, 0x1a1a2e, 0.95);
+        this.dialogBg = this.add.rectangle(width / 2, height - 96, width - 48, 168, 0x1a1a2e, 0.95);
         this.dialogBg.setStrokeStyle(2, 0x8866cc);
         this.dialogContainer.add(this.dialogBg);
 
-        const innerBorder = this.add.rectangle(width / 2, height - 32, width - 20, 52, 0x000000, 0);
+        const innerBorder = this.add.rectangle(width / 2, height - 96, width - 60, 156, 0x000000, 0);
         innerBorder.setStrokeStyle(1, 0x4a3388);
         this.dialogContainer.add(innerBorder);
 
-        this.dialogSpeaker = this.add.text(16, height - 58, '', {
-            fontSize: '8px', fontFamily: 'monospace', color: '#f1c40f',
-            backgroundColor: '#1a1a2e', padding: { x: 4, y: 2 }
+        this.dialogSpeaker = this.add.text(48, height - 174, '', {
+            fontSize: '24px', fontFamily: 'monospace', color: '#f1c40f',
+            backgroundColor: '#1a1a2e', padding: { x: 12, y: 6 }
         });
         this.dialogContainer.add(this.dialogSpeaker);
 
-        this.dialogText = this.add.text(16, height - 48, '', {
-            fontSize: '7px', fontFamily: 'monospace', color: '#ffffff',
-            wordWrap: { width: width - 36 }, lineSpacing: 2
+        this.dialogText = this.add.text(48, height - 144, '', {
+            fontSize: '21px', fontFamily: 'monospace', color: '#ffffff',
+            wordWrap: { width: width - 108 }, lineSpacing: 6
         });
         this.dialogContainer.add(this.dialogText);
 
-        this.dialogAdvance = this.add.text(width - 20, height - 10, '\u25BC', {
-            fontSize: '8px', fontFamily: 'monospace', color: '#ccaaff'
+        this.dialogAdvance = this.add.text(width - 60, height - 30, '\u25BC', {
+            fontSize: '24px', fontFamily: 'monospace', color: '#ccaaff'
         });
         this.tweens.add({
             targets: this.dialogAdvance,
@@ -56,8 +58,8 @@ export class UIScene extends Phaser.Scene {
         });
         this.dialogContainer.add(this.dialogAdvance);
 
-        this.dialogProgress = this.add.text(width - 60, height - 10, '', {
-            fontSize: '6px', fontFamily: 'monospace', color: '#666688'
+        this.dialogProgress = this.add.text(width - 180, height - 30, '', {
+            fontSize: '18px', fontFamily: 'monospace', color: '#666688'
         });
         this.dialogContainer.add(this.dialogProgress);
 
@@ -74,10 +76,72 @@ export class UIScene extends Phaser.Scene {
         this.buildQuestLogPanel();
 
         // === NOTIFICATION ===
-        this.notifText = this.add.text(width / 2, 20, '', {
-            fontSize: '8px', fontFamily: 'monospace', color: '#f1c40f',
-            backgroundColor: '#1a1a2eee', padding: { x: 6, y: 3 }
+        this.notifText = this.add.text(width / 2, 60, '', {
+            fontSize: '24px', fontFamily: 'monospace', color: '#f1c40f',
+            backgroundColor: '#1a1a2eee', padding: { x: 18, y: 9 }
         }).setOrigin(0.5).setDepth(60).setVisible(false);
+
+        // Show city name on entry
+        if (this.cityName) {
+            this.showCityName(this.cityName, this.cityDescription);
+        }
+    }
+
+    // === CITY NAME DISPLAY ===
+
+    showCityName(name, description) {
+        const { width } = this.cameras.main;
+
+        const text = this.add.text(width / 2, 60, name, {
+            fontSize: '42px',
+            fontFamily: 'monospace',
+            color: '#ffffff',
+            backgroundColor: '#1a1a2ecc',
+            padding: { x: 24, y: 12 }
+        }).setOrigin(0.5).setDepth(100);
+
+        const subText = this.add.text(width / 2, 114, description, {
+            fontSize: '24px',
+            fontFamily: 'monospace',
+            color: '#ccaaff',
+            backgroundColor: '#1a1a2ecc',
+            padding: { x: 18, y: 6 }
+        }).setOrigin(0.5).setDepth(100);
+
+        this.tweens.add({
+            targets: [text, subText],
+            alpha: 0,
+            delay: 2500,
+            duration: 500,
+            onComplete: () => { text.destroy(); subText.destroy(); }
+        });
+    }
+
+    // === NPC LABEL METHODS ===
+
+    updateNPCLabels(labels) {
+        if (!this.npcLabelPool) return;
+
+        // Hide all existing labels
+        for (const label of this.npcLabelPool) {
+            label.setVisible(false);
+        }
+
+        // Show/create labels for visible NPCs
+        for (let i = 0; i < labels.length; i++) {
+            const { name, screenX, screenY } = labels[i];
+            if (i >= this.npcLabelPool.length) {
+                const label = this.add.text(0, 0, '', {
+                    fontSize: '18px', fontFamily: 'monospace', color: '#ffffff',
+                    backgroundColor: '#1a1a2ecc', padding: { x: 6, y: 3 }
+                }).setOrigin(0.5).setDepth(10);
+                this.npcLabelPool.push(label);
+            }
+            const label = this.npcLabelPool[i];
+            label.setText(name);
+            label.setPosition(screenX, screenY);
+            label.setVisible(true);
+        }
     }
 
     // === DIALOG METHODS ===
@@ -105,25 +169,25 @@ export class UIScene extends Phaser.Scene {
         const { width, height } = this.cameras.main;
 
         // Background
-        const bgH = 20 + choices.length * 16;
-        const bg = this.add.rectangle(width / 2, height / 2, 200, bgH, 0x1a1a2e, 0.95);
+        const bgH = 60 + choices.length * 48;
+        const bg = this.add.rectangle(width / 2, height / 2, 600, bgH, 0x1a1a2e, 0.95);
         bg.setStrokeStyle(2, 0x8866cc);
         this.choiceContainer.add(bg);
 
         // Prompt
-        const promptText = this.add.text(width / 2, height / 2 - bgH / 2 + 8, prompt, {
-            fontSize: '7px', fontFamily: 'monospace', color: '#ccaaff',
-            wordWrap: { width: 180 }
+        const promptText = this.add.text(width / 2, height / 2 - bgH / 2 + 24, prompt, {
+            fontSize: '21px', fontFamily: 'monospace', color: '#ccaaff',
+            wordWrap: { width: 540 }
         }).setOrigin(0.5, 0);
         this.choiceContainer.add(promptText);
 
         // Choice buttons
-        const startY = height / 2 - bgH / 2 + 26;
+        const startY = height / 2 - bgH / 2 + 78;
         choices.forEach((choice, i) => {
-            const btnBg = this.add.rectangle(width / 2, startY + i * 16, 180, 14, 0x2d1b69)
+            const btnBg = this.add.rectangle(width / 2, startY + i * 48, 540, 42, 0x2d1b69)
                 .setInteractive({ useHandCursor: true });
-            const btnText = this.add.text(width / 2, startY + i * 16, choice.text, {
-                fontSize: '7px', fontFamily: 'monospace', color: '#ccaaff'
+            const btnText = this.add.text(width / 2, startY + i * 48, choice.text, {
+                fontSize: '21px', fontFamily: 'monospace', color: '#ccaaff'
             }).setOrigin(0.5);
 
             btnBg.on('pointerover', () => {
@@ -150,8 +214,8 @@ export class UIScene extends Phaser.Scene {
 
     buildInventoryPanel() {
         const { width, height } = this.cameras.main;
-        const panelW = 150;
-        const panelH = 180;
+        const panelW = 450;
+        const panelH = 540;
         const px = width / 2;
         const py = height / 2;
 
@@ -159,28 +223,28 @@ export class UIScene extends Phaser.Scene {
         bg.setStrokeStyle(2, 0x8866cc);
         this.inventoryContainer.add(bg);
 
-        const innerBorder = this.add.rectangle(px, py, panelW - 4, panelH - 4, 0x000000, 0);
+        const innerBorder = this.add.rectangle(px, py, panelW - 12, panelH - 12, 0x000000, 0);
         innerBorder.setStrokeStyle(1, 0x4a3388);
         this.inventoryContainer.add(innerBorder);
 
-        const title = this.add.text(px, py - panelH / 2 + 8, 'INVENTORY', {
-            fontSize: '8px', fontFamily: 'monospace', color: '#f1c40f'
+        const title = this.add.text(px, py - panelH / 2 + 24, 'INVENTORY', {
+            fontSize: '24px', fontFamily: 'monospace', color: '#f1c40f'
         }).setOrigin(0.5);
         this.inventoryContainer.add(title);
 
         // Separator line
-        const sep = this.add.rectangle(px, py - panelH / 2 + 18, panelW - 16, 1, 0x4a3388);
+        const sep = this.add.rectangle(px, py - panelH / 2 + 54, panelW - 48, 1, 0x4a3388);
         this.inventoryContainer.add(sep);
 
         // Item list area
-        this.inventoryItemsText = this.add.text(px - panelW / 2 + 12, py - panelH / 2 + 24, '', {
-            fontSize: '7px', fontFamily: 'monospace', color: '#ffffff',
-            wordWrap: { width: panelW - 24 }, lineSpacing: 4
+        this.inventoryItemsText = this.add.text(px - panelW / 2 + 36, py - panelH / 2 + 72, '', {
+            fontSize: '21px', fontFamily: 'monospace', color: '#ffffff',
+            wordWrap: { width: panelW - 72 }, lineSpacing: 12
         });
         this.inventoryContainer.add(this.inventoryItemsText);
 
-        const closeHint = this.add.text(px, py + panelH / 2 - 8, 'Press I to close', {
-            fontSize: '6px', fontFamily: 'monospace', color: '#666688'
+        const closeHint = this.add.text(px, py + panelH / 2 - 24, 'Press I to close', {
+            fontSize: '18px', fontFamily: 'monospace', color: '#666688'
         }).setOrigin(0.5);
         this.inventoryContainer.add(closeHint);
     }
@@ -210,8 +274,8 @@ export class UIScene extends Phaser.Scene {
 
     buildQuestLogPanel() {
         const { width, height } = this.cameras.main;
-        const panelW = 200;
-        const panelH = 190;
+        const panelW = 600;
+        const panelH = 570;
         const px = width / 2;
         const py = height / 2;
 
@@ -219,26 +283,26 @@ export class UIScene extends Phaser.Scene {
         bg.setStrokeStyle(2, 0x8866cc);
         this.questLogContainer.add(bg);
 
-        const innerBorder = this.add.rectangle(px, py, panelW - 4, panelH - 4, 0x000000, 0);
+        const innerBorder = this.add.rectangle(px, py, panelW - 12, panelH - 12, 0x000000, 0);
         innerBorder.setStrokeStyle(1, 0x4a3388);
         this.questLogContainer.add(innerBorder);
 
-        const title = this.add.text(px, py - panelH / 2 + 8, 'QUEST LOG', {
-            fontSize: '8px', fontFamily: 'monospace', color: '#f1c40f'
+        const title = this.add.text(px, py - panelH / 2 + 24, 'QUEST LOG', {
+            fontSize: '24px', fontFamily: 'monospace', color: '#f1c40f'
         }).setOrigin(0.5);
         this.questLogContainer.add(title);
 
-        const sep = this.add.rectangle(px, py - panelH / 2 + 18, panelW - 16, 1, 0x4a3388);
+        const sep = this.add.rectangle(px, py - panelH / 2 + 54, panelW - 48, 1, 0x4a3388);
         this.questLogContainer.add(sep);
 
-        this.questLogText = this.add.text(px - panelW / 2 + 12, py - panelH / 2 + 24, '', {
-            fontSize: '7px', fontFamily: 'monospace', color: '#ffffff',
-            wordWrap: { width: panelW - 24 }, lineSpacing: 3
+        this.questLogText = this.add.text(px - panelW / 2 + 36, py - panelH / 2 + 72, '', {
+            fontSize: '21px', fontFamily: 'monospace', color: '#ffffff',
+            wordWrap: { width: panelW - 72 }, lineSpacing: 9
         });
         this.questLogContainer.add(this.questLogText);
 
-        const closeHint = this.add.text(px, py + panelH / 2 - 8, 'Press Q to close', {
-            fontSize: '6px', fontFamily: 'monospace', color: '#666688'
+        const closeHint = this.add.text(px, py + panelH / 2 - 24, 'Press Q to close', {
+            fontSize: '18px', fontFamily: 'monospace', color: '#666688'
         }).setOrigin(0.5);
         this.questLogContainer.add(closeHint);
     }

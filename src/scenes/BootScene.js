@@ -7,7 +7,7 @@ export class BootScene extends Phaser.Scene {
         // Show loading text
         const { width, height } = this.cameras.main;
         this.add.text(width / 2, height / 2, 'Loading...', {
-            fontSize: '12px',
+            fontSize: '36px',
             fontFamily: 'monospace',
             color: '#ccaaff'
         }).setOrigin(0.5);

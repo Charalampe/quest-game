@@ -32,19 +32,11 @@ export class NPC extends Phaser.Physics.Arcade.Sprite {
             ease: 'Sine.easeInOut'
         });
 
-        // NPC name label (shown on hover)
-        this.nameLabel = scene.add.text(x, y + 10, data.name, {
-            fontSize: '6px',
-            fontFamily: 'monospace',
-            color: '#ffffff',
-            backgroundColor: '#1a1a2ecc',
-            padding: { x: 2, y: 1 }
-        }).setOrigin(0.5).setDepth(10).setVisible(false);
+        // NPC name label rendered in UIScene for crisp text
     }
 
     setInteractable(canInteract) {
         this.indicator.setVisible(canInteract);
-        this.nameLabel.setVisible(canInteract);
     }
 
     preUpdate(time, delta) {
@@ -62,7 +54,6 @@ export class NPC extends Phaser.Physics.Arcade.Sprite {
             this.scene.tweens.killTweensOf(this.indicator);
         }
         if (this.indicator) this.indicator.destroy();
-        if (this.nameLabel) this.nameLabel.destroy();
         super.destroy();
     }
 }

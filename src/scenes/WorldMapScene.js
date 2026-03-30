@@ -1,6 +1,9 @@
 import { TravelManager, CITY_MAP_POSITIONS, TRAVEL_ROUTES } from '../systems/TravelManager.js';
 import { CITIES } from '../data/cities.js';
 
+// Scale factor for converting 320x240 map coords to 960x720
+const MAP_SCALE = 3;
+
 export class WorldMapScene extends Phaser.Scene {
     constructor() {
         super('WorldMap');
@@ -17,12 +20,12 @@ export class WorldMapScene extends Phaser.Scene {
 
         this.travelManager = new TravelManager(this);
 
-        // Background
-        this.add.image(width / 2, height / 2, 'world_map_bg');
+        // Background (320x240 texture scaled to 960x720)
+        this.add.image(width / 2, height / 2, 'world_map_bg').setScale(MAP_SCALE);
 
         // Title
-        this.add.text(width / 2, 8, 'WORLD MAP', {
-            fontSize: '10px', fontFamily: 'monospace', color: '#f1c40f'
+        this.add.text(width / 2, 24, 'WORLD MAP', {
+            fontSize: '30px', fontFamily: 'monospace', color: '#f1c40f'
         }).setOrigin(0.5);
 
         // Draw travel routes (lines between cities)
@@ -33,23 +36,23 @@ export class WorldMapScene extends Phaser.Scene {
         this.drawCities();
 
         // Info panel at bottom
-        this.infoBg = this.add.rectangle(width / 2, height - 20, width - 16, 32, 0x1a1a2e, 0.9);
+        this.infoBg = this.add.rectangle(width / 2, height - 60, width - 48, 96, 0x1a1a2e, 0.9);
         this.infoBg.setStrokeStyle(1, 0x8866cc);
 
-        this.infoText = this.add.text(width / 2, height - 24, 'Select a destination', {
-            fontSize: '8px', fontFamily: 'monospace', color: '#ccaaff',
+        this.infoText = this.add.text(width / 2, height - 72, 'Select a destination', {
+            fontSize: '24px', fontFamily: 'monospace', color: '#ccaaff',
             align: 'center'
         }).setOrigin(0.5);
 
-        this.infoSubtext = this.add.text(width / 2, height - 14, 'Click a city or press ESC to return', {
-            fontSize: '6px', fontFamily: 'monospace', color: '#666688',
+        this.infoSubtext = this.add.text(width / 2, height - 42, 'Click a city or press ESC to return', {
+            fontSize: '18px', fontFamily: 'monospace', color: '#666688',
             align: 'center'
         }).setOrigin(0.5);
 
         // Travel button (hidden initially)
-        this.travelButton = this.add.text(width / 2, height - 14, '', {
-            fontSize: '7px', fontFamily: 'monospace', color: '#1a1a2e',
-            backgroundColor: '#f1c40f', padding: { x: 8, y: 2 }
+        this.travelButton = this.add.text(width / 2, height - 42, '', {
+            fontSize: '21px', fontFamily: 'monospace', color: '#1a1a2e',
+            backgroundColor: '#f1c40f', padding: { x: 24, y: 6 }
         }).setOrigin(0.5).setVisible(false).setInteractive({ useHandCursor: true });
 
         this.travelButton.on('pointerdown', () => this.startTravel());
@@ -58,14 +61,14 @@ export class WorldMapScene extends Phaser.Scene {
 
         // Current city indicator
         const currentPos = CITY_MAP_POSITIONS[this.fromCity];
-        this.currentMarker = this.add.text(currentPos.x, currentPos.y - 12, 'YOU', {
-            fontSize: '6px', fontFamily: 'monospace', color: '#ffffff',
-            backgroundColor: '#e74c3c', padding: { x: 2, y: 1 }
+        this.currentMarker = this.add.text(currentPos.x * MAP_SCALE, currentPos.y * MAP_SCALE - 36, 'YOU', {
+            fontSize: '18px', fontFamily: 'monospace', color: '#ffffff',
+            backgroundColor: '#e74c3c', padding: { x: 6, y: 3 }
         }).setOrigin(0.5);
 
         this.tweens.add({
             targets: this.currentMarker,
-            y: currentPos.y - 14,
+            y: currentPos.y * MAP_SCALE - 42,
             duration: 500,
             yoyo: true,
             repeat: -1,
@@ -110,19 +113,21 @@ export class WorldMapScene extends Phaser.Scene {
                 const colors = { train: 0xe74c3c, boat: 0x3498db, portal: 0x9b59b6 };
                 const color = colors[route.type] || 0xffffff;
 
-                // Draw dotted line
-                graphics.lineStyle(1, color, 0.6);
-                const dx = to.x - from.x;
-                const dy = to.y - from.y;
+                // Draw dotted line (scale positions to 960x720)
+                const fromX = from.x * MAP_SCALE, fromY = from.y * MAP_SCALE;
+                const toX = to.x * MAP_SCALE, toY = to.y * MAP_SCALE;
+                graphics.lineStyle(3, color, 0.6);
+                const dx = toX - fromX;
+                const dy = toY - fromY;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                const steps = Math.floor(dist / 4);
+                const steps = Math.floor(dist / 12);
 
                 for (let i = 0; i < steps; i += 2) {
                     const t1 = i / steps;
                     const t2 = Math.min((i + 1) / steps, 1);
                     graphics.lineBetween(
-                        from.x + dx * t1, from.y + dy * t1,
-                        from.x + dx * t2, from.y + dy * t2
+                        fromX + dx * t1, fromY + dy * t1,
+                        fromX + dx * t2, fromY + dy * t2
                     );
                 }
             }
@@ -137,24 +142,26 @@ export class WorldMapScene extends Phaser.Scene {
             const isUnlocked = unlocked.includes(cityId);
             const isCurrent = cityId === this.fromCity;
 
-            // City dot
-            const dot = this.add.image(pos.x, pos.y, isUnlocked ? 'city_dot' : 'city_locked');
+            // City dot (scaled up from pixel art)
+            const sx = pos.x * MAP_SCALE;
+            const sy = pos.y * MAP_SCALE;
+            const dot = this.add.image(sx, sy, isUnlocked ? 'city_dot' : 'city_locked').setScale(MAP_SCALE);
             dot.setInteractive({ useHandCursor: isUnlocked });
 
             // City label
             const labelColor = isCurrent ? '#f1c40f' : (isUnlocked ? '#ffffff' : '#555555');
-            const label = this.add.text(pos.x, pos.y + 8, pos.label, {
-                fontSize: '6px', fontFamily: 'monospace', color: labelColor
+            const label = this.add.text(sx, sy + 24, pos.label, {
+                fontSize: '18px', fontFamily: 'monospace', color: labelColor
             }).setOrigin(0.5);
 
             if (isUnlocked && !isCurrent) {
                 dot.on('pointerdown', () => this.selectCity(cityId));
                 dot.on('pointerover', () => {
-                    dot.setScale(1.5);
+                    dot.setScale(MAP_SCALE * 1.5);
                     label.setColor('#f1c40f');
                 });
                 dot.on('pointerout', () => {
-                    dot.setScale(1);
+                    dot.setScale(MAP_SCALE);
                     label.setColor(this.selectedCity === cityId ? '#f1c40f' : '#ffffff');
                 });
             }
@@ -208,16 +215,19 @@ export class WorldMapScene extends Phaser.Scene {
         const from = CITY_MAP_POSITIONS[this.fromCity];
         const to = CITY_MAP_POSITIONS[this.selectedCity];
 
+        const fromX = from.x * MAP_SCALE, fromY = from.y * MAP_SCALE;
+        const toX = to.x * MAP_SCALE, toY = to.y * MAP_SCALE;
+
         // Animate travel
         this.infoText.setText(`Traveling by ${route.label}...`);
         this.travelButton.setVisible(false);
 
         // Travel dot animation
-        const traveler = this.add.circle(from.x, from.y, 3, 0xf1c40f);
+        const traveler = this.add.circle(fromX, fromY, 9, 0xf1c40f);
         this.tweens.add({
             targets: traveler,
-            x: to.x,
-            y: to.y,
+            x: toX,
+            y: toY,
             duration: route.duration,
             ease: 'Sine.easeInOut',
             onComplete: () => {
@@ -231,7 +241,7 @@ export class WorldMapScene extends Phaser.Scene {
         // Draw trailing line
         const graphics = this.add.graphics();
         const colors = { train: 0xe74c3c, boat: 0x3498db, portal: 0x9b59b6 };
-        graphics.lineStyle(2, colors[route.type] || 0xffffff, 0.8);
+        graphics.lineStyle(6, colors[route.type] || 0xffffff, 0.8);
 
         let progress = 0;
         this.time.addEvent({
@@ -240,11 +250,11 @@ export class WorldMapScene extends Phaser.Scene {
                 progress += 16 / route.duration;
                 if (progress > 1) progress = 1;
                 graphics.clear();
-                graphics.lineStyle(2, colors[route.type] || 0xffffff, 0.8);
+                graphics.lineStyle(6, colors[route.type] || 0xffffff, 0.8);
                 graphics.lineBetween(
-                    from.x, from.y,
-                    from.x + (to.x - from.x) * progress,
-                    from.y + (to.y - from.y) * progress
+                    fromX, fromY,
+                    fromX + (toX - fromX) * progress,
+                    fromY + (toY - fromY) * progress
                 );
             },
             repeat: Math.floor(route.duration / 16)
