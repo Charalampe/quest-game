@@ -1,0 +1,173 @@
+import { DIALOGUES } from '../data/dialogues.js';
+
+export class DialogManager {
+    constructor(scene) {
+        this.scene = scene;
+        this.active = false;
+        this.currentDialog = null;
+        this.currentLine = 0;
+        this.callback = null;
+        this.typewriterTimer = null;
+        this.displayedText = '';
+        this.fullText = '';
+        this.isTyping = false;
+        this.choiceMode = false;
+        this.choices = [];
+        this.selectedChoice = 0;
+        this.choiceCallback = null;
+    }
+
+    startDialog(dialogId, speakerName, callback) {
+        const dialog = DIALOGUES[dialogId];
+        if (!dialog) {
+            this.showMessage("...", callback);
+            return;
+        }
+
+        this.active = true;
+        this.currentDialog = dialog;
+        this.currentLine = 0;
+        this.callback = callback;
+        this.speakerName = speakerName;
+
+        this.showLine();
+    }
+
+    showLine() {
+        if (!this.currentDialog || this.currentLine >= this.currentDialog.lines.length) {
+            this.endDialog();
+            return;
+        }
+
+        this.fullText = this.currentDialog.lines[this.currentLine];
+        this.displayedText = '';
+        this.isTyping = true;
+
+        // Notify UI scene
+        const uiScene = this.scene.scene.get('UI');
+        if (uiScene && uiScene.showDialog) {
+            uiScene.showDialog(this.speakerName, this.fullText, this.currentLine, this.currentDialog.lines.length);
+        }
+
+        // Start typewriter effect
+        this.typewriterIndex = 0;
+        if (this.typewriterTimer) {
+            this.typewriterTimer.remove();
+        }
+        this.typewriterTimer = this.scene.time.addEvent({
+            delay: 25,
+            callback: () => {
+                if (this.typewriterIndex < this.fullText.length) {
+                    this.displayedText = this.fullText.substring(0, this.typewriterIndex + 1);
+                    this.typewriterIndex++;
+                    const uiScene = this.scene.scene.get('UI');
+                    if (uiScene && uiScene.updateDialogText) {
+                        uiScene.updateDialogText(this.displayedText);
+                    }
+                } else {
+                    this.isTyping = false;
+                    this.typewriterTimer.remove();
+                }
+            },
+            loop: true
+        });
+    }
+
+    advance() {
+        if (this.choiceMode) return;
+
+        if (this.isTyping) {
+            // Skip typewriter, show full text
+            this.isTyping = false;
+            if (this.typewriterTimer) this.typewriterTimer.remove();
+            this.displayedText = this.fullText;
+            const uiScene = this.scene.scene.get('UI');
+            if (uiScene && uiScene.updateDialogText) {
+                uiScene.updateDialogText(this.displayedText);
+            }
+        } else {
+            // Next line
+            this.currentLine++;
+            this.showLine();
+        }
+    }
+
+    endDialog() {
+        this.active = false;
+
+        // Handle dialog rewards
+        if (this.currentDialog) {
+            if (this.currentDialog.givesItem) {
+                const inv = this.scene.inventoryManager;
+                if (inv) inv.addItem(this.currentDialog.givesItem);
+            }
+            if (this.currentDialog.setsFlag) {
+                const flags = this.scene.registry.get('flags') || {};
+                flags[this.currentDialog.setsFlag] = true;
+                this.scene.registry.set('flags', flags);
+            }
+            if (this.currentDialog.unlocksCity) {
+                const unlocked = this.scene.registry.get('unlockedCities') || ['paris'];
+                if (!unlocked.includes(this.currentDialog.unlocksCity)) {
+                    unlocked.push(this.currentDialog.unlocksCity);
+                    this.scene.registry.set('unlockedCities', unlocked);
+
+                    // Show unlock notification
+                    const uiScene = this.scene.scene.get('UI');
+                    if (uiScene && uiScene.showNotification) {
+                        const cityName = this.currentDialog.unlocksCity.charAt(0).toUpperCase() + this.currentDialog.unlocksCity.slice(1);
+                        uiScene.showNotification(`New destination: ${cityName}!`);
+                    }
+                }
+            }
+            if (this.currentDialog.unlocksPortal) {
+                const flags = this.scene.registry.get('flags') || {};
+                flags.portal_unlocked = true;
+                this.scene.registry.set('flags', flags);
+            }
+            if (this.currentDialog.completesObjective) {
+                const qm = this.scene.questManager;
+                if (qm) qm.completeObjective(this.currentDialog.completesObjective);
+            }
+        }
+
+        // Hide dialog UI
+        const uiScene = this.scene.scene.get('UI');
+        if (uiScene && uiScene.hideDialog) {
+            uiScene.hideDialog();
+        }
+
+        if (this.callback) {
+            this.callback();
+        }
+    }
+
+    showMessage(text, callback) {
+        this.active = true;
+        this.currentDialog = { lines: [text] };
+        this.currentLine = 0;
+        this.callback = callback;
+        this.speakerName = '';
+        this.showLine();
+    }
+
+    showChoice(prompt, choices, callback) {
+        this.active = true;
+        this.choiceMode = true;
+        this.choices = choices;
+        this.selectedChoice = 0;
+        this.choiceCallback = callback;
+
+        const uiScene = this.scene.scene.get('UI');
+        if (uiScene && uiScene.showChoices) {
+            uiScene.showChoices(prompt, choices, (choice) => {
+                this.choiceMode = false;
+                this.active = false;
+                uiScene.hideDialog();
+                if (this.choiceCallback) {
+                    this.choiceCallback(choice);
+                }
+            });
+        }
+    }
+}

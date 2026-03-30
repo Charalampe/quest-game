@@ -1,0 +1,12 @@
+{
+  "name": "quest-game",
+  "version": "1.0.0",
+  "description": "A retro top-down RPG exploration game",
+  "scripts": {
+    "start": "http-server -p 8080 -c-1 --cors -o"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "playwright": "^1.58.2"
+  }
+}
