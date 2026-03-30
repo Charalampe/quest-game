@@ -10,7 +10,9 @@
       "Bash(node test_diag.mjs:*)",
       "Bash(node:*)",
       "Bash(find:*)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(git worktree add:*)",
+      "Bash(git branch:*)"
     ]
   }
 }
