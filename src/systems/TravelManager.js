@@ -1,23 +1,23 @@
 export const TRAVEL_ROUTES = {
     paris: {
-        london: { type: 'train', label: 'Eurostar Train', duration: 1000 },
-        rome: { type: 'train', label: 'Night Train', duration: 1500 }
+        london: { type: 'train', label: 'Eurostar Train', labelKey: 'eurostar', duration: 1000 },
+        rome: { type: 'train', label: 'Night Train', labelKey: 'nightTrain', duration: 1500 }
     },
     london: {
-        paris: { type: 'train', label: 'Eurostar Train', duration: 1000 },
-        rome: { type: 'train', label: 'Train via Paris', duration: 2000 }
+        paris: { type: 'train', label: 'Eurostar Train', labelKey: 'eurostar', duration: 1000 },
+        rome: { type: 'train', label: 'Train via Paris', labelKey: 'trainViaParis', duration: 2000 }
     },
     rome: {
-        paris: { type: 'train', label: 'Night Train', duration: 1500 },
-        london: { type: 'train', label: 'Train via Paris', duration: 2000 },
-        marrakech: { type: 'boat', label: 'Boat across Mediterranean', duration: 2000 }
+        paris: { type: 'train', label: 'Night Train', labelKey: 'nightTrain', duration: 1500 },
+        london: { type: 'train', label: 'Train via Paris', labelKey: 'trainViaParis', duration: 2000 },
+        marrakech: { type: 'boat', label: 'Boat across Mediterranean', labelKey: 'boatMediterranean', duration: 2000 }
     },
     marrakech: {
-        rome: { type: 'boat', label: 'Boat to Italy', duration: 2000 },
-        tokyo: { type: 'portal', label: 'Magic Portal', duration: 800, requiresFlag: 'portal_unlocked' }
+        rome: { type: 'boat', label: 'Boat to Italy', labelKey: 'boatItaly', duration: 2000 },
+        tokyo: { type: 'portal', label: 'Magic Portal', labelKey: 'magicPortal', duration: 800, requiresFlag: 'portal_unlocked' }
     },
     tokyo: {
-        marrakech: { type: 'portal', label: 'Magic Portal', duration: 800, requiresFlag: 'portal_unlocked' }
+        marrakech: { type: 'portal', label: 'Magic Portal', labelKey: 'magicPortal', duration: 800, requiresFlag: 'portal_unlocked' }
     }
 };
 

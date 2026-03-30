@@ -1,4 +1,5 @@
 import { DIALOGUES } from '../data/dialogues.js';
+import { t, getDialogueLines, getItemText } from '../data/i18n/index.js';
 
 export class DialogManager {
     constructor(scene) {
@@ -21,12 +22,16 @@ export class DialogManager {
     startDialog(dialogId, speakerName, callback) {
         const dialog = DIALOGUES[dialogId];
         if (!dialog) {
-            this.showMessage("...", callback);
+            this.showMessage(t('ui.fallbackDialog'), callback);
             return;
         }
 
         this.active = true;
-        this.currentDialog = dialog;
+        const localizedLines = getDialogueLines(dialogId);
+        this.currentDialog = {
+            ...dialog,
+            lines: localizedLines || dialog.lines
+        };
         this.currentLine = 0;
         this.callback = callback;
         this.speakerName = speakerName;
@@ -122,7 +127,7 @@ export class DialogManager {
                     const uiScene = this.scene.scene.get('UI');
                     if (uiScene && uiScene.showNotification) {
                         const cityName = this.currentDialog.unlocksCity.charAt(0).toUpperCase() + this.currentDialog.unlocksCity.slice(1);
-                        uiScene.showNotification(`New destination: ${cityName}!`);
+                        uiScene.showNotification(t('ui.newDestination', { city: cityName }));
                     }
                 }
             }

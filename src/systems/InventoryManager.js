@@ -1,3 +1,5 @@
+import { t, getItemText } from '../data/i18n/index.js';
+
 export class InventoryManager {
     constructor(scene) {
         this.scene = scene;
@@ -20,7 +22,9 @@ export class InventoryManager {
         // Show notification
         const uiScene = this.scene.scene.get('UI');
         if (uiScene && uiScene.showNotification) {
-            uiScene.showNotification(`Got: ${item.name}`);
+            const itemText = getItemText(item.id);
+            const localName = itemText ? itemText.name : item.name;
+            uiScene.showNotification(t('ui.gotItem', { name: localName }));
         }
     }
 

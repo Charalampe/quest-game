@@ -1,4 +1,5 @@
 import { QUESTS, NPC_DIALOG_ROUTES, CHEST_REWARDS } from '../data/quests.js';
+import { t, getQuestText } from '../data/i18n/index.js';
 
 export class QuestManager {
     constructor(scene) {
@@ -58,7 +59,7 @@ export class QuestManager {
             // Notify UI
             const uiScene = this.scene.scene.get('UI');
             if (uiScene && uiScene.showNotification) {
-                uiScene.showNotification('Objective complete!');
+                uiScene.showNotification(t('ui.objectiveComplete'));
             }
 
             // Check if quest is complete
@@ -96,7 +97,7 @@ export class QuestManager {
                 const uiScene = this.scene.scene.get('UI');
                 if (uiScene && uiScene.showNotification) {
                     const cityName = chestData.unlocksCity.charAt(0).toUpperCase() + chestData.unlocksCity.slice(1);
-                    uiScene.showNotification(`New destination: ${cityName}!`);
+                    uiScene.showNotification(t('ui.newDestination', { city: cityName }));
                 }
             }
         }
@@ -109,6 +110,7 @@ export class QuestManager {
 
         const quest = QUESTS.main_quest;
         const flags = this.scene.registry.get('flags') || {};
+        const questText = getQuestText(quest.id);
 
         // Determine which objectives are visible
         const visibleObjectives = quest.objectives.filter(obj => {
@@ -120,16 +122,16 @@ export class QuestManager {
 
         const objectives = visibleObjectives.map(obj => ({
             id: obj.id,
-            text: obj.text,
+            text: questText?.objectives?.[obj.id]?.text ?? obj.text,
             completed: this.completedObjectives.includes(obj.id),
-            hint: obj.hint,
+            hint: questText?.objectives?.[obj.id]?.hint ?? obj.hint,
             city: obj.city
         }));
 
         return [{
             id: quest.id,
-            name: quest.name,
-            description: quest.description,
+            name: questText?.name ?? quest.name,
+            description: questText?.description ?? quest.description,
             objectives
         }];
     }
@@ -161,7 +163,7 @@ export class QuestManager {
     showVictory() {
         const uiScene = this.scene.scene.get('UI');
         if (uiScene) {
-            uiScene.showNotification("Congratulations! You found the treasure!");
+            uiScene.showNotification(t('ui.congratulations'));
         }
 
         this.scene.time.delayedCall(3000, () => {

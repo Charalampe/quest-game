@@ -6,6 +6,7 @@ import { DialogManager } from '../systems/DialogManager.js';
 import { QuestManager } from '../systems/QuestManager.js';
 import { InventoryManager } from '../systems/InventoryManager.js';
 import { SaveManager } from '../systems/SaveManager.js';
+import { t, getItemText } from '../data/i18n/index.js';
 
 export class ExploreScene extends Phaser.Scene {
     constructor() {
@@ -94,7 +95,7 @@ export class ExploreScene extends Phaser.Scene {
             questManager: this.questManager,
             inventoryManager: this.inventoryManager,
             cityName: cityData.name,
-            cityDescription: cityData.description
+            cityDescription: t(`cities.${this.cityId}`)
         });
 
         // Check for quest triggers on entering city
@@ -274,7 +275,7 @@ export class ExploreScene extends Phaser.Scene {
         if (chest.opened || openedChests.includes(chest.id)) {
             chest.opened = true;
             this.dialogActive = true;
-            this.dialogManager.showMessage("The chest is empty.", () => {
+            this.dialogManager.showMessage(t('ui.chestEmpty'), () => {
                 this.dialogActive = false;
             });
             return;
@@ -286,14 +287,16 @@ export class ExploreScene extends Phaser.Scene {
             openedChests.push(chest.id);
             this.registry.set('openedChests', openedChests);
             this.inventoryManager.addItem(reward);
+            const itemText = getItemText(reward.id);
+            const localName = itemText ? itemText.name : reward.name;
             this.dialogActive = true;
-            this.dialogManager.showMessage(`Found: ${reward.name}!`, () => {
+            this.dialogManager.showMessage(t('ui.chestFound', { name: localName }), () => {
                 this.dialogActive = false;
                 this.questManager.onItemFound(reward.id);
             });
         } else {
             this.dialogActive = true;
-            this.dialogManager.showMessage("The chest is locked.", () => {
+            this.dialogManager.showMessage(t('ui.chestLocked'), () => {
                 this.dialogActive = false;
             });
         }
@@ -308,15 +311,8 @@ export class ExploreScene extends Phaser.Scene {
     }
 
     getSignText(signId) {
-        const signs = {
-            'paris_sign_4_12': 'Librairie du Pont - Books & Maps',
-            'paris_sign_27_12': "Grand-m\u00E8re's House",
-            'london_sign_14_5': 'The British Museum - Est. 1753',
-            'rome_sign_14_9': 'Fontana di Trevi - Make a Wish',
-            'marrakech_sign_23_7': "Merchant of Wonders",
-            'tokyo_sign_14_5': 'Secret Garden - Enter with Care'
-        };
-        return signs[signId] || 'A weathered sign.';
+        const text = t(`signs.${signId}`);
+        return text !== `signs.${signId}` ? text : t('ui.signDefault');
     }
 
     usePortal(portal) {
@@ -324,7 +320,7 @@ export class ExploreScene extends Phaser.Scene {
         if (flags.portal_unlocked) {
             this.dialogActive = true;
             this.dialogManager.showChoice(
-                'The portal shimmers with magical energy. Where do you want to go?',
+                t('ui.portalActive'),
                 this.getPortalDestinations(),
                 (choice) => {
                     this.dialogActive = false;
@@ -335,7 +331,7 @@ export class ExploreScene extends Phaser.Scene {
             );
         } else {
             this.dialogActive = true;
-            this.dialogManager.showMessage('A strange shimmer hangs in the air, but nothing happens...', () => {
+            this.dialogManager.showMessage(t('ui.portalInactive'), () => {
                 this.dialogActive = false;
             });
         }
@@ -349,7 +345,7 @@ export class ExploreScene extends Phaser.Scene {
                 destinations.push({ text: CITIES[cityId].name, value: cityId });
             }
         }
-        destinations.push({ text: 'Cancel', value: 'cancel' });
+        destinations.push({ text: t('ui.cancel'), value: 'cancel' });
         return destinations;
     }
 
@@ -380,7 +376,7 @@ export class ExploreScene extends Phaser.Scene {
             this.scene.start('WorldMap', { from: this.cityId });
         } else {
             this.dialogActive = true;
-            this.dialogManager.showMessage("You haven't unlocked any travel routes yet.", () => {
+            this.dialogManager.showMessage(t('ui.noTravelRoutes'), () => {
                 this.dialogActive = false;
             });
         }

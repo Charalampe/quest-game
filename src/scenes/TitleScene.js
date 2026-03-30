@@ -1,4 +1,5 @@
 import { SaveManager } from '../systems/SaveManager.js';
+import { t, getLanguage, toggleLanguage } from '../data/i18n/index.js';
 
 export class TitleScene extends Phaser.Scene {
     constructor() {
@@ -27,7 +28,7 @@ export class TitleScene extends Phaser.Scene {
         }
 
         // Title text
-        const title = this.add.text(width / 2, 150, 'The Locket\n  of Worlds', {
+        const title = this.add.text(width / 2, 150, t('ui.title'), {
             fontSize: '60px',
             fontFamily: 'monospace',
             color: '#ccaaff',
@@ -60,18 +61,33 @@ export class TitleScene extends Phaser.Scene {
         });
 
         // Subtitle
-        this.add.text(width / 2, 390, "A Mystery Across the World", {
+        this.add.text(width / 2, 390, t('ui.subtitle'), {
             fontSize: '24px',
             fontFamily: 'monospace',
             color: '#8866cc'
         }).setOrigin(0.5);
 
         // Menu buttons
-        this.createButton(width / 2, 510, 'New Game', () => this.startNewGame());
-        this.createButton(width / 2, 588, 'Continue', () => this.continueGame());
+        this.createButton(width / 2, 510, t('ui.newGame'), () => this.startNewGame());
+        this.createButton(width / 2, 588, t('ui.continue'), () => this.continueGame());
+
+        // Language toggle button (top-right)
+        const langBg = this.add.rectangle(width - 40, 30, 56, 32, 0x2d1b69)
+            .setInteractive({ useHandCursor: true });
+        langBg.setStrokeStyle(1, 0x8866cc);
+        const langText = this.add.text(width - 40, 30, getLanguage().toUpperCase(), {
+            fontSize: '18px', fontFamily: 'monospace', color: '#ccaaff'
+        }).setOrigin(0.5);
+
+        langBg.on('pointerover', () => { langBg.setFillStyle(0x4a2d8e); langText.setColor('#ffffff'); });
+        langBg.on('pointerout', () => { langBg.setFillStyle(0x2d1b69); langText.setColor('#ccaaff'); });
+        langBg.on('pointerdown', () => {
+            toggleLanguage();
+            this.scene.restart();
+        });
 
         // Version text
-        this.add.text(width / 2, height - 30, 'v1.0', {
+        this.add.text(width / 2, height - 30, t('ui.version'), {
             fontSize: '18px',
             fontFamily: 'monospace',
             color: '#444466'

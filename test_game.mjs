@@ -32,6 +32,10 @@ async function test(name, fn) {
     const pageErrors = [];
     page.on('pageerror', err => pageErrors.push(err.message));
 
+    // Set language to English for test assertions (default is French)
+    await page.goto('http://localhost:8080', { waitUntil: 'domcontentloaded', timeout: TIMEOUT });
+    await page.evaluate(() => localStorage.setItem('questgame_language', 'en'));
+
     // --- TEST 1: Page loads ---
     await test('Page loads at localhost:8080', async () => {
         const resp = await page.goto('http://localhost:8080', { waitUntil: 'networkidle', timeout: TIMEOUT });

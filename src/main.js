@@ -3,6 +3,9 @@ import { TitleScene } from './scenes/TitleScene.js';
 import { ExploreScene } from './scenes/ExploreScene.js';
 import { WorldMapScene } from './scenes/WorldMapScene.js';
 import { UIScene } from './scenes/UIScene.js';
+import { initLanguage } from './data/i18n/index.js';
+
+initLanguage();
 
 const config = {
     type: Phaser.AUTO,

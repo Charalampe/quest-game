@@ -1,3 +1,5 @@
+import { t, getItemText, getQuestText } from '../data/i18n/index.js';
+
 export class UIScene extends Phaser.Scene {
     constructor() {
         super('UI');
@@ -22,7 +24,7 @@ export class UIScene extends Phaser.Scene {
         this.hudCityText = this.add.text(12, 6, this.cityName || '', {
             fontSize: '21px', fontFamily: 'monospace', color: '#ccaaff'
         });
-        this.hudHints = this.add.text(width - 12, 6, 'I:Items Q:Quests M:Map', {
+        this.hudHints = this.add.text(width - 12, 6, t('ui.hudHints'), {
             fontSize: '18px', fontFamily: 'monospace', color: '#666688'
         }).setOrigin(1, 0);
 
@@ -227,7 +229,7 @@ export class UIScene extends Phaser.Scene {
         innerBorder.setStrokeStyle(1, 0x4a3388);
         this.inventoryContainer.add(innerBorder);
 
-        const title = this.add.text(px, py - panelH / 2 + 24, 'INVENTORY', {
+        const title = this.add.text(px, py - panelH / 2 + 24, t('ui.inventory'), {
             fontSize: '24px', fontFamily: 'monospace', color: '#f1c40f'
         }).setOrigin(0.5);
         this.inventoryContainer.add(title);
@@ -243,7 +245,7 @@ export class UIScene extends Phaser.Scene {
         });
         this.inventoryContainer.add(this.inventoryItemsText);
 
-        const closeHint = this.add.text(px, py + panelH / 2 - 24, 'Press I to close', {
+        const closeHint = this.add.text(px, py + panelH / 2 - 24, t('ui.inventoryClose'), {
             fontSize: '18px', fontFamily: 'monospace', color: '#666688'
         }).setOrigin(0.5);
         this.inventoryContainer.add(closeHint);
@@ -263,9 +265,14 @@ export class UIScene extends Phaser.Scene {
         if (!this.inventoryManager) return;
         const items = this.inventoryManager.getItems();
         if (items.length === 0) {
-            this.inventoryItemsText.setText('No items yet.\n\nExplore and talk to\npeople to find clues!');
+            this.inventoryItemsText.setText(t('ui.inventoryEmpty'));
         } else {
-            const text = items.map(item => `\u2022 ${item.name}\n  ${item.description || ''}`).join('\n\n');
+            const text = items.map(item => {
+                const itemText = getItemText(item.id);
+                const name = itemText ? itemText.name : item.name;
+                const desc = itemText ? itemText.description : (item.description || '');
+                return `\u2022 ${name}\n  ${desc}`;
+            }).join('\n\n');
             this.inventoryItemsText.setText(text);
         }
     }
@@ -287,7 +294,7 @@ export class UIScene extends Phaser.Scene {
         innerBorder.setStrokeStyle(1, 0x4a3388);
         this.questLogContainer.add(innerBorder);
 
-        const title = this.add.text(px, py - panelH / 2 + 24, 'QUEST LOG', {
+        const title = this.add.text(px, py - panelH / 2 + 24, t('ui.questLog'), {
             fontSize: '24px', fontFamily: 'monospace', color: '#f1c40f'
         }).setOrigin(0.5);
         this.questLogContainer.add(title);
@@ -301,7 +308,7 @@ export class UIScene extends Phaser.Scene {
         });
         this.questLogContainer.add(this.questLogText);
 
-        const closeHint = this.add.text(px, py + panelH / 2 - 24, 'Press Q to close', {
+        const closeHint = this.add.text(px, py + panelH / 2 - 24, t('ui.questLogClose'), {
             fontSize: '18px', fontFamily: 'monospace', color: '#666688'
         }).setOrigin(0.5);
         this.questLogContainer.add(closeHint);
@@ -321,7 +328,7 @@ export class UIScene extends Phaser.Scene {
         if (!this.questManager) return;
         const quests = this.questManager.getActiveQuests();
         if (quests.length === 0) {
-            this.questLogText.setText('No active quests.\n\nTalk to people to\ndiscover adventures!');
+            this.questLogText.setText(t('ui.questLogEmpty'));
         } else {
             const text = quests.map(q => {
                 const objectives = q.objectives.map(o => {

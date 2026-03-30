@@ -78,6 +78,11 @@ const { SaveManager } = await import('../src/systems/SaveManager.js');
 const { DialogManager } = await import('../src/systems/DialogManager.js');
 const { QuestManager } = await import('../src/systems/QuestManager.js');
 const { TravelManager } = await import('../src/systems/TravelManager.js');
+const { initLanguage, setLanguage, getLanguage, toggleLanguage, t, getDialogueLines, getItemText, getQuestText } = await import('../src/data/i18n/index.js');
+
+// Initialize i18n and set English for existing test assertions
+initLanguage();
+setLanguage('en');
 
 // ======================================================================
 describe('Dialog Data Integrity', () => {
@@ -1257,5 +1262,159 @@ describe('Portal Tile Placement (Bug Fix)', () => {
             }
             assert.ok(hasPortal, `${cityId} has portal routes but no portal tile`);
         }
+    });
+});
+
+// ======================================================================
+describe('i18n System', () => {
+// ======================================================================
+
+    beforeEach(() => {
+        setLanguage('en');
+    });
+
+    it('initLanguage defaults to French when no preference stored', () => {
+        _localStorage.delete('questgame_language');
+        initLanguage();
+        assert.equal(getLanguage(), 'fr');
+        // Reset back for other tests
+        setLanguage('en');
+    });
+
+    it('setLanguage persists to localStorage', () => {
+        setLanguage('en');
+        assert.equal(_localStorage.get('questgame_language'), 'en');
+        assert.equal(getLanguage(), 'en');
+    });
+
+    it('toggleLanguage switches between en and fr', () => {
+        setLanguage('en');
+        toggleLanguage();
+        assert.equal(getLanguage(), 'fr');
+        toggleLanguage();
+        assert.equal(getLanguage(), 'en');
+    });
+
+    it('t() returns translated string for simple key', () => {
+        setLanguage('en');
+        assert.equal(t('ui.newGame'), 'New Game');
+        setLanguage('fr');
+        assert.equal(t('ui.newGame'), 'Nouvelle Partie');
+        setLanguage('en');
+    });
+
+    it('t() supports placeholder replacement', () => {
+        setLanguage('en');
+        assert.equal(t('ui.travelTo', { city: 'London' }), 'Travel to London');
+    });
+
+    it('t() returns key path for missing keys', () => {
+        assert.equal(t('ui.nonexistent'), 'ui.nonexistent');
+    });
+
+    it('getDialogueLines returns array for valid dialogue', () => {
+        setLanguage('en');
+        const lines = getDialogueLines('grandma_intro');
+        assert.ok(Array.isArray(lines));
+        assert.ok(lines.length > 0);
+    });
+
+    it('getItemText returns name and description', () => {
+        setLanguage('en');
+        const item = getItemText('locket');
+        assert.ok(item);
+        assert.ok(item.name);
+        assert.ok(item.description);
+    });
+
+    it('getQuestText returns quest data', () => {
+        setLanguage('en');
+        const quest = getQuestText('main_quest');
+        assert.ok(quest);
+        assert.ok(quest.name);
+        assert.ok(quest.objectives);
+    });
+
+    it('every dialogue in DIALOGUES has a matching EN i18n entry', () => {
+        setLanguage('en');
+        const missing = [];
+        for (const dialogId of Object.keys(DIALOGUES)) {
+            if (!getDialogueLines(dialogId)) missing.push(dialogId);
+        }
+        assert.equal(missing.length, 0, `Missing EN dialogues: ${missing.join(', ')}`);
+    });
+
+    it('every dialogue in DIALOGUES has a matching FR i18n entry', () => {
+        setLanguage('fr');
+        const missing = [];
+        for (const dialogId of Object.keys(DIALOGUES)) {
+            if (!getDialogueLines(dialogId)) missing.push(dialogId);
+        }
+        setLanguage('en');
+        assert.equal(missing.length, 0, `Missing FR dialogues: ${missing.join(', ')}`);
+    });
+
+    it('EN and FR dialogue entries have the same line count', () => {
+        const mismatches = [];
+        for (const dialogId of Object.keys(DIALOGUES)) {
+            setLanguage('en');
+            const enLines = getDialogueLines(dialogId);
+            setLanguage('fr');
+            const frLines = getDialogueLines(dialogId);
+            if (enLines && frLines && enLines.length !== frLines.length) {
+                mismatches.push(`${dialogId}: en=${enLines.length}, fr=${frLines.length}`);
+            }
+        }
+        setLanguage('en');
+        assert.equal(mismatches.length, 0, `Line count mismatches: ${mismatches.join(', ')}`);
+    });
+
+    it('every item in CHEST_REWARDS and DIALOGUES has i18n entry (EN)', () => {
+        setLanguage('en');
+        const itemIds = new Set();
+        for (const dialog of Object.values(DIALOGUES)) {
+            if (dialog.givesItem) itemIds.add(dialog.givesItem.id);
+        }
+        for (const chest of Object.values(CHEST_REWARDS)) {
+            if (chest.item) itemIds.add(chest.item.id);
+        }
+        const missing = [];
+        for (const id of itemIds) {
+            if (!getItemText(id)) missing.push(id);
+        }
+        assert.equal(missing.length, 0, `Missing item i18n entries: ${missing.join(', ')}`);
+    });
+
+    it('every item in CHEST_REWARDS and DIALOGUES has i18n entry (FR)', () => {
+        setLanguage('fr');
+        const itemIds = new Set();
+        for (const dialog of Object.values(DIALOGUES)) {
+            if (dialog.givesItem) itemIds.add(dialog.givesItem.id);
+        }
+        for (const chest of Object.values(CHEST_REWARDS)) {
+            if (chest.item) itemIds.add(chest.item.id);
+        }
+        const missing = [];
+        for (const id of itemIds) {
+            if (!getItemText(id)) missing.push(id);
+        }
+        setLanguage('en');
+        assert.equal(missing.length, 0, `Missing FR item i18n entries: ${missing.join(', ')}`);
+    });
+
+    it('all travel route labelKeys have i18n entries', () => {
+        setLanguage('en');
+        const missing = [];
+        for (const [from, routes] of Object.entries(TRAVEL_ROUTES)) {
+            for (const [to, route] of Object.entries(routes)) {
+                if (route.labelKey) {
+                    const label = t(`travel.${route.labelKey}`);
+                    if (label === `travel.${route.labelKey}`) {
+                        missing.push(`${from}->${to}: ${route.labelKey}`);
+                    }
+                }
+            }
+        }
+        assert.equal(missing.length, 0, `Missing travel label i18n: ${missing.join(', ')}`);
     });
 });

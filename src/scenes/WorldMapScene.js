@@ -1,5 +1,6 @@
 import { TravelManager, CITY_MAP_POSITIONS, TRAVEL_ROUTES } from '../systems/TravelManager.js';
 import { CITIES } from '../data/cities.js';
+import { t } from '../data/i18n/index.js';
 
 // Scale factor for converting 320x240 map coords to 960x720
 const MAP_SCALE = 3;
@@ -24,7 +25,7 @@ export class WorldMapScene extends Phaser.Scene {
         this.add.image(width / 2, height / 2, 'world_map_bg').setScale(MAP_SCALE);
 
         // Title
-        this.add.text(width / 2, 24, 'WORLD MAP', {
+        this.add.text(width / 2, 24, t('ui.worldMap'), {
             fontSize: '30px', fontFamily: 'monospace', color: '#f1c40f'
         }).setOrigin(0.5);
 
@@ -39,12 +40,12 @@ export class WorldMapScene extends Phaser.Scene {
         this.infoBg = this.add.rectangle(width / 2, height - 60, width - 48, 96, 0x1a1a2e, 0.9);
         this.infoBg.setStrokeStyle(1, 0x8866cc);
 
-        this.infoText = this.add.text(width / 2, height - 72, 'Select a destination', {
+        this.infoText = this.add.text(width / 2, height - 72, t('ui.selectDestination'), {
             fontSize: '24px', fontFamily: 'monospace', color: '#ccaaff',
             align: 'center'
         }).setOrigin(0.5);
 
-        this.infoSubtext = this.add.text(width / 2, height - 42, 'Click a city or press ESC to return', {
+        this.infoSubtext = this.add.text(width / 2, height - 42, t('ui.worldMapHint'), {
             fontSize: '18px', fontFamily: 'monospace', color: '#666688',
             align: 'center'
         }).setOrigin(0.5);
@@ -61,7 +62,7 @@ export class WorldMapScene extends Phaser.Scene {
 
         // Current city indicator
         const currentPos = CITY_MAP_POSITIONS[this.fromCity];
-        this.currentMarker = this.add.text(currentPos.x * MAP_SCALE, currentPos.y * MAP_SCALE - 36, 'YOU', {
+        this.currentMarker = this.add.text(currentPos.x * MAP_SCALE, currentPos.y * MAP_SCALE - 36, t('ui.youMarker'), {
             fontSize: '18px', fontFamily: 'monospace', color: '#ffffff',
             backgroundColor: '#e74c3c', padding: { x: 6, y: 3 }
         }).setOrigin(0.5);
@@ -180,20 +181,20 @@ export class WorldMapScene extends Phaser.Scene {
         const cityName = CITIES[cityId].name;
 
         if (route && (!route.requiresFlag || flags[route.requiresFlag])) {
-            this.infoText.setText(`${cityName} - ${route.label}`);
-            this.travelButton.setText(`Travel to ${cityName}`);
+            const routeLabel = route.labelKey ? t(`travel.${route.labelKey}`) : route.label;
+            this.infoText.setText(`${cityName} - ${routeLabel}`);
+            this.travelButton.setText(t('ui.travelTo', { city: cityName }));
             this.travelButton.setVisible(true);
             this.infoSubtext.setVisible(false);
         } else if (route && route.requiresFlag && !flags[route.requiresFlag]) {
-            this.infoText.setText(`${cityName} - Route locked`);
+            this.infoText.setText(`${cityName} - ${t('ui.routeLocked')}`);
             this.travelButton.setVisible(false);
-            this.infoSubtext.setText('You need to unlock this travel method first');
+            this.infoSubtext.setText(t('ui.routeLockedHint'));
             this.infoSubtext.setVisible(true);
         } else {
-            // No direct route, check if we can travel at all
-            this.infoText.setText(`No direct route to ${cityName}`);
+            this.infoText.setText(t('ui.noDirectRoute', { city: cityName }));
             this.travelButton.setVisible(false);
-            this.infoSubtext.setText('Try traveling through another city');
+            this.infoSubtext.setText(t('ui.noDirectRouteHint'));
             this.infoSubtext.setVisible(true);
         }
 
@@ -219,7 +220,8 @@ export class WorldMapScene extends Phaser.Scene {
         const toX = to.x * MAP_SCALE, toY = to.y * MAP_SCALE;
 
         // Animate travel
-        this.infoText.setText(`Traveling by ${route.label}...`);
+        const routeLabel = route.labelKey ? t(`travel.${route.labelKey}`) : route.label;
+        this.infoText.setText(t('ui.travelingBy', { route: routeLabel }));
         this.travelButton.setVisible(false);
 
         // Travel dot animation
