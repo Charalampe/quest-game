@@ -17,34 +17,26 @@ export class BootScene extends Phaser.Scene {
         this.generatePlayerSpritesheet();
         this.generateNPCSpritesheet();
         this.generateTileset();
+        this.generateParticleTextures();
         this.generateUIAssets();
         this.generateWorldMapAssets();
         this.generateItemIcons();
     }
 
     generatePlayerSpritesheet() {
-        const frameW = 16, frameH = 16;
+        const frameW = 16, frameH = 24;
         const canvas = this.textures.createCanvas('player', frameW * 4, frameH * 4);
         const ctx = canvas.getContext();
 
         // 4 directions x 4 frames: down, left, right, up
-        const dirs = [
-            { hair: '#8B4513', facing: 'down' },
-            { hair: '#8B4513', facing: 'left' },
-            { hair: '#8B4513', facing: 'right' },
-            { hair: '#8B4513', facing: 'up' }
-        ];
+        const facings = ['down', 'left', 'right', 'up'];
 
-        dirs.forEach((dir, row) => {
+        facings.forEach((facing, row) => {
             for (let col = 0; col < 4; col++) {
                 const x = col * frameW;
                 const y = row * frameH;
-                this.drawCharacter(ctx, x, y, frameW, frameH, {
-                    hair: '#8B4513',
-                    skin: '#FDBCB4',
-                    shirt: '#E84393',
-                    skirt: '#6C5CE7',
-                    facing: dir.facing,
+                this.drawPlayer(ctx, x, y, frameW, frameH, {
+                    facing,
                     frame: col
                 });
             }
@@ -58,6 +50,139 @@ export class BootScene extends Phaser.Scene {
                 const frameIndex = row * 4 + col;
                 this.textures.get('player').add(frameIndex, 0, col * frameW, row * frameH, frameW, frameH);
             }
+        }
+    }
+
+    drawPlayer(ctx, x, y, w, h, opts) {
+        const cx = x + w / 2;
+        const bobOffset = (opts.frame === 1 || opts.frame === 3) ? -1 : 0;
+        const by = y + bobOffset;
+        const isLeft = opts.facing === 'left';
+        const isRight = opts.facing === 'right';
+        const isSide = isLeft || isRight;
+        const isDown = opts.facing === 'down';
+        const isUp = opts.facing === 'up';
+
+        // === Hair (rows 0-3) ===
+        ctx.fillStyle = '#8B4513'; // base brown
+        ctx.fillRect(cx - 4, by + 0, 8, 4);
+        // Hair highlight strand
+        ctx.fillStyle = '#A0612B';
+        if (isDown) {
+            ctx.fillRect(cx - 2, by + 0, 2, 1);
+            ctx.fillRect(cx + 1, by + 1, 1, 1);
+        } else if (isUp) {
+            ctx.fillRect(cx - 1, by + 0, 3, 1);
+        } else {
+            ctx.fillRect(cx - 2, by + 0, 3, 1);
+        }
+        // Side hair drape
+        if (isDown || isSide) {
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(cx - 4, by + 3, 1, 3);
+            ctx.fillRect(cx + 3, by + 3, 1, 3);
+        }
+
+        // === Face/Head (rows 3-7) ===
+        ctx.fillStyle = '#FDBCB4'; // skin
+        ctx.fillRect(cx - 3, by + 3, 6, 5);
+
+        // === Eyes (row 5) ===
+        if (!isUp) {
+            ctx.fillStyle = '#1a1a2e';
+            if (isDown) {
+                ctx.fillRect(cx - 2, by + 5, 1, 1);
+                ctx.fillRect(cx + 1, by + 5, 1, 1);
+            } else if (isLeft) {
+                ctx.fillRect(cx - 2, by + 5, 1, 1);
+                ctx.fillRect(cx, by + 5, 1, 1);
+            } else { // right
+                ctx.fillRect(cx + 1, by + 5, 1, 1);
+                ctx.fillRect(cx - 1, by + 5, 1, 1);
+            }
+        }
+
+        // === Mouth (row 6) ===
+        if (isDown) {
+            ctx.fillStyle = '#e07c6a';
+            ctx.fillRect(cx - 1, by + 7, 2, 1);
+        } else if (isSide) {
+            ctx.fillStyle = '#e07c6a';
+            ctx.fillRect(isLeft ? cx - 2 : cx + 1, by + 7, 1, 1);
+        }
+
+        // === Collar (row 8) ===
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(cx - 3, by + 8, 6, 1);
+
+        // === Shirt with shading (rows 9-14) ===
+        ctx.fillStyle = '#E84393'; // pink shirt
+        ctx.fillRect(cx - 4, by + 9, 8, 5);
+        // Shirt shadow
+        ctx.fillStyle = '#C73878';
+        ctx.fillRect(cx - 4, by + 12, 8, 2);
+        // Shirt highlight
+        ctx.fillStyle = '#F06AAE';
+        if (isDown) {
+            ctx.fillRect(cx - 1, by + 9, 2, 2);
+        } else if (isSide) {
+            ctx.fillRect(isLeft ? cx : cx - 2, by + 9, 2, 2);
+        }
+
+        // === Arms with swing animation ===
+        ctx.fillStyle = '#FDBCB4'; // skin
+        const armSwing = opts.frame === 1 ? 1 : opts.frame === 3 ? -1 : 0;
+        if (isDown || isUp) {
+            // Left arm
+            ctx.fillRect(cx - 5, by + 9 + armSwing, 1, 4);
+            // Right arm
+            ctx.fillRect(cx + 4, by + 9 - armSwing, 1, 4);
+        } else if (isLeft) {
+            // One visible arm in front
+            ctx.fillRect(cx - 4, by + 9 + armSwing, 1, 4);
+        } else {
+            ctx.fillRect(cx + 3, by + 9 + armSwing, 1, 4);
+        }
+
+        // === Skirt with pleats (rows 14-17) ===
+        ctx.fillStyle = '#6C5CE7'; // purple skirt
+        ctx.fillRect(cx - 4, by + 14, 8, 3);
+        // Skirt dark pleats
+        ctx.fillStyle = '#5B4CC7';
+        ctx.fillRect(cx - 3, by + 14, 1, 3);
+        ctx.fillRect(cx, by + 14, 1, 3);
+        ctx.fillRect(cx + 2, by + 14, 1, 3);
+        // Skirt hem highlight
+        ctx.fillStyle = '#7E6FEF';
+        ctx.fillRect(cx - 4, by + 16, 8, 1);
+
+        // === Legs with stride animation (rows 17-20) ===
+        ctx.fillStyle = '#FDBCB4';
+        const legStride = opts.frame === 1 ? 1 : opts.frame === 3 ? -1 : 0;
+        if (isDown || isUp) {
+            ctx.fillRect(cx - 2 + legStride, by + 17, 2, 3);
+            ctx.fillRect(cx + 0 - legStride, by + 17, 2, 3);
+        } else {
+            // Side view: legs overlap
+            ctx.fillRect(cx - 2 + legStride, by + 17, 2, 3);
+            ctx.fillRect(cx - 1 - legStride, by + 17, 2, 3);
+        }
+
+        // === Shoes (rows 20-23) ===
+        ctx.fillStyle = '#5D4037'; // dark brown shoes
+        if (isDown || isUp) {
+            ctx.fillRect(cx - 3 + legStride, by + 20, 3, 2);
+            ctx.fillRect(cx + 0 - legStride, by + 20, 3, 2);
+            // Shoe soles
+            ctx.fillStyle = '#3E2723';
+            ctx.fillRect(cx - 3 + legStride, by + 21, 3, 1);
+            ctx.fillRect(cx + 0 - legStride, by + 21, 3, 1);
+        } else {
+            ctx.fillRect(cx - 3 + legStride, by + 20, 3, 2);
+            ctx.fillRect(cx - 2 - legStride, by + 20, 3, 2);
+            ctx.fillStyle = '#3E2723';
+            ctx.fillRect(cx - 3 + legStride, by + 21, 3, 1);
+            ctx.fillRect(cx - 2 - legStride, by + 21, 3, 1);
         }
     }
 
@@ -102,42 +227,170 @@ export class BootScene extends Phaser.Scene {
     }
 
     generateNPCSpritesheet() {
-        const frameW = 16, frameH = 16;
-        // 6 NPC types, 2 frames each (idle animation)
+        const frameW = 16, frameH = 24;
+        // 6 NPC types, 4 frames each (idle animation)
         const npcDefs = [
-            { name: 'librarian', hair: '#444444', shirt: '#2ecc71', skirt: '#27ae60' },
-            { name: 'curator', hair: '#d4a574', shirt: '#3498db', skirt: '#2980b9' },
-            { name: 'merchant', hair: '#1a1a1a', shirt: '#e67e22', skirt: '#d35400' },
-            { name: 'guide', hair: '#c0392b', shirt: '#f1c40f', skirt: '#f39c12' },
-            { name: 'gardener', hair: '#2c3e50', shirt: '#1abc9c', skirt: '#16a085' },
-            { name: 'grandma', hair: '#bdc3c7', shirt: '#9b59b6', skirt: '#8e44ad' }
+            { name: 'librarian', hair: '#444444', hairHi: '#5a5a5a', shirt: '#2ecc71', shirtShadow: '#22a85c', pants: '#27ae60', pantsDark: '#1e8c4d', skin: '#FDBCB4', accessory: 'glasses_vest' },
+            { name: 'curator', hair: '#d4a574', hairHi: '#e0b88a', shirt: '#3498db', shirtShadow: '#2a7ab8', pants: '#2980b9', pantsDark: '#20669a', skin: '#FDBCB4', accessory: 'necklace_blazer' },
+            { name: 'merchant', hair: '#1a1a1a', hairHi: '#333333', shirt: '#e67e22', shirtShadow: '#c76a1c', pants: '#d35400', pantsDark: '#a84300', skin: '#D4A574', accessory: 'apron_mustache' },
+            { name: 'guide', hair: '#c0392b', hairHi: '#d44535', shirt: '#f1c40f', shirtShadow: '#d4ac0d', pants: '#f39c12', pantsDark: '#d4850f', skin: '#FDBCB4', accessory: 'ponytail_scarf' },
+            { name: 'gardener', hair: '#2c3e50', hairHi: '#3a5068', shirt: '#1abc9c', shirtShadow: '#149c81', pants: '#16a085', pantsDark: '#128570', skin: '#D4A574', accessory: 'hat_apron' },
+            { name: 'grandma', hair: '#bdc3c7', hairHi: '#d5dade', shirt: '#9b59b6', shirtShadow: '#824a99', pants: '#8e44ad', pantsDark: '#763891', skin: '#F0C8B0', accessory: 'shawl_bun' }
         ];
 
-        npcDefs.forEach((npc, index) => {
-            const canvas = this.textures.createCanvas(`npc_${npc.name}`, frameW * 2, frameH);
+        npcDefs.forEach((npc) => {
+            const canvas = this.textures.createCanvas(`npc_${npc.name}`, frameW * 4, frameH);
             const ctx = canvas.getContext();
 
-            for (let frame = 0; frame < 2; frame++) {
-                this.drawCharacter(ctx, frame * frameW, 0, frameW, frameH, {
-                    hair: npc.hair,
-                    skin: '#FDBCB4',
-                    shirt: npc.shirt,
-                    skirt: npc.skirt,
-                    facing: 'down',
-                    frame: frame
-                });
+            for (let frame = 0; frame < 4; frame++) {
+                this.drawNPC(ctx, frame * frameW, 0, frameW, frameH, npc, frame);
             }
 
             canvas.refresh();
-            this.textures.get(`npc_${npc.name}`).add(0, 0, 0, 0, frameW, frameH);
-            this.textures.get(`npc_${npc.name}`).add(1, 0, frameW, 0, frameW, frameH);
+            for (let f = 0; f < 4; f++) {
+                this.textures.get(`npc_${npc.name}`).add(f, 0, f * frameW, 0, frameW, frameH);
+            }
         });
+    }
+
+    drawNPC(ctx, x, y, w, h, npc, frame) {
+        const cx = x + w / 2;
+        // Gentle sway: frames 0,2 are center, 1 sways left, 3 sways right
+        const swayOffset = frame === 1 ? -1 : frame === 3 ? 1 : 0;
+        const bobOffset = (frame === 1 || frame === 3) ? -1 : 0;
+        const by = y + bobOffset;
+
+        // === Hair ===
+        ctx.fillStyle = npc.hair;
+        ctx.fillRect(cx - 4, by + 0, 8, 4);
+        ctx.fillStyle = npc.hairHi;
+        ctx.fillRect(cx - 2, by + 0, 3, 1);
+
+        // Special hair per type (clamp to canvas top at y=0)
+        if (npc.accessory === 'shawl_bun') {
+            // Grandma: gray bun on top
+            ctx.fillStyle = npc.hair;
+            ctx.fillRect(cx - 2, Math.max(y, by), 4, 2);
+            ctx.fillRect(cx - 1, Math.max(y, by), 2, 1);
+        } else if (npc.accessory === 'ponytail_scarf') {
+            // Guide: ponytail hanging back
+            ctx.fillStyle = npc.hair;
+            ctx.fillRect(cx + 3, by + 2, 2, 5);
+        } else if (npc.accessory === 'hat_apron') {
+            // Gardener: straw hat
+            ctx.fillStyle = '#D4A950';
+            ctx.fillRect(cx - 5, Math.max(y, by), 10, 1);
+            ctx.fillRect(cx - 3, Math.max(y, by), 6, 1);
+        }
+
+        // === Face ===
+        ctx.fillStyle = npc.skin;
+        ctx.fillRect(cx - 3, by + 3, 6, 5);
+
+        // === Eyes ===
+        ctx.fillStyle = '#2d3436';
+        ctx.fillRect(cx - 2, by + 5, 1, 1);
+        ctx.fillRect(cx + 1, by + 5, 1, 1);
+
+        // Glasses for librarian
+        if (npc.accessory === 'glasses_vest') {
+            ctx.fillStyle = '#888888';
+            ctx.fillRect(cx - 3, by + 4, 2, 2);
+            ctx.fillRect(cx + 1, by + 4, 2, 2);
+            ctx.fillRect(cx - 1, by + 5, 2, 1);
+            // Clear inner lens
+            ctx.fillStyle = '#aaddff';
+            ctx.fillRect(cx - 2, by + 5, 1, 1);
+            ctx.fillRect(cx + 1, by + 5, 1, 1);
+        }
+
+        // Mustache for merchant
+        if (npc.accessory === 'apron_mustache') {
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(cx - 2, by + 7, 4, 1);
+        }
+
+        // Mouth
+        ctx.fillStyle = '#e07c6a';
+        ctx.fillRect(cx - 1, by + 7, 2, 1);
+
+        // === Necklace for curator ===
+        if (npc.accessory === 'necklace_blazer') {
+            ctx.fillStyle = '#F5E6CA';
+            ctx.fillRect(cx - 2, by + 8, 4, 1);
+            ctx.fillStyle = '#FFD700';
+            ctx.fillRect(cx, by + 8, 1, 1);
+        }
+
+        // === Shirt/Body (rows 8-14) ===
+        ctx.fillStyle = npc.shirt;
+        const bodyW = npc.accessory === 'apron_mustache' ? 9 : 8;
+        const bodyX = npc.accessory === 'apron_mustache' ? cx - 5 : cx - 4;
+        ctx.fillRect(bodyX + swayOffset, by + 8, bodyW, 6);
+        // Shirt shadow
+        ctx.fillStyle = npc.shirtShadow;
+        ctx.fillRect(bodyX + swayOffset, by + 12, bodyW, 2);
+
+        // Apron for merchant
+        if (npc.accessory === 'apron_mustache') {
+            ctx.fillStyle = '#F5F5DC';
+            ctx.fillRect(cx - 3 + swayOffset, by + 9, 6, 5);
+        }
+        // Vest detail for librarian
+        if (npc.accessory === 'glasses_vest') {
+            ctx.fillStyle = '#6B5B3E';
+            ctx.fillRect(cx - 3 + swayOffset, by + 9, 2, 4);
+            ctx.fillRect(cx + 1 + swayOffset, by + 9, 2, 4);
+        }
+        // Blazer for curator
+        if (npc.accessory === 'necklace_blazer') {
+            ctx.fillStyle = '#1F3A5F';
+            ctx.fillRect(cx - 4 + swayOffset, by + 9, 2, 5);
+            ctx.fillRect(cx + 2 + swayOffset, by + 9, 2, 5);
+        }
+        // Scarf for guide
+        if (npc.accessory === 'ponytail_scarf') {
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(cx - 1, by + 8, 2, 2);
+            ctx.fillRect(cx - 2, by + 10, 1, 3);
+        }
+        // Green apron for gardener
+        if (npc.accessory === 'hat_apron') {
+            ctx.fillStyle = '#27AE60';
+            ctx.fillRect(cx - 3 + swayOffset, by + 9, 6, 5);
+        }
+        // Shawl for grandma
+        if (npc.accessory === 'shawl_bun') {
+            ctx.fillStyle = '#A87CB3';
+            ctx.fillRect(cx - 4 + swayOffset, by + 8, 8, 3);
+            ctx.fillStyle = npc.shirtShadow;
+            ctx.fillRect(cx - 4 + swayOffset, by + 10, 2, 2);
+            ctx.fillRect(cx + 2 + swayOffset, by + 10, 2, 2);
+        }
+
+        // === Pants/Skirt (rows 14-17) ===
+        ctx.fillStyle = npc.pants;
+        ctx.fillRect(cx - 4 + swayOffset, by + 14, 8, 3);
+        ctx.fillStyle = npc.pantsDark;
+        ctx.fillRect(cx - 3 + swayOffset, by + 14, 1, 3);
+        ctx.fillRect(cx + swayOffset, by + 14, 1, 3);
+
+        // === Legs (rows 17-20) ===
+        ctx.fillStyle = npc.skin;
+        const legOff = frame === 1 ? 1 : frame === 3 ? -1 : 0;
+        ctx.fillRect(cx - 2 + legOff, by + 17, 2, 3);
+        ctx.fillRect(cx + 0 - legOff, by + 17, 2, 3);
+
+        // === Shoes (rows 20-22) ===
+        ctx.fillStyle = '#3E2723';
+        ctx.fillRect(cx - 3 + legOff, by + 20, 3, 2);
+        ctx.fillRect(cx + 0 - legOff, by + 20, 3, 2);
     }
 
     generateTileset() {
         const tileSize = 16;
         const cols = 8;
-        const rows = 8;
+        const rows = 10; // extra rows for water animation variants
         const canvas = this.textures.createCanvas('tileset', tileSize * cols, tileSize * rows);
         const ctx = canvas.getContext();
 
@@ -237,142 +490,688 @@ export class BootScene extends Phaser.Scene {
             this.drawTileDetail(ctx, x, y, tileSize, tile);
         });
 
+        // Draw water animation variants (indices 64 and 65)
+        const waterVariants = [
+            { index: 64, waveShift: 1 },
+            { index: 65, waveShift: 2 }
+        ];
+        waterVariants.forEach(v => {
+            const col = v.index % cols;
+            const row = Math.floor(v.index / cols);
+            const wx = col * tileSize;
+            const wy = row * tileSize;
+            // Base water
+            ctx.fillStyle = '#2a6ab8';
+            ctx.fillRect(wx, wy, tileSize, tileSize);
+            ctx.fillStyle = '#3b7dd8';
+            ctx.fillRect(wx, wy, tileSize, 6);
+            ctx.fillStyle = '#4a8de8';
+            ctx.fillRect(wx, wy, tileSize, 3);
+            // Wave lines shifted
+            ctx.fillStyle = '#5ba3f0';
+            ctx.fillRect(wx + 2 + v.waveShift, wy + 4, 4, 1);
+            ctx.fillRect(wx + 10 - v.waveShift, wy + 4, 3, 1);
+            ctx.fillRect(wx + 1 + v.waveShift, wy + 8, 5, 1);
+            ctx.fillRect(wx + 9 - v.waveShift, wy + 9, 4, 1);
+            ctx.fillRect(wx + 4 + v.waveShift, wy + 13, 6, 1);
+            // Specular highlights shifted
+            ctx.fillStyle = '#8bc4f5';
+            ctx.fillRect(wx + 3 + v.waveShift, wy + 3, 2, 1);
+            ctx.fillRect(wx + 11 - v.waveShift, wy + 7, 1, 1);
+            ctx.fillRect(wx + 6 + v.waveShift, wy + 12, 2, 1);
+        });
+
         canvas.refresh();
 
-        // Add individual tile frames
-        for (let i = 0; i < tiles.length; i++) {
+        // Add individual tile frames (including water variants)
+        const totalTiles = tiles.length + waterVariants.length;
+        for (let i = 0; i < totalTiles; i++) {
             const col = i % cols;
             const row = Math.floor(i / cols);
             this.textures.get('tileset').add(i, 0, col * tileSize, row * tileSize, tileSize, tileSize);
         }
     }
 
+    dither(ctx, x, y, w, h, color1, color2) {
+        for (let py = 0; py < h; py++) {
+            for (let px = 0; px < w; px++) {
+                ctx.fillStyle = ((px + py) % 2 === 0) ? color1 : color2;
+                ctx.fillRect(x + px, y + py, 1, 1);
+            }
+        }
+    }
+
     drawTileDetail(ctx, x, y, size, tile) {
         const s = size;
-        ctx.globalAlpha = 0.3;
 
         switch (tile.detail) {
-            case 'cobble':
-                ctx.fillStyle = '#a09070';
-                for (let i = 0; i < 4; i++) {
-                    const cx = x + (i % 2) * 8 + 1;
-                    const cy = y + Math.floor(i / 2) * 8 + 1;
-                    ctx.fillRect(cx, cy, 6, 6);
-                }
+            case 'cobble': {
+                // Individual stones with highlight/shadow edges
+                ctx.fillStyle = '#b8a880';
+                ctx.fillRect(x, y, s, s);
+                const stones = [
+                    [0,0,7,7], [8,0,8,6], [0,8,6,8], [7,7,9,9]
+                ];
+                stones.forEach(([sx,sy,sw,sh]) => {
+                    ctx.fillStyle = '#c8b88a';
+                    ctx.fillRect(x+sx+1, y+sy+1, sw-1, sh-1);
+                    // Top-left highlight
+                    ctx.fillStyle = '#d8c89a';
+                    ctx.fillRect(x+sx+1, y+sy+1, sw-2, 1);
+                    ctx.fillRect(x+sx+1, y+sy+1, 1, sh-2);
+                    // Bottom-right shadow
+                    ctx.fillStyle = '#a09070';
+                    ctx.fillRect(x+sx+1, y+sy+sh-1, sw-1, 1);
+                    ctx.fillRect(x+sx+sw-1, y+sy+1, 1, sh-1);
+                });
+                // Mortar lines
+                ctx.fillStyle = '#887860';
+                ctx.fillRect(x+7, y, 1, s);
+                ctx.fillRect(x, y+7, s, 1);
                 break;
-            case 'grass':
-                ctx.fillStyle = '#2d7a2d';
-                ctx.fillRect(x + 2, y + 4, 1, 3);
-                ctx.fillRect(x + 7, y + 2, 1, 4);
-                ctx.fillRect(x + 12, y + 6, 1, 3);
-                break;
-            case 'water':
-                ctx.fillStyle = '#5ba3e6';
-                ctx.fillRect(x + 2, y + 4, 4, 1);
-                ctx.fillRect(x + 9, y + 8, 5, 1);
-                ctx.fillRect(x + 4, y + 12, 6, 1);
-                break;
-            case 'brick':
-                ctx.fillStyle = '#000000';
-                ctx.globalAlpha = 0.15;
-                for (let row = 0; row < 4; row++) {
-                    const offset = (row % 2) * 4;
-                    ctx.fillRect(x, y + row * 4, s, 1);
-                    ctx.fillRect(x + offset, y + row * 4, 1, 4);
-                    ctx.fillRect(x + offset + 8, y + row * 4, 1, 4);
-                }
-                break;
-            case 'tree':
-                ctx.globalAlpha = 1;
-                ctx.fillStyle = '#1a7a1a';
-                ctx.fillRect(x + 2, y + 1, 12, 10);
-                ctx.fillStyle = '#8B4513';
-                ctx.fillRect(x + 6, y + 11, 4, 5);
-                break;
-            case 'flower':
-                ctx.globalAlpha = 1;
+            }
+            case 'grass': {
+                // 3 shades of grass with tiny flowers
                 ctx.fillStyle = '#4a8c3f';
                 ctx.fillRect(x, y, s, s);
-                ctx.fillStyle = '#ff6b6b';
-                ctx.fillRect(x + 3, y + 3, 3, 3);
+                // Dark grass patches
+                ctx.fillStyle = '#3a7030';
+                ctx.fillRect(x+1, y+3, 3, 3);
+                ctx.fillRect(x+8, y+10, 4, 3);
+                ctx.fillRect(x+11, y+1, 3, 3);
+                // Light grass blades
+                ctx.fillStyle = '#5ca84f';
+                ctx.fillRect(x+2, y+2, 1, 3);
+                ctx.fillRect(x+7, y+1, 1, 4);
+                ctx.fillRect(x+12, y+5, 1, 3);
+                ctx.fillRect(x+4, y+9, 1, 3);
+                ctx.fillRect(x+14, y+10, 1, 3);
+                // Tiny flowers
                 ctx.fillStyle = '#ffd93d';
-                ctx.fillRect(x + 10, y + 8, 3, 3);
-                ctx.fillStyle = '#ff6b6b';
-                ctx.fillRect(x + 7, y + 11, 3, 3);
+                ctx.fillRect(x+5, y+5, 1, 1);
+                ctx.fillStyle = '#ff9ff3';
+                ctx.fillRect(x+10, y+7, 1, 1);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(x+3, y+12, 1, 1);
                 break;
-            case 'fountain':
-                ctx.globalAlpha = 1;
-                ctx.fillStyle = '#555';
-                ctx.fillRect(x + 3, y + 3, 10, 10);
+            }
+            case 'water': {
+                // Water with depth gradient and specular highlights
+                ctx.fillStyle = '#2a6ab8';
+                ctx.fillRect(x, y, s, s);
                 ctx.fillStyle = '#3b7dd8';
-                ctx.fillRect(x + 5, y + 5, 6, 6);
+                ctx.fillRect(x, y, s, 6);
+                ctx.fillStyle = '#4a8de8';
+                ctx.fillRect(x, y, s, 3);
+                // Wave lines
+                ctx.fillStyle = '#5ba3f0';
+                ctx.fillRect(x+2, y+4, 4, 1);
+                ctx.fillRect(x+10, y+4, 3, 1);
+                ctx.fillRect(x+1, y+8, 5, 1);
+                ctx.fillRect(x+9, y+9, 4, 1);
+                ctx.fillRect(x+4, y+13, 6, 1);
+                // Specular highlights
+                ctx.fillStyle = '#8bc4f5';
+                ctx.fillRect(x+3, y+3, 2, 1);
+                ctx.fillRect(x+11, y+7, 1, 1);
+                ctx.fillRect(x+6, y+12, 2, 1);
                 break;
-            case 'chest':
+            }
+            case 'brick': {
+                // Individual bricks with mortar, highlight/shadow
+                const baseColor = tile.color;
+                ctx.fillStyle = '#665544'; // mortar base
+                ctx.fillRect(x, y, s, s);
+                for (let row = 0; row < 4; row++) {
+                    const offset = (row % 2) * 4;
+                    for (let bx = 0; bx < 2; bx++) {
+                        const brickX = x + offset + bx * 8;
+                        const brickY = y + row * 4;
+                        const bw = Math.min(7, x + s - brickX);
+                        if (bw <= 0) continue;
+                        // Brick body
+                        ctx.fillStyle = baseColor;
+                        ctx.fillRect(brickX, brickY + 1, bw, 3);
+                        // Top highlight
+                        ctx.fillStyle = '#ffffff';
+                        ctx.globalAlpha = 0.15;
+                        ctx.fillRect(brickX, brickY + 1, bw, 1);
+                        ctx.globalAlpha = 1;
+                        // Bottom shadow
+                        ctx.fillStyle = '#000000';
+                        ctx.globalAlpha = 0.15;
+                        ctx.fillRect(brickX, brickY + 3, bw, 1);
+                        ctx.globalAlpha = 1;
+                    }
+                }
+                // Occasional crack
+                ctx.fillStyle = '#444444';
+                ctx.globalAlpha = 0.2;
+                ctx.fillRect(x+5, y+5, 1, 3);
                 ctx.globalAlpha = 1;
-                ctx.fillStyle = '#8B6914';
-                ctx.fillRect(x + 3, y + 5, 10, 8);
-                ctx.fillStyle = '#FFD700';
-                ctx.fillRect(x + 7, y + 7, 2, 2);
                 break;
-            case 'portal':
-                ctx.globalAlpha = 0.7;
+            }
+            case 'tree': {
+                // 3-shade canopy with bark texture
+                // Ground shadow
+                ctx.fillStyle = '#2a6628';
+                ctx.fillRect(x+3, y+12, 10, 2);
+                // Trunk with bark texture
+                ctx.fillStyle = '#6B4226';
+                ctx.fillRect(x+6, y+9, 4, 7);
+                ctx.fillStyle = '#7B5236';
+                ctx.fillRect(x+7, y+10, 2, 5);
+                ctx.fillStyle = '#5B3216';
+                ctx.fillRect(x+6, y+11, 1, 3);
+                // Canopy: dark core
+                ctx.fillStyle = '#1a6a1a';
+                ctx.fillRect(x+3, y+3, 10, 7);
+                // Canopy: medium body
+                ctx.fillStyle = '#2a8a2a';
+                ctx.fillRect(x+2, y+2, 10, 6);
+                // Canopy: light highlights on top
+                ctx.fillStyle = '#3aaa3a';
+                ctx.fillRect(x+4, y+1, 6, 3);
+                ctx.fillRect(x+3, y+2, 2, 2);
+                ctx.fillRect(x+10, y+3, 2, 2);
+                // Leaf detail dots
+                ctx.fillStyle = '#1a6a1a';
+                ctx.fillRect(x+5, y+3, 1, 1);
+                ctx.fillRect(x+8, y+2, 1, 1);
+                ctx.fillRect(x+4, y+5, 1, 1);
+                ctx.fillRect(x+9, y+6, 1, 1);
+                break;
+            }
+            case 'flower': {
+                // Grass base with multiple flower types
+                ctx.fillStyle = '#4a8c3f';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#3a7030';
+                ctx.fillRect(x+1, y+2, 4, 3);
+                ctx.fillRect(x+9, y+8, 4, 3);
+                // Red flower with center
+                ctx.fillStyle = '#ff4444';
+                ctx.fillRect(x+3, y+2, 3, 3);
+                ctx.fillStyle = '#ffdd00';
+                ctx.fillRect(x+4, y+3, 1, 1);
+                // Yellow flower
+                ctx.fillStyle = '#ffdd44';
+                ctx.fillRect(x+10, y+7, 3, 3);
+                ctx.fillStyle = '#ff8800';
+                ctx.fillRect(x+11, y+8, 1, 1);
+                // White daisy
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(x+6, y+11, 3, 3);
+                ctx.fillStyle = '#ffdd00';
+                ctx.fillRect(x+7, y+12, 1, 1);
+                // Stems
+                ctx.fillStyle = '#2d6a2d';
+                ctx.fillRect(x+4, y+5, 1, 2);
+                ctx.fillRect(x+11, y+10, 1, 2);
+                ctx.fillRect(x+7, y+14, 1, 2);
+                break;
+            }
+            case 'fountain': {
+                // Stone basin with water
+                ctx.fillStyle = '#666666';
+                ctx.fillRect(x+2, y+3, 12, 11);
+                ctx.fillStyle = '#888888';
+                ctx.fillRect(x+3, y+3, 10, 1); // rim highlight
+                ctx.fillStyle = '#555555';
+                ctx.fillRect(x+2, y+13, 12, 1); // rim shadow
+                // Water inside
+                ctx.fillStyle = '#3b7dd8';
+                ctx.fillRect(x+4, y+5, 8, 7);
+                ctx.fillStyle = '#5ba3f0';
+                ctx.fillRect(x+5, y+6, 4, 3); // lighter water
+                // Center spout
+                ctx.fillStyle = '#777777';
+                ctx.fillRect(x+7, y+5, 2, 4);
+                // Water spray
+                ctx.fillStyle = '#aaddff';
+                ctx.fillRect(x+7, y+2, 2, 3);
+                ctx.fillRect(x+6, y+3, 1, 1);
+                ctx.fillRect(x+9, y+3, 1, 1);
+                break;
+            }
+            case 'chest': {
+                // Detailed treasure chest
+                ctx.fillStyle = '#5C4A1E';
+                ctx.fillRect(x+3, y+5, 10, 9);
+                // Lid
+                ctx.fillStyle = '#7B6428';
+                ctx.fillRect(x+3, y+5, 10, 4);
+                ctx.fillStyle = '#8B7438';
+                ctx.fillRect(x+4, y+5, 8, 1); // lid highlight
+                // Body
+                ctx.fillStyle = '#6B5420';
+                ctx.fillRect(x+3, y+9, 10, 5);
+                // Metal bands
+                ctx.fillStyle = '#888888';
+                ctx.fillRect(x+3, y+8, 10, 1);
+                ctx.fillRect(x+3, y+12, 10, 1);
+                // Lock
+                ctx.fillStyle = '#FFD700';
+                ctx.fillRect(x+7, y+9, 2, 3);
+                ctx.fillStyle = '#FFA500';
+                ctx.fillRect(x+7, y+10, 2, 1);
+                // Keyhole
+                ctx.fillStyle = '#333333';
+                ctx.fillRect(x+8, y+10, 1, 1);
+                break;
+            }
+            case 'portal': {
+                // Glowing portal arch
+                ctx.fillStyle = '#6C3483';
+                ctx.fillRect(x+3, y+1, 10, 14);
+                ctx.fillStyle = '#8E44AD';
+                ctx.fillRect(x+4, y+2, 8, 12);
+                // Inner glow
                 ctx.fillStyle = '#c39bd3';
-                ctx.fillRect(x + 3, y + 1, 10, 14);
+                ctx.fillRect(x+5, y+3, 6, 10);
+                ctx.fillStyle = '#d7bde2';
+                ctx.fillRect(x+6, y+4, 4, 8);
+                // Center bright spot
                 ctx.fillStyle = '#f4ecf7';
-                ctx.fillRect(x + 5, y + 3, 6, 10);
+                ctx.fillRect(x+7, y+6, 2, 4);
+                // Sparkle dots
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(x+5, y+5, 1, 1);
+                ctx.fillRect(x+10, y+8, 1, 1);
+                ctx.fillRect(x+7, y+11, 1, 1);
                 break;
-            case 'door':
-                ctx.globalAlpha = 1;
-                ctx.fillStyle = '#8B4513';
-                ctx.fillRect(x + 3, y + 2, 10, 14);
+            }
+            case 'door': {
+                ctx.fillStyle = '#6B3A1F';
+                ctx.fillRect(x+3, y+2, 10, 14);
+                ctx.fillStyle = '#8B5A2F';
+                ctx.fillRect(x+4, y+3, 8, 12);
+                // Panels
+                ctx.fillStyle = '#7B4A25';
+                ctx.fillRect(x+5, y+4, 6, 4);
+                ctx.fillRect(x+5, y+10, 6, 4);
+                // Panel highlights
+                ctx.fillStyle = '#9B6A3F';
+                ctx.fillRect(x+5, y+4, 6, 1);
+                ctx.fillRect(x+5, y+10, 6, 1);
+                // Knob
                 ctx.fillStyle = '#FFD700';
-                ctx.fillRect(x + 10, y + 9, 2, 2);
+                ctx.fillRect(x+10, y+9, 2, 2);
+                ctx.fillStyle = '#FFA500';
+                ctx.fillRect(x+10, y+10, 1, 1);
                 break;
-            case 'sign':
-                ctx.globalAlpha = 1;
-                ctx.fillStyle = '#8B4513';
-                ctx.fillRect(x + 7, y + 8, 2, 8);
+            }
+            case 'sign': {
+                // Post
+                ctx.fillStyle = '#6B4226';
+                ctx.fillRect(x+7, y+8, 2, 8);
+                // Sign board
                 ctx.fillStyle = '#DEB887';
-                ctx.fillRect(x + 3, y + 2, 10, 7);
+                ctx.fillRect(x+3, y+2, 10, 7);
+                ctx.fillStyle = '#C8A070';
+                ctx.fillRect(x+3, y+8, 10, 1);
+                // Text lines
+                ctx.fillStyle = '#6B4226';
+                ctx.fillRect(x+5, y+4, 6, 1);
+                ctx.fillRect(x+5, y+6, 4, 1);
+                // Nail
+                ctx.fillStyle = '#888888';
+                ctx.fillRect(x+8, y+2, 1, 1);
                 break;
-            case 'eiffel':
-                ctx.globalAlpha = 1;
+            }
+            case 'eiffel': {
+                // Eiffel Tower with cross-hatching
+                ctx.fillStyle = '#4A5A6A';
+                // Main tower body
+                ctx.fillRect(x+6, y+0, 4, 16);
+                // Viewing platform
+                ctx.fillRect(x+4, y+7, 8, 2);
+                // Base legs
+                ctx.fillRect(x+2, y+13, 4, 3);
+                ctx.fillRect(x+10, y+13, 4, 3);
+                // Cross-hatching pattern
                 ctx.fillStyle = '#5D6D7E';
-                ctx.fillRect(x + 6, y, 4, 16);
-                ctx.fillRect(x + 4, y + 8, 8, 2);
-                ctx.fillRect(x + 2, y + 14, 12, 2);
+                ctx.fillRect(x+7, y+1, 2, 1);
+                ctx.fillRect(x+6, y+3, 1, 1);
+                ctx.fillRect(x+9, y+3, 1, 1);
+                ctx.fillRect(x+6, y+5, 1, 1);
+                ctx.fillRect(x+9, y+5, 1, 1);
+                // Highlight
+                ctx.fillStyle = '#7D8D9E';
+                ctx.fillRect(x+7, y+0, 1, 7);
+                ctx.fillRect(x+5, y+7, 1, 1);
+                // Arch
+                ctx.fillStyle = '#3A4A5A';
+                ctx.fillRect(x+5, y+10, 1, 3);
+                ctx.fillRect(x+10, y+10, 1, 3);
                 break;
-            case 'cherry':
+            }
+            case 'bigben': {
+                // Big Ben with clock face
+                ctx.fillStyle = '#6E4B00';
+                ctx.fillRect(x+5, y+0, 6, 16);
+                // Clock face area
+                ctx.fillStyle = '#F5F5DC';
+                ctx.fillRect(x+6, y+2, 4, 4);
+                // Clock border
+                ctx.fillStyle = '#8B6914';
+                ctx.fillRect(x+6, y+2, 4, 1);
+                ctx.fillRect(x+6, y+5, 4, 1);
+                ctx.fillRect(x+6, y+2, 1, 4);
+                ctx.fillRect(x+9, y+2, 1, 4);
+                // Clock hands
+                ctx.fillStyle = '#333333';
+                ctx.fillRect(x+8, y+3, 1, 2); // hour hand
+                ctx.fillRect(x+7, y+4, 2, 1); // minute hand
+                // Tower details
+                ctx.fillStyle = '#7E5B10';
+                ctx.fillRect(x+6, y+7, 4, 1);
+                ctx.fillRect(x+6, y+10, 4, 1);
+                // Spire
+                ctx.fillStyle = '#555555';
+                ctx.fillRect(x+7, y+0, 2, 2);
+                break;
+            }
+            case 'column': {
+                // Marble column with fluting
+                ctx.fillStyle = '#E8E0D0';
+                ctx.fillRect(x+4, y+1, 8, 14);
+                // Capital (top)
+                ctx.fillStyle = '#F0E8D8';
+                ctx.fillRect(x+3, y+1, 10, 2);
+                // Base
+                ctx.fillStyle = '#D0C8B8';
+                ctx.fillRect(x+3, y+13, 10, 2);
+                // Fluting (vertical grooves)
+                ctx.fillStyle = '#C8C0B0';
+                ctx.fillRect(x+5, y+3, 1, 10);
+                ctx.fillRect(x+8, y+3, 1, 10);
+                ctx.fillRect(x+11, y+3, 1, 10);
+                // Highlight
+                ctx.fillStyle = '#FFFFFF';
+                ctx.globalAlpha = 0.3;
+                ctx.fillRect(x+6, y+3, 1, 10);
                 ctx.globalAlpha = 1;
+                break;
+            }
+            case 'mosaic': {
+                // Colorful mosaic tile pattern
+                const colors = ['#D4AC0D', '#C0392B', '#2980B9', '#27AE60', '#8E44AD'];
+                for (let py = 0; py < 4; py++) {
+                    for (let px = 0; px < 4; px++) {
+                        ctx.fillStyle = colors[(px + py * 3) % colors.length];
+                        ctx.fillRect(x + px * 4, y + py * 4, 3, 3);
+                    }
+                }
+                // Grout lines
+                ctx.fillStyle = '#BDC3C7';
+                for (let i = 1; i < 4; i++) {
+                    ctx.fillRect(x, y + i * 4 - 1, s, 1);
+                    ctx.fillRect(x + i * 4 - 1, y, 1, s);
+                }
+                break;
+            }
+            case 'phonebox': {
+                // Red British phone box
+                ctx.fillStyle = '#C0392B';
+                ctx.fillRect(x+4, y+1, 8, 14);
+                // Window panes
+                ctx.fillStyle = '#AED6F1';
+                ctx.fillRect(x+5, y+3, 6, 4);
+                ctx.fillRect(x+5, y+8, 6, 3);
+                // Cross bars
+                ctx.fillStyle = '#C0392B';
+                ctx.fillRect(x+5, y+5, 6, 1);
+                ctx.fillRect(x+8, y+3, 1, 4);
+                // Crown on top
+                ctx.fillStyle = '#F1C40F';
+                ctx.fillRect(x+6, y+1, 4, 1);
+                // Door handle
+                ctx.fillStyle = '#555555';
+                ctx.fillRect(x+10, y+9, 1, 1);
+                break;
+            }
+            case 'cherry': {
+                // Cherry blossom tree
+                // Trunk
+                ctx.fillStyle = '#6B4226';
+                ctx.fillRect(x+6, y+10, 4, 6);
+                ctx.fillStyle = '#7B5236';
+                ctx.fillRect(x+7, y+11, 2, 4);
+                // Blossom canopy: pinks
+                ctx.fillStyle = '#e8859a';
+                ctx.fillRect(x+2, y+2, 12, 9);
                 ctx.fillStyle = '#f8a5c2';
-                ctx.fillRect(x + 2, y + 1, 12, 10);
+                ctx.fillRect(x+3, y+1, 10, 8);
+                ctx.fillStyle = '#ffc8d7';
+                ctx.fillRect(x+4, y+2, 6, 5);
+                // Petal dots
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(x+5, y+3, 1, 1);
+                ctx.fillRect(x+8, y+2, 1, 1);
+                ctx.fillRect(x+10, y+5, 1, 1);
+                ctx.fillRect(x+3, y+6, 1, 1);
+                // Dark accent
+                ctx.fillStyle = '#d8658a';
+                ctx.fillRect(x+4, y+7, 2, 1);
+                ctx.fillRect(x+9, y+4, 2, 1);
+                break;
+            }
+            case 'palm': {
+                // Palm tree with fronds and trunk
+                // Trunk
+                ctx.fillStyle = '#7D5A1E';
+                ctx.fillRect(x+7, y+5, 2, 11);
+                ctx.fillStyle = '#8D6A2E';
+                ctx.fillRect(x+7, y+7, 2, 2);
+                ctx.fillRect(x+7, y+11, 2, 2);
+                // Fronds
+                ctx.fillStyle = '#1B7D3A';
+                ctx.fillRect(x+2, y+1, 5, 4);
+                ctx.fillRect(x+9, y+1, 5, 4);
+                ctx.fillStyle = '#22944A';
+                ctx.fillRect(x+4, y+0, 8, 3);
+                ctx.fillRect(x+1, y+2, 3, 2);
+                ctx.fillRect(x+12, y+2, 3, 2);
+                // Frond tips
+                ctx.fillStyle = '#2AAA5A';
+                ctx.fillRect(x+6, y+0, 4, 1);
+                // Coconuts
+                ctx.fillStyle = '#6B4226';
+                ctx.fillRect(x+6, y+4, 2, 2);
+                ctx.fillRect(x+8, y+5, 1, 1);
+                break;
+            }
+            case 'torii': {
+                // Torii gate with curved top beam
+                ctx.fillStyle = '#AA2211';
+                // Top beam (kasagi) — wider
+                ctx.fillRect(x+0, y+2, 16, 2);
+                // Nuki (lower beam)
+                ctx.fillRect(x+2, y+5, 12, 1);
+                // Pillars
+                ctx.fillRect(x+3, y+2, 2, 14);
+                ctx.fillRect(x+11, y+2, 2, 14);
+                // Curved ends of kasagi
+                ctx.fillStyle = '#CC3322';
+                ctx.fillRect(x+0, y+1, 2, 1);
+                ctx.fillRect(x+14, y+1, 2, 1);
+                // Highlight
+                ctx.fillStyle = '#DD4433';
+                ctx.fillRect(x+1, y+2, 14, 1);
+                break;
+            }
+            case 'lantern': {
+                // Paper lantern with glow
+                ctx.fillStyle = '#333333';
+                ctx.fillRect(x+7, y+1, 2, 2); // hook
+                ctx.fillStyle = '#CC3322';
+                ctx.fillRect(x+5, y+3, 6, 9);
+                // Paper body
+                ctx.fillStyle = '#DD4433';
+                ctx.fillRect(x+6, y+4, 4, 7);
+                // Glow
+                ctx.fillStyle = '#FFE0AA';
+                ctx.fillRect(x+7, y+5, 2, 5);
+                // Ribs
+                ctx.fillStyle = '#AA2211';
+                ctx.fillRect(x+5, y+6, 6, 1);
+                ctx.fillRect(x+5, y+9, 6, 1);
+                // Bottom cap
+                ctx.fillStyle = '#333333';
+                ctx.fillRect(x+6, y+12, 4, 1);
+                // Tassel
+                ctx.fillStyle = '#CC3322';
+                ctx.fillRect(x+7, y+13, 2, 2);
+                break;
+            }
+            case 'bamboo': {
+                // Bamboo stalks
+                ctx.fillStyle = '#2d7a2d';
+                ctx.fillRect(x+3, y, 3, 16);
+                ctx.fillRect(x+10, y, 3, 16);
+                // Node joints
+                ctx.fillStyle = '#1a5a1a';
+                ctx.fillRect(x+3, y+4, 3, 1);
+                ctx.fillRect(x+3, y+10, 3, 1);
+                ctx.fillRect(x+10, y+3, 3, 1);
+                ctx.fillRect(x+10, y+9, 3, 1);
+                // Highlight
+                ctx.fillStyle = '#3a9a3a';
+                ctx.fillRect(x+4, y, 1, 16);
+                ctx.fillRect(x+11, y, 1, 16);
+                // Small leaves
+                ctx.fillStyle = '#2d8a2d';
+                ctx.fillRect(x+6, y+4, 3, 2);
+                ctx.fillRect(x+7, y+9, 3, 2);
+                break;
+            }
+            case 'statue': {
+                // Statue on pedestal
+                ctx.fillStyle = '#95a5a6';
+                // Pedestal
+                ctx.fillRect(x+4, y+12, 8, 4);
+                ctx.fillStyle = '#aab5b6';
+                ctx.fillRect(x+4, y+12, 8, 1);
+                // Figure body
+                ctx.fillStyle = '#b0bec5';
+                ctx.fillRect(x+6, y+4, 4, 8);
+                // Head
+                ctx.fillRect(x+6, y+1, 4, 4);
+                // Arms
+                ctx.fillRect(x+4, y+5, 2, 4);
+                ctx.fillRect(x+10, y+5, 2, 4);
+                break;
+            }
+            case 'bridge': {
+                // Stone bridge
+                ctx.fillStyle = '#5A6B7E';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#6A7B8E';
+                ctx.fillRect(x, y, s, 2);
+                // Railing stones
+                ctx.fillStyle = '#7A8B9E';
+                ctx.fillRect(x+1, y, 2, 2);
+                ctx.fillRect(x+5, y, 2, 2);
+                ctx.fillRect(x+9, y, 2, 2);
+                ctx.fillRect(x+13, y, 2, 2);
+                // Road surface
+                ctx.fillStyle = '#4A5B6E';
+                ctx.fillRect(x, y+3, s, s-3);
+                break;
+            }
+            case 'bookshop': {
+                // Bookshop front
+                ctx.fillStyle = '#1a5276';
+                ctx.fillRect(x, y, s, s);
+                // Bookshelves visible through window
                 ctx.fillStyle = '#8B4513';
-                ctx.fillRect(x + 6, y + 11, 4, 5);
+                ctx.fillRect(x+2, y+3, 5, 10);
+                ctx.fillRect(x+9, y+3, 5, 10);
+                // Books
+                ctx.fillStyle = '#C0392B';
+                ctx.fillRect(x+3, y+4, 1, 3);
+                ctx.fillStyle = '#2980B9';
+                ctx.fillRect(x+4, y+4, 1, 3);
+                ctx.fillStyle = '#27AE60';
+                ctx.fillRect(x+5, y+4, 1, 3);
+                ctx.fillStyle = '#F1C40F';
+                ctx.fillRect(x+10, y+4, 1, 3);
+                ctx.fillStyle = '#9B59B6';
+                ctx.fillRect(x+11, y+4, 1, 3);
                 break;
-            case 'palm':
+            }
+            case 'lamp': {
+                // Street lamp
+                ctx.fillStyle = '#555555';
+                ctx.fillRect(x+7, y+4, 2, 12);
+                // Lamp head
+                ctx.fillStyle = '#777777';
+                ctx.fillRect(x+5, y+1, 6, 4);
+                // Glass
+                ctx.fillStyle = '#FFE082';
+                ctx.fillRect(x+6, y+2, 4, 2);
+                // Glow
+                ctx.fillStyle = '#FFEE88';
+                ctx.globalAlpha = 0.3;
+                ctx.fillRect(x+4, y+0, 8, 5);
                 ctx.globalAlpha = 1;
-                ctx.fillStyle = '#1e8449';
-                ctx.fillRect(x + 1, y + 0, 14, 6);
-                ctx.fillStyle = '#7d6608';
-                ctx.fillRect(x + 7, y + 4, 2, 12);
                 break;
-            case 'torii':
-                ctx.globalAlpha = 1;
-                ctx.fillStyle = '#c0392b';
-                ctx.fillRect(x + 1, y + 2, 14, 3);
-                ctx.fillRect(x + 3, y + 2, 2, 14);
-                ctx.fillRect(x + 11, y + 2, 2, 14);
+            }
+            case 'park': {
+                // Park bench
+                ctx.fillStyle = '#5D4037';
+                // Seat
+                ctx.fillRect(x+2, y+8, 12, 2);
+                // Back rest
+                ctx.fillRect(x+2, y+5, 12, 2);
+                // Legs
+                ctx.fillRect(x+3, y+10, 2, 4);
+                ctx.fillRect(x+11, y+10, 2, 4);
+                // Highlight
+                ctx.fillStyle = '#795548';
+                ctx.fillRect(x+3, y+5, 10, 1);
+                ctx.fillRect(x+3, y+8, 10, 1);
                 break;
-            case 'lantern':
-                ctx.globalAlpha = 1;
-                ctx.fillStyle = '#e74c3c';
-                ctx.fillRect(x + 5, y + 3, 6, 8);
-                ctx.fillStyle = '#f9e79f';
-                ctx.fillRect(x + 6, y + 5, 4, 4);
-                break;
+            }
         }
+    }
 
+    generateParticleTextures() {
+        // White particle (fountain spray)
+        let canvas = this.textures.createCanvas('particle_white', 4, 4);
+        let ctx = canvas.getContext();
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(1, 1, 2, 2);
+        ctx.globalAlpha = 0.6;
+        ctx.fillRect(0, 0, 4, 4);
         ctx.globalAlpha = 1;
+        canvas.refresh();
+
+        // Sparkle particle (portal)
+        canvas = this.textures.createCanvas('particle_sparkle', 3, 3);
+        ctx = canvas.getContext();
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(1, 0, 1, 3);
+        ctx.fillRect(0, 1, 3, 1);
+        canvas.refresh();
+
+        // Cherry blossom petal
+        canvas = this.textures.createCanvas('particle_petal', 4, 6);
+        ctx = canvas.getContext();
+        ctx.fillStyle = '#f8a5c2';
+        ctx.fillRect(1, 0, 2, 4);
+        ctx.fillRect(0, 1, 4, 2);
+        ctx.fillStyle = '#ffc8d7';
+        ctx.fillRect(1, 1, 2, 2);
+        canvas.refresh();
+
+        // Dust mote
+        canvas = this.textures.createCanvas('particle_dust', 2, 2);
+        ctx = canvas.getContext();
+        ctx.fillStyle = '#ffffcc';
+        ctx.fillRect(0, 0, 2, 2);
+        canvas.refresh();
     }
 
     generateUIAssets() {

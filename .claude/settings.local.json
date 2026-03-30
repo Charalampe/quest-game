@@ -12,7 +12,11 @@
       "Bash(find:*)",
       "Bash(cd:*)",
       "Bash(git worktree add:*)",
-      "Bash(git branch:*)"
+      "Bash(git branch:*)",
+      "Bash(PORT=8081 node -e \"\nimport { readFileSync } from ''fs'';\nlet content = readFileSync\\(''test_game.mjs'', ''utf8''\\);\ncontent = content.replace\\(/localhost:8080/g, ''localhost:8081''\\);\nimport { writeFileSync } from ''fs'';\nwriteFileSync\\(''/tmp/test_game_8081.mjs'', content\\);\n\")",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nRevamp graphics with neo-retro monument tiles for all 5 cities\n\nExpand tileset from 64 to 256 tiles with detailed pixel art for\nrecognizable landmarks: Eiffel Tower, Big Ben, Colosseum, Koutoubia\nminaret, Tokyo Tower, and many more. Each city now has multiple\niconic monuments placed in the map, giving each a distinct cliché\nidentity.\n\nCo-Authored-By: Claude Opus 4.6 \\(1M context\\) <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(findstr:*)"
     ]
   }
 }

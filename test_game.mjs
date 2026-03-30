@@ -163,7 +163,7 @@ async function test(name, fn) {
         });
         if (!mapInfo) throw new Error('No tilemap found');
         if (mapInfo.cityId !== 'paris') throw new Error(`Expected paris, got ${mapInfo.cityId}`);
-        if (mapInfo.width !== 30 || mapInfo.height !== 25) throw new Error(`Map size ${mapInfo.width}x${mapInfo.height}, expected 30x25`);
+        if (mapInfo.width !== 50 || mapInfo.height !== 40) throw new Error(`Map size ${mapInfo.width}x${mapInfo.height}, expected 50x40`);
         log(`  Map: ${mapInfo.width}x${mapInfo.height}, ${mapInfo.layers} layers, city: ${mapInfo.cityId}`);
     });
 
@@ -234,7 +234,7 @@ async function test(name, fn) {
         await page.evaluate(() => {
             const explore = window.game.scene.getScene('Explore');
             const player = explore.player;
-            player.setPosition(27 * 16 + 8, 19 * 16 + 8);
+            player.setPosition(44 * 16 + 8, 33 * 16 + 8);
             player.direction = 'up';
         });
         await page.waitForTimeout(200);
@@ -336,7 +336,7 @@ async function test(name, fn) {
         // Teleport player near librarian
         await page.evaluate(() => {
             const explore = window.game.scene.getScene('Explore');
-            explore.player.setPosition(4 * 16 + 8, 19 * 16 + 8);
+            explore.player.setPosition(5 * 16 + 8, 28 * 16 + 8);
             explore.player.direction = 'up';
         });
         await page.waitForTimeout(200);

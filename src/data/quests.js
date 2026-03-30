@@ -127,18 +127,18 @@ export const NPC_DIALOG_ROUTES = {
 
 // Chest rewards
 export const CHEST_REWARDS = {
-    'paris_chest_4_3': {
+    'paris_chest_7_5': {
         requiresFlag: 'quest_started',
         item: { id: 'coin', name: 'Old Coin', icon: 'item_coin', description: 'An old French coin with a compass rose engraved on it.' }
     },
-    'rome_chest_18_13': {
+    'rome_chest_30_22': {
         requiresFlag: 'rome_have_key',
         item: { id: 'book', name: 'Hidden Book', icon: 'item_book', description: "A book hidden behind the fountain with notes about Marrakech." },
         setsFlag: 'rome_complete',
         completesObjective: 'rome_open_chest',
         unlocksCity: 'marrakech'
     },
-    'tokyo_chest_15_2': {
+    'tokyo_chest_25_3': {
         requiresFlag: 'tokyo_chest_unlocked',
         item: { id: 'gem', name: 'Gem of Understanding', icon: 'item_gem', description: 'A magical gem that lets you understand any language. The greatest treasure!' },
         setsFlag: 'game_complete',

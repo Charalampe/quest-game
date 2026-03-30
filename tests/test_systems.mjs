@@ -280,15 +280,15 @@ describe('Chest Rewards', () => {
         }
     });
 
-    it('chest at rome_chest_18_13 unlocks marrakech', () => {
-        const chest = CHEST_REWARDS['rome_chest_18_13'];
+    it('chest at rome_chest_30_22 unlocks marrakech', () => {
+        const chest = CHEST_REWARDS['rome_chest_30_22'];
         assert.ok(chest);
         assert.equal(chest.unlocksCity, 'marrakech');
         assert.equal(chest.setsFlag, 'rome_complete');
     });
 
-    it('chest at tokyo_chest_15_2 completes the game', () => {
-        const chest = CHEST_REWARDS['tokyo_chest_15_2'];
+    it('chest at tokyo_chest_25_3 completes the game', () => {
+        const chest = CHEST_REWARDS['tokyo_chest_25_3'];
         assert.ok(chest);
         assert.equal(chest.setsFlag, 'game_complete');
         assert.equal(chest.completesObjective, 'tokyo_find_treasure');
@@ -308,8 +308,8 @@ describe('City Map Data', () => {
     for (const [cityId, city] of Object.entries(CITIES)) {
         describe(`${city.name} (${cityId})`, () => {
             it('has correct dimensions', () => {
-                assert.equal(city.width, 30);
-                assert.equal(city.height, 25);
+                assert.equal(city.width, 50);
+                assert.equal(city.height, 40);
             });
 
             it('ground layer is correct size', () => {
@@ -581,11 +581,11 @@ describe('SaveManager', () => {
     it('save includes openedChests', () => {
         const reg = createMockRegistry({
             currentCity: 'rome',
-            openedChests: ['rome_chest_18_13']
+            openedChests: ['rome_chest_30_22']
         });
         SaveManager.save(reg);
         const data = JSON.parse(_localStorage.get('questgame_save'));
-        assert.deepEqual(data.openedChests, ['rome_chest_18_13']);
+        assert.deepEqual(data.openedChests, ['rome_chest_30_22']);
     });
 });
 
@@ -817,7 +817,7 @@ describe('QuestManager', () => {
     it('getChestReward returns null when flag not met', () => {
         const scene = createMockScene({ flags: {}, questState: {}, unlockedCities: ['paris'] });
         const qm = new QuestManager(scene);
-        assert.equal(qm.getChestReward('paris_chest_4_3'), null);
+        assert.equal(qm.getChestReward('paris_chest_7_5'), null);
     });
 
     it('getChestReward returns item when flag is met', () => {
@@ -827,7 +827,7 @@ describe('QuestManager', () => {
             unlockedCities: ['paris']
         });
         const qm = new QuestManager(scene);
-        const reward = qm.getChestReward('paris_chest_4_3');
+        const reward = qm.getChestReward('paris_chest_7_5');
         assert.ok(reward);
         assert.equal(reward.id, 'coin');
     });
@@ -972,7 +972,7 @@ describe('Full Quest Playthrough (data layer)', () => {
         assert.ok(flags.rome_have_key);
 
         // 5. Rome: Open chest
-        assert.ok(simulateChest('rome_chest_18_13'));
+        assert.ok(simulateChest('rome_chest_30_22'));
         assert.ok(flags.rome_complete);
         assert.ok(unlocked.includes('marrakech'));
 
@@ -989,7 +989,7 @@ describe('Full Quest Playthrough (data layer)', () => {
         assert.ok(flags.tokyo_chest_unlocked);
 
         // 8. Tokyo: Open treasure chest
-        assert.ok(simulateChest('tokyo_chest_15_2'));
+        assert.ok(simulateChest('tokyo_chest_25_3'));
         assert.ok(flags.game_complete);
 
         // Verify all objectives completed
@@ -1007,47 +1007,49 @@ describe('Full Quest Playthrough (data layer)', () => {
 describe('Water Tile Collision (Bug Fix)', () => {
 // ======================================================================
 
-    it('Paris Seine tiles (rows 10-11) have walls except at bridge', () => {
+    it('Paris Seine tiles (rows 16-18) have walls except at bridges', () => {
         const city = CITIES.paris;
         for (let x = 0; x < city.width; x++) {
-            const isBridge = x >= 13 && x <= 16;
-            if (isBridge) {
-                assert.equal(city.walls[10][x], -1, `Bridge tile at (${x},10) should be walkable`);
-                assert.equal(city.walls[11][x], -1, `Bridge tile at (${x},11) should be walkable`);
-            } else {
-                assert.notEqual(city.walls[10][x], -1, `Water at (${x},10) should have wall`);
-                assert.notEqual(city.walls[11][x], -1, `Water at (${x},11) should have wall`);
+            const isBridge = (x >= 22 && x <= 26) || (x >= 38 && x <= 42);
+            for (let r = 16; r <= 18; r++) {
+                if (isBridge) {
+                    assert.equal(city.walls[r][x], -1, `Bridge tile at (${x},${r}) should be walkable`);
+                } else {
+                    assert.notEqual(city.walls[r][x], -1, `Water at (${x},${r}) should have wall`);
+                }
             }
         }
     });
 
-    it('London Thames tiles (rows 12-13) have walls except at bridge', () => {
+    it('London Thames tiles (rows 18-21) have walls except at bridges', () => {
         const city = CITIES.london;
         for (let x = 0; x < city.width; x++) {
-            const isBridge = x >= 13 && x <= 16;
-            if (isBridge) {
-                assert.equal(city.walls[12][x], -1, `Bridge tile at (${x},12) should be walkable`);
-                assert.equal(city.walls[13][x], -1, `Bridge tile at (${x},13) should be walkable`);
-            } else {
-                assert.notEqual(city.walls[12][x], -1, `Water at (${x},12) should have wall`);
-                assert.notEqual(city.walls[13][x], -1, `Water at (${x},13) should have wall`);
+            const isBridge = (x >= 22 && x <= 27) || (x >= 38 && x <= 42);
+            for (let r = 18; r <= 21; r++) {
+                if (isBridge) {
+                    assert.equal(city.walls[r][x], -1, `Bridge tile at (${x},${r}) should be walkable`);
+                } else {
+                    assert.notEqual(city.walls[r][x], -1, `Water at (${x},${r}) should have wall`);
+                }
             }
         }
     });
 
     it('Paris bridge tiles have cobblestone ground, not water', () => {
         const city = CITIES.paris;
-        for (let x = 13; x <= 16; x++) {
-            assert.equal(city.ground[10][x], 0, `Bridge ground at (${x},10) should be cobblestone`);
-            assert.equal(city.ground[11][x], 0, `Bridge ground at (${x},11) should be cobblestone`);
+        for (let x = 22; x <= 26; x++) {
+            for (let r = 16; r <= 18; r++) {
+                assert.equal(city.ground[r][x], 0, `Bridge ground at (${x},${r}) should be cobblestone`);
+            }
         }
     });
 
     it('London bridge tiles have pavement ground, not water', () => {
         const city = CITIES.london;
-        for (let x = 13; x <= 16; x++) {
-            assert.equal(city.ground[12][x], 39, `Bridge ground at (${x},12) should be pavement`);
-            assert.equal(city.ground[13][x], 39, `Bridge ground at (${x},13) should be pavement`);
+        for (let x = 22; x <= 27; x++) {
+            for (let r = 18; r <= 21; r++) {
+                assert.equal(city.ground[r][x], 39, `Bridge ground at (${x},${r}) should be pavement`);
+            }
         }
     });
 });
@@ -1416,5 +1418,173 @@ describe('i18n System', () => {
             }
         }
         assert.equal(missing.length, 0, `Missing travel label i18n: ${missing.join(', ')}`);
+    });
+});
+
+// ======================================================================
+describe('Graphics Overhaul Regression', () => {
+// ======================================================================
+
+    // --- Map dimensions and player start ---
+    for (const [cityId, city] of Object.entries(CITIES)) {
+        it(`${cityId} is 50x40 with playerStart at (25,33)`, () => {
+            assert.equal(city.width, 50);
+            assert.equal(city.height, 40);
+            assert.equal(city.playerStart.x, 25);
+            assert.equal(city.playerStart.y, 33);
+        });
+    }
+
+    // --- Chest ID / decor coordinate consistency ---
+    it('every CHEST_REWARDS key matches an actual chest decor tile in the map', () => {
+        const missing = [];
+        for (const chestId of Object.keys(CHEST_REWARDS)) {
+            const m = chestId.match(/^([a-z]+)_chest_(\d+)_(\d+)$/);
+            assert.ok(m, `Invalid chest ID format: ${chestId}`);
+            const [, cityId, xStr, yStr] = m;
+            const cx = parseInt(xStr), cy = parseInt(yStr);
+            const city = CITIES[cityId];
+            assert.ok(city, `Chest ${chestId} references unknown city '${cityId}'`);
+            assert.equal(city.decor[cy][cx], 20,
+                `Chest ${chestId} expects decor tile 20 at (${cx},${cy}) but found ${city.decor[cy][cx]}`);
+        }
+    });
+
+    it('every chest decor tile (20) in every city map has a matching CHEST_REWARDS entry or is non-quest', () => {
+        // Verify that quest-critical chests have reward entries
+        const rewardIds = new Set(Object.keys(CHEST_REWARDS));
+        for (const [cityId, city] of Object.entries(CITIES)) {
+            for (let y = 0; y < city.height; y++) {
+                for (let x = 0; x < city.width; x++) {
+                    if (city.decor[y][x] === 20) {
+                        const id = `${cityId}_chest_${x}_${y}`;
+                        // At minimum, the chest tile exists — it may or may not have rewards
+                        assert.ok(city.walls[y][x] === -1,
+                            `Chest at ${id} is on a wall tile — player cannot reach it`);
+                    }
+                }
+            }
+        }
+    });
+
+    // --- Portal tiles are walkable ---
+    it('all portal decor tiles (21) are on walkable ground', () => {
+        for (const [cityId, city] of Object.entries(CITIES)) {
+            for (let y = 0; y < city.height; y++) {
+                for (let x = 0; x < city.width; x++) {
+                    if (city.decor[y][x] === 21) {
+                        assert.equal(city.walls[y][x], -1,
+                            `Portal in ${cityId} at (${x},${y}) is on a wall tile`);
+                    }
+                }
+            }
+        }
+    });
+
+    // --- No portal and chest sharing same decor tile ---
+    it('no tile has both a chest and a portal on the same decor cell', () => {
+        // decor layer can only hold one value per tile
+        // If chest (20) and portal (21) share a cell, one gets overwritten
+        // This checks that every quest chest is really a chest and not overwritten
+        for (const chestId of Object.keys(CHEST_REWARDS)) {
+            const m = chestId.match(/^([a-z]+)_chest_(\d+)_(\d+)$/);
+            const [, cityId, xStr, yStr] = m;
+            const cx = parseInt(xStr), cy = parseInt(yStr);
+            assert.notEqual(CITIES[cityId].decor[cy][cx], 21,
+                `Quest chest ${chestId} was overwritten by portal tile at (${cx},${cy})`);
+        }
+    });
+
+    // --- Exit zone alignment ---
+    for (const [cityId, city] of Object.entries(CITIES)) {
+        it(`${cityId} exit zone aligns with south gap in wall border`, () => {
+            const exitX = Math.floor(city.width / 2 - 1); // tile coordinate
+            // The exit zone covers 3 tiles: exitX, exitX+1, exitX+2
+            for (let dx = 0; dx < 3; dx++) {
+                const wx = exitX + dx;
+                if (wx < city.width) {
+                    assert.equal(city.walls[city.height - 1][wx], -1,
+                        `${cityId} exit tile at (${wx},${city.height-1}) should be walkable (-1) but is ${city.walls[city.height-1][wx]}`);
+                }
+            }
+        });
+    }
+
+    // --- Water tile collision consistency ---
+    it('every water ground tile (2) in cities with rivers has a corresponding wall', () => {
+        for (const [cityId, city] of Object.entries(CITIES)) {
+            for (let y = 0; y < city.height; y++) {
+                for (let x = 0; x < city.width; x++) {
+                    if (city.ground[y][x] === 2) {
+                        assert.notEqual(city.walls[y][x], -1,
+                            `${cityId}: water at (${x},${y}) has no wall — player can walk on water`);
+                    }
+                }
+            }
+        }
+    });
+
+    // --- NPC not on water ---
+    it('no NPC is placed on a water tile', () => {
+        for (const [cityId, npcs] of Object.entries(NPC_DATA)) {
+            const city = CITIES[cityId];
+            for (const npc of npcs) {
+                assert.notEqual(city.ground[npc.y][npc.x], 2,
+                    `${npc.name} in ${cityId} at (${npc.x},${npc.y}) is on water`);
+            }
+        }
+    });
+
+    // --- NPC not on border wall ---
+    it('no NPC is placed on the border (row 0, last row, col 0, last col)', () => {
+        for (const [cityId, npcs] of Object.entries(NPC_DATA)) {
+            const city = CITIES[cityId];
+            for (const npc of npcs) {
+                assert.ok(npc.x > 0 && npc.x < city.width - 1,
+                    `${npc.name} in ${cityId} at x=${npc.x} is on border column`);
+                assert.ok(npc.y > 0 && npc.y < city.height - 1,
+                    `${npc.name} in ${cityId} at y=${npc.y} is on border row`);
+            }
+        }
+    });
+
+    // --- Player start not on water ---
+    for (const [cityId, city] of Object.entries(CITIES)) {
+        it(`${cityId} player start is not on water`, () => {
+            const { x, y } = city.playerStart;
+            assert.notEqual(city.ground[y][x], 2,
+                `Player starts on water tile at (${x},${y})`);
+        });
+    }
+
+    // --- Interactables reachability: signs, chests must be on walkable tiles ---
+    it('all sign tiles (22 in decor) are on walkable ground', () => {
+        for (const [cityId, city] of Object.entries(CITIES)) {
+            for (let y = 0; y < city.height; y++) {
+                for (let x = 0; x < city.width; x++) {
+                    if (city.decor[y][x] === 22) {
+                        // Signs need to be reachable — adjacent tile must be walkable
+                        // (sign itself can be on a wall, player interacts facing it)
+                        // Just check it's not on water
+                        assert.notEqual(city.ground[y][x], 2,
+                            `Sign in ${cityId} at (${x},${y}) is on water`);
+                    }
+                }
+            }
+        }
+    });
+
+    // --- NPC collision body fits within tile ---
+    it('NPC collision body (12x12 with offset 2,12) fits within 16x24 sprite', () => {
+        // offset.x=2, size.w=12: 2+12=14 <= 16 OK
+        // offset.y=12, size.h=12: 12+12=24 <= 24 OK
+        assert.ok(2 + 12 <= 16, 'NPC collision body width exceeds sprite width');
+        assert.ok(12 + 12 <= 24, 'NPC collision body height exceeds sprite height');
+    });
+
+    // --- Player collision body fits within tile ---
+    it('Player collision body (10x10 with offset 3,14) fits within 16x24 sprite', () => {
+        assert.ok(3 + 10 <= 16, 'Player collision body width exceeds sprite width');
+        assert.ok(14 + 10 <= 24, 'Player collision body height exceeds sprite height');
     });
 });

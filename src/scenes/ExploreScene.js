@@ -66,6 +66,10 @@ export class ExploreScene extends Phaser.Scene {
         this.interactables = [];
         this.createInteractables(cityData);
 
+        // Create particle effects and environmental animations
+        this.createParticles(cityData);
+        this.createEnvironmentalAnimations(cityData);
+
         // Input for interaction (store refs for cleanup)
         this._onSpace = () => this.handleInteract();
         this._onI = () => this.toggleInventory();
@@ -87,6 +91,27 @@ export class ExploreScene extends Phaser.Scene {
             this.input.keyboard.off('keydown-ESC', this._onEsc);
             for (const npc of this.npcs) { npc.destroy(); }
             this.npcs = [];
+            this.waterTiles = [];
+            // Cleanup particle emitters
+            if (this.particleEmitters) {
+                for (const emitter of this.particleEmitters) {
+                    emitter.destroy();
+                }
+                this.particleEmitters = [];
+            }
+            // Cleanup environmental tweens
+            if (this.envTweens) {
+                for (const tween of this.envTweens) {
+                    tween.remove();
+                }
+                this.envTweens = [];
+            }
+            if (this.envObjects) {
+                for (const obj of this.envObjects) {
+                    obj.destroy();
+                }
+                this.envObjects = [];
+            }
         });
 
         // Start UI overlay scene
@@ -154,6 +179,18 @@ export class ExploreScene extends Phaser.Scene {
         this.decorLayer.setDepth(3);
 
         this.map = map;
+
+        // Collect water tile positions for animation
+        this.waterTiles = [];
+        for (let y = 0; y < cityData.height; y++) {
+            for (let x = 0; x < cityData.width; x++) {
+                if (cityData.ground[y][x] === 2) {
+                    this.waterTiles.push({ x, y });
+                }
+            }
+        }
+        this.waterFrame = 0;
+        this.waterTimer = 0;
     }
 
     createNPCs() {
@@ -210,9 +247,10 @@ export class ExploreScene extends Phaser.Scene {
 
         // Check for exit zones at map edges
         this.exitZones = [];
-        // South exit
+        // South exit (dynamic center based on map width)
+        const exitX = Math.floor(cityData.width / 2 - 1) * 16;
         this.exitZones.push({
-            rect: new Phaser.Geom.Rectangle(13 * 16, (cityData.height - 1) * 16, 3 * 16, 16),
+            rect: new Phaser.Geom.Rectangle(exitX, (cityData.height - 1) * 16, 3 * 16, 16),
             action: 'worldmap'
         });
     }
@@ -400,8 +438,172 @@ export class ExploreScene extends Phaser.Scene {
         });
     }
 
-    update() {
+    createParticles(cityData) {
+        this.particleEmitters = [];
+
+        // Scan for special tiles
+        for (let y = 0; y < cityData.height; y++) {
+            for (let x = 0; x < cityData.width; x++) {
+                const wallTile = cityData.walls[y][x];
+                const decorTile = cityData.decor[y][x];
+                const worldX = x * 16 + 8;
+                const worldY = y * 16 + 8;
+
+                // Fountain particles (tile 18)
+                if (wallTile === 18) {
+                    const emitter = this.add.particles(worldX, worldY - 8, 'particle_white', {
+                        speed: { min: 10, max: 25 },
+                        angle: { min: 250, max: 290 },
+                        lifespan: 600,
+                        frequency: 80,
+                        quantity: 1,
+                        scale: { start: 0.8, end: 0.2 },
+                        alpha: { start: 0.8, end: 0 },
+                        gravityY: 40
+                    });
+                    emitter.setDepth(6);
+                    this.particleEmitters.push(emitter);
+                }
+
+                // Portal sparkle (decor tile 21)
+                if (decorTile === 21) {
+                    const emitter = this.add.particles(worldX, worldY, 'particle_sparkle', {
+                        speed: { min: 5, max: 15 },
+                        angle: { min: 0, max: 360 },
+                        lifespan: 800,
+                        frequency: 200,
+                        quantity: 1,
+                        scale: { start: 0.6, end: 0.1 },
+                        alpha: { start: 0.9, end: 0 },
+                        tint: [0xc39bd3, 0xf4ecf7, 0x8e44ad]
+                    });
+                    emitter.setDepth(6);
+                    this.particleEmitters.push(emitter);
+                }
+            }
+        }
+
+        // Cherry blossom petals in Tokyo
+        if (this.cityId === 'tokyo') {
+            const emitter = this.add.particles(cityData.width * 8, 0, 'particle_petal', {
+                emitZone: {
+                    type: 'random',
+                    source: new Phaser.Geom.Rectangle(0, 0, cityData.width * 16, 16)
+                },
+                speedX: { min: 5, max: 15 },
+                speedY: { min: 10, max: 25 },
+                lifespan: 4000,
+                frequency: 300,
+                quantity: 1,
+                scale: { start: 0.5, end: 0.3 },
+                alpha: { start: 0.7, end: 0 },
+                rotate: { min: 0, max: 360 }
+            });
+            emitter.setDepth(8);
+            this.particleEmitters.push(emitter);
+        }
+
+        // Ambient dust motes (all cities)
+        const dustEmitter = this.add.particles(cityData.width * 8, cityData.height * 8, 'particle_dust', {
+            emitZone: {
+                type: 'random',
+                source: new Phaser.Geom.Rectangle(0, 0, cityData.width * 16, cityData.height * 16)
+            },
+            speedY: { min: -3, max: -8 },
+            speedX: { min: -2, max: 2 },
+            lifespan: 3000,
+            frequency: 500,
+            quantity: 1,
+            scale: { start: 0.4, end: 0.1 },
+            alpha: { start: 0.3, end: 0 },
+            blendMode: 'ADD'
+        });
+        dustEmitter.setDepth(7);
+        this.particleEmitters.push(dustEmitter);
+    }
+
+    createEnvironmentalAnimations(cityData) {
+        this.envTweens = [];
+        this.envObjects = [];
+
+        for (let y = 0; y < cityData.height; y++) {
+            for (let x = 0; x < cityData.width; x++) {
+                const decorTile = cityData.decor[y][x];
+                const worldX = x * 16 + 8;
+                const worldY = y * 16 + 8;
+
+                // Chest pulsing glow
+                if (decorTile === 20) {
+                    const glow = this.add.rectangle(worldX, worldY, 16, 16, 0xFFD700, 0.05);
+                    glow.setDepth(2);
+                    this.envObjects.push(glow);
+                    const tween = this.tweens.add({
+                        targets: glow,
+                        alpha: 0.15,
+                        scaleX: 1.3,
+                        scaleY: 1.3,
+                        duration: 1200,
+                        yoyo: true,
+                        repeat: -1,
+                        ease: 'Sine.easeInOut'
+                    });
+                    this.envTweens.push(tween);
+                }
+
+                // Portal pulsing glow
+                if (decorTile === 21) {
+                    const glow = this.add.rectangle(worldX, worldY, 16, 16, 0x8E44AD, 0.05);
+                    glow.setDepth(2);
+                    this.envObjects.push(glow);
+                    const tween = this.tweens.add({
+                        targets: glow,
+                        alpha: 0.2,
+                        scaleX: 1.5,
+                        scaleY: 1.5,
+                        duration: 1500,
+                        yoyo: true,
+                        repeat: -1,
+                        ease: 'Sine.easeInOut'
+                    });
+                    this.envTweens.push(tween);
+                }
+
+                // Street lamp flicker (tile 28)
+                if (decorTile === 28) {
+                    const light = this.add.rectangle(worldX, worldY - 4, 12, 10, 0xFFEE88, 0.2);
+                    light.setDepth(2);
+                    this.envObjects.push(light);
+                    const tween = this.tweens.add({
+                        targets: light,
+                        alpha: 0.4,
+                        duration: 200 + Math.random() * 200,
+                        yoyo: true,
+                        repeat: -1,
+                        ease: 'Sine.easeInOut'
+                    });
+                    this.envTweens.push(tween);
+                }
+            }
+        }
+    }
+
+    update(time, delta) {
         this.player.update();
+
+        // Animate water tiles
+        if (this.waterTiles && this.waterTiles.length > 0) {
+            this.waterTimer += delta;
+            if (this.waterTimer > 500) {
+                this.waterTimer = 0;
+                this.waterFrame = (this.waterFrame + 1) % 3;
+                const waterIndices = [2, 64, 65];
+                const tileIdx = waterIndices[this.waterFrame];
+                const groundLayer = this.map.getLayer('ground').tilemapLayer;
+                for (const wt of this.waterTiles) {
+                    groundLayer.putTileAt(tileIdx, wt.x, wt.y);
+                }
+            }
+        }
 
         // Check exit zones (only trigger once per entry)
         let inExitZone = false;
