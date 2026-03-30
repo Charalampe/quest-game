@@ -13,7 +13,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.direction = 'down';
         this.isMoving = false;
 
-        // Input
+        // Input (SPACE/I/Q/M/ESC handled by ExploreScene)
         this.cursors = scene.input.keyboard.createCursorKeys();
         this.wasd = scene.input.keyboard.addKeys({
             up: Phaser.Input.Keyboard.KeyCodes.W,
@@ -21,8 +21,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             left: Phaser.Input.Keyboard.KeyCodes.A,
             right: Phaser.Input.Keyboard.KeyCodes.D
         });
-        this.interactKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        this.inventoryKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.I);
     }
 
     update() {

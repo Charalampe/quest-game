@@ -16,6 +16,7 @@ export class ExploreScene extends Phaser.Scene {
         this.cityId = data.city || 'paris';
         this.dialogActive = false;
         this.menuOpen = false;
+        this.exitTriggered = false;
     }
 
     create() {
@@ -354,6 +355,7 @@ export class ExploreScene extends Phaser.Scene {
     }
 
     toggleInventory() {
+        if (this.dialogActive) return;
         const uiScene = this.scene.get('UI');
         if (uiScene) {
             uiScene.toggleInventory();
@@ -362,6 +364,7 @@ export class ExploreScene extends Phaser.Scene {
     }
 
     toggleQuestLog() {
+        if (this.dialogActive) return;
         const uiScene = this.scene.get('UI');
         if (uiScene) {
             uiScene.toggleQuestLog();
@@ -432,13 +435,19 @@ export class ExploreScene extends Phaser.Scene {
     update() {
         this.player.update();
 
-        // Check exit zones
+        // Check exit zones (only trigger once per entry)
+        let inExitZone = false;
         for (const zone of this.exitZones) {
             if (Phaser.Geom.Rectangle.Contains(zone.rect, this.player.x, this.player.y)) {
-                if (zone.action === 'worldmap') {
+                inExitZone = true;
+                if (!this.exitTriggered && zone.action === 'worldmap') {
+                    this.exitTriggered = true;
                     this.openWorldMap();
                 }
             }
+        }
+        if (!inExitZone) {
+            this.exitTriggered = false;
         }
 
         // Update NPC interaction indicators

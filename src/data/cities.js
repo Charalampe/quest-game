@@ -88,11 +88,15 @@ function generateParis() {
     for (let x = 0; x < W; x++) {
         ground[10][x] = 2;
         ground[11][x] = 2;
+        walls[10][x] = 2; // water is impassable
+        walls[11][x] = 2;
     }
-    // Bridge at x=13-16
+    // Bridge at x=13-16 (walkable)
     for (let x = 13; x <= 16; x++) {
         ground[10][x] = 0;
         ground[11][x] = 0;
+        walls[10][x] = -1; // bridge is walkable
+        walls[11][x] = -1;
         decor[10][x] = 25;
     }
 
@@ -233,11 +237,15 @@ function generateLondon() {
     for (let x = 0; x < W; x++) {
         ground[12][x] = 2;
         ground[13][x] = 2;
+        walls[12][x] = 2; // water is impassable
+        walls[13][x] = 2;
     }
-    // Bridge
+    // Bridge (walkable)
     for (let x = 13; x <= 16; x++) {
         ground[12][x] = 39;
         ground[13][x] = 39;
+        walls[12][x] = -1; // bridge is walkable
+        walls[13][x] = -1;
     }
 
     // Green park areas
@@ -441,6 +449,9 @@ function generateMarrakech() {
 
     // Mosaic decorations
     decor[12][12] = 49; decor[12][17] = 49;
+
+    // Portal (unlocked during Marrakech quest)
+    decor[15][15] = 21;
 
     // Border
     for (let y = 0; y < H; y++) { walls[y][0] = 53; walls[y][W - 1] = 53; }

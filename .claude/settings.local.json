@@ -8,7 +8,8 @@
       "Bash(npx playwright:*)",
       "Bash(node test_game.mjs:*)",
       "Bash(node test_diag.mjs:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(find:*)"
     ]
   }
 }

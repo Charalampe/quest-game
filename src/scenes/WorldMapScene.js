@@ -72,9 +72,15 @@ export class WorldMapScene extends Phaser.Scene {
             ease: 'Sine.easeInOut'
         });
 
-        // ESC to return
-        this.input.keyboard.on('keydown-ESC', () => {
+        // ESC to return (store ref for cleanup)
+        this._onEsc = () => {
             if (!this.traveling) this.returnToExplore();
+        };
+        this.input.keyboard.on('keydown-ESC', this._onEsc);
+
+        // Cleanup on scene shutdown
+        this.events.on('shutdown', () => {
+            this.input.keyboard.off('keydown-ESC', this._onEsc);
         });
 
         // Fade in
@@ -163,13 +169,19 @@ export class WorldMapScene extends Phaser.Scene {
         this.selectedCity = cityId;
 
         const route = this.travelManager.getRoute(this.fromCity, cityId);
+        const flags = this.registry.get('flags') || {};
         const cityName = CITIES[cityId].name;
 
-        if (route) {
+        if (route && (!route.requiresFlag || flags[route.requiresFlag])) {
             this.infoText.setText(`${cityName} - ${route.label}`);
             this.travelButton.setText(`Travel to ${cityName}`);
             this.travelButton.setVisible(true);
             this.infoSubtext.setVisible(false);
+        } else if (route && route.requiresFlag && !flags[route.requiresFlag]) {
+            this.infoText.setText(`${cityName} - Route locked`);
+            this.travelButton.setVisible(false);
+            this.infoSubtext.setText('You need to unlock this travel method first');
+            this.infoSubtext.setVisible(true);
         } else {
             // No direct route, check if we can travel at all
             this.infoText.setText(`No direct route to ${cityName}`);

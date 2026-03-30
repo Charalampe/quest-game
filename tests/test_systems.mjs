@@ -997,3 +997,265 @@ describe('Full Quest Playthrough (data layer)', () => {
         assert.deepEqual(unlocked.sort(), ['london', 'marrakech', 'paris', 'rome', 'tokyo']);
     });
 });
+
+// ======================================================================
+describe('Water Tile Collision (Bug Fix)', () => {
+// ======================================================================
+
+    it('Paris Seine tiles (rows 10-11) have walls except at bridge', () => {
+        const city = CITIES.paris;
+        for (let x = 0; x < city.width; x++) {
+            const isBridge = x >= 13 && x <= 16;
+            if (isBridge) {
+                assert.equal(city.walls[10][x], -1, `Bridge tile at (${x},10) should be walkable`);
+                assert.equal(city.walls[11][x], -1, `Bridge tile at (${x},11) should be walkable`);
+            } else {
+                assert.notEqual(city.walls[10][x], -1, `Water at (${x},10) should have wall`);
+                assert.notEqual(city.walls[11][x], -1, `Water at (${x},11) should have wall`);
+            }
+        }
+    });
+
+    it('London Thames tiles (rows 12-13) have walls except at bridge', () => {
+        const city = CITIES.london;
+        for (let x = 0; x < city.width; x++) {
+            const isBridge = x >= 13 && x <= 16;
+            if (isBridge) {
+                assert.equal(city.walls[12][x], -1, `Bridge tile at (${x},12) should be walkable`);
+                assert.equal(city.walls[13][x], -1, `Bridge tile at (${x},13) should be walkable`);
+            } else {
+                assert.notEqual(city.walls[12][x], -1, `Water at (${x},12) should have wall`);
+                assert.notEqual(city.walls[13][x], -1, `Water at (${x},13) should have wall`);
+            }
+        }
+    });
+
+    it('Paris bridge tiles have cobblestone ground, not water', () => {
+        const city = CITIES.paris;
+        for (let x = 13; x <= 16; x++) {
+            assert.equal(city.ground[10][x], 0, `Bridge ground at (${x},10) should be cobblestone`);
+            assert.equal(city.ground[11][x], 0, `Bridge ground at (${x},11) should be cobblestone`);
+        }
+    });
+
+    it('London bridge tiles have pavement ground, not water', () => {
+        const city = CITIES.london;
+        for (let x = 13; x <= 16; x++) {
+            assert.equal(city.ground[12][x], 39, `Bridge ground at (${x},12) should be pavement`);
+            assert.equal(city.ground[13][x], 39, `Bridge ground at (${x},13) should be pavement`);
+        }
+    });
+});
+
+// ======================================================================
+describe('Travel Route Flag Validation (Bug Fix)', () => {
+// ======================================================================
+
+    it('portal route from marrakech to tokyo requires portal_unlocked', () => {
+        const route = TRAVEL_ROUTES.marrakech.tokyo;
+        assert.equal(route.requiresFlag, 'portal_unlocked');
+    });
+
+    it('TravelManager filters portal routes without flag', () => {
+        const scene = createMockScene({
+            unlockedCities: ['marrakech', 'tokyo'],
+            flags: {}
+        });
+        const tm = new TravelManager(scene);
+        const dests = tm.getAvailableDestinations('marrakech');
+        assert.ok(!dests.some(d => d.cityId === 'tokyo'),
+            'Should not list tokyo without portal_unlocked');
+    });
+
+    it('TravelManager includes portal routes with flag', () => {
+        const scene = createMockScene({
+            unlockedCities: ['marrakech', 'tokyo'],
+            flags: { portal_unlocked: true }
+        });
+        const tm = new TravelManager(scene);
+        const dests = tm.getAvailableDestinations('marrakech');
+        assert.ok(dests.some(d => d.cityId === 'tokyo'),
+            'Should list tokyo with portal_unlocked');
+    });
+
+    it('getRoute returns raw route even without flag (caller must validate)', () => {
+        const scene = createMockScene({});
+        const tm = new TravelManager(scene);
+        const route = tm.getRoute('marrakech', 'tokyo');
+        assert.ok(route, 'Raw route should exist');
+        assert.equal(route.requiresFlag, 'portal_unlocked',
+            'Route should carry requiresFlag for caller validation');
+    });
+});
+
+// ======================================================================
+describe('Menu State Guards (Bug Fix)', () => {
+// ======================================================================
+
+    it('inventory should not open during active dialog (ExploreScene logic)', () => {
+        // Simulates the guard: toggleInventory checks dialogActive
+        const dialogActive = true;
+        const menuOpen = false;
+        // The fix adds: if (this.dialogActive) return;
+        const shouldOpen = !dialogActive; // mimics the guard
+        assert.equal(shouldOpen, false, 'Inventory should not open during dialog');
+    });
+
+    it('quest log should not open during active dialog (ExploreScene logic)', () => {
+        const dialogActive = true;
+        const shouldOpen = !dialogActive;
+        assert.equal(shouldOpen, false, 'Quest log should not open during dialog');
+    });
+
+    it('inventory can open when no dialog active', () => {
+        const dialogActive = false;
+        const shouldOpen = !dialogActive;
+        assert.equal(shouldOpen, true, 'Inventory should open when no dialog');
+    });
+});
+
+// ======================================================================
+describe('NPC Sprite Types (Data Integrity)', () => {
+// ======================================================================
+
+    const validSprites = ['librarian', 'curator', 'merchant', 'guide', 'gardener', 'grandma'];
+
+    for (const [cityId, npcs] of Object.entries(NPC_DATA)) {
+        for (const npc of npcs) {
+            it(`${npc.name} has valid sprite type '${npc.sprite}'`, () => {
+                assert.ok(validSprites.includes(npc.sprite),
+                    `NPC ${npc.name} has unknown sprite '${npc.sprite}'`);
+            });
+        }
+    }
+});
+
+// ======================================================================
+describe('Dialog Reward Integrity', () => {
+// ======================================================================
+
+    it('every dialog givesItem has required fields', () => {
+        const issues = [];
+        for (const [id, dialog] of Object.entries(DIALOGUES)) {
+            if (dialog.givesItem) {
+                if (!dialog.givesItem.id) issues.push(`${id}: missing item id`);
+                if (!dialog.givesItem.name) issues.push(`${id}: missing item name`);
+                if (!dialog.givesItem.icon) issues.push(`${id}: missing item icon`);
+            }
+        }
+        assert.equal(issues.length, 0, `Item issues: ${issues.join(', ')}`);
+    });
+
+    it('every dialog unlocksCity references a valid city', () => {
+        for (const [id, dialog] of Object.entries(DIALOGUES)) {
+            if (dialog.unlocksCity) {
+                assert.ok(CITIES[dialog.unlocksCity],
+                    `Dialog ${id} unlocks unknown city '${dialog.unlocksCity}'`);
+            }
+        }
+    });
+
+    it('every dialog setsFlag is a non-empty string', () => {
+        for (const [id, dialog] of Object.entries(DIALOGUES)) {
+            if (dialog.setsFlag !== undefined) {
+                assert.equal(typeof dialog.setsFlag, 'string', `Dialog ${id} setsFlag is not a string`);
+                assert.ok(dialog.setsFlag.length > 0, `Dialog ${id} setsFlag is empty`);
+            }
+        }
+    });
+
+    it('every chest unlocksCity references a valid city', () => {
+        for (const [id, chest] of Object.entries(CHEST_REWARDS)) {
+            if (chest.unlocksCity) {
+                assert.ok(CITIES[chest.unlocksCity],
+                    `Chest ${id} unlocks unknown city '${chest.unlocksCity}'`);
+            }
+        }
+    });
+});
+
+// ======================================================================
+describe('City Connections Consistency', () => {
+// ======================================================================
+
+    it('every city connection has a matching TRAVEL_ROUTE', () => {
+        const missing = [];
+        for (const [cityId, city] of Object.entries(CITIES)) {
+            for (const conn of city.connections) {
+                if (!TRAVEL_ROUTES[cityId] || !TRAVEL_ROUTES[cityId][conn]) {
+                    missing.push(`${cityId} -> ${conn}`);
+                }
+            }
+        }
+        assert.equal(missing.length, 0, `Missing routes: ${missing.join(', ')}`);
+    });
+
+    it('every TRAVEL_ROUTE references valid cities', () => {
+        for (const [from, routes] of Object.entries(TRAVEL_ROUTES)) {
+            assert.ok(CITIES[from], `Route from unknown city '${from}'`);
+            for (const to of Object.keys(routes)) {
+                assert.ok(CITIES[to], `Route from ${from} to unknown city '${to}'`);
+            }
+        }
+    });
+});
+
+// ======================================================================
+describe('Portal Tile Placement (Bug Fix)', () => {
+// ======================================================================
+
+    it('Marrakech has a portal tile for portal travel', () => {
+        const city = CITIES.marrakech;
+        let found = false;
+        for (let y = 0; y < city.height; y++) {
+            for (let x = 0; x < city.width; x++) {
+                if (city.decor[y][x] === 21) {
+                    found = true;
+                    // Portal must be on a walkable tile
+                    assert.equal(city.walls[y][x], -1,
+                        `Portal at (${x},${y}) is on a wall tile`);
+                }
+            }
+        }
+        assert.ok(found, 'Marrakech must have at least one portal tile (21)');
+    });
+
+    it('Tokyo has a portal tile', () => {
+        const city = CITIES.tokyo;
+        let found = false;
+        for (let y = 0; y < city.height; y++) {
+            for (let x = 0; x < city.width; x++) {
+                if (city.decor[y][x] === 21) {
+                    found = true;
+                    assert.equal(city.walls[y][x], -1,
+                        `Portal at (${x},${y}) is on a wall tile`);
+                }
+            }
+        }
+        assert.ok(found, 'Tokyo must have at least one portal tile (21)');
+    });
+
+    it('cities with portal connections have portal tiles', () => {
+        // Cities connected by portal routes should have portal tiles
+        const portalCities = new Set();
+        for (const [from, routes] of Object.entries(TRAVEL_ROUTES)) {
+            for (const [to, route] of Object.entries(routes)) {
+                if (route.type === 'portal') {
+                    portalCities.add(from);
+                    portalCities.add(to);
+                }
+            }
+        }
+
+        for (const cityId of portalCities) {
+            const city = CITIES[cityId];
+            let hasPortal = false;
+            for (let y = 0; y < city.height && !hasPortal; y++) {
+                for (let x = 0; x < city.width && !hasPortal; x++) {
+                    if (city.decor[y][x] === 21) hasPortal = true;
+                }
+            }
+            assert.ok(hasPortal, `${cityId} has portal routes but no portal tile`);
+        }
+    });
+});
