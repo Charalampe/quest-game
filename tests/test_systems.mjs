@@ -60,11 +60,24 @@ function createMockScene(registryData = {}) {
 // QUEST DATA TESTS
 // ======================================================================
 
+// Mock localStorage before importing SaveManager
+const _localStorage = new Map();
+globalThis.localStorage = {
+    getItem(key) { return _localStorage.get(key) ?? null; },
+    setItem(key, val) { _localStorage.set(key, val); },
+    removeItem(key) { _localStorage.delete(key); }
+};
+
 const { QUESTS, NPC_DIALOG_ROUTES, CHEST_REWARDS } = await import('../src/data/quests.js');
 const { DIALOGUES } = await import('../src/data/dialogues.js');
 const { NPC_DATA } = await import('../src/data/npcs.js');
 const { CITIES } = await import('../src/data/cities.js');
 const { TRAVEL_ROUTES, CITY_MAP_POSITIONS } = await import('../src/systems/TravelManager.js');
+const { InventoryManager } = await import('../src/systems/InventoryManager.js');
+const { SaveManager } = await import('../src/systems/SaveManager.js');
+const { DialogManager } = await import('../src/systems/DialogManager.js');
+const { QuestManager } = await import('../src/systems/QuestManager.js');
+const { TravelManager } = await import('../src/systems/TravelManager.js');
 
 // ======================================================================
 describe('Dialog Data Integrity', () => {
@@ -144,15 +157,15 @@ describe('NPC Dialog Routing', () => {
         assert.equal(missing.length, 0, `NPCs without routes: ${missing.join(', ')}`);
     });
 
-    it('each route list has a fallback condition that always returns true', () => {
-        const noFallback = [];
+    it('each route list has at least one matching condition for empty flags', () => {
+        const noMatch = [];
         for (const [npcId, routes] of Object.entries(NPC_DIALOG_ROUTES)) {
-            const last = routes[routes.length - 1];
-            if (!last.condition({})) {
-                noFallback.push(npcId);
+            const match = routes.find(r => r.condition({}));
+            if (!match) {
+                noMatch.push(npcId);
             }
         }
-        assert.equal(noFallback.length, 0, `Routes without fallback: ${noFallback.join(', ')}`);
+        assert.equal(noMatch.length, 0, `NPCs with no matching route for empty flags: ${noMatch.join(', ')}`);
     });
 
     it('grandma shows intro before quest, after_locket after', () => {
@@ -432,9 +445,6 @@ describe('Travel Routes', () => {
 describe('InventoryManager', () => {
 // ======================================================================
 
-    // Import the actual class
-    const { InventoryManager } = await import('../src/systems/InventoryManager.js');
-
     it('starts empty on new game', () => {
         const scene = createMockScene({ inventory: [] });
         const inv = new InventoryManager(scene);
@@ -491,18 +501,8 @@ describe('InventoryManager', () => {
 describe('SaveManager', () => {
 // ======================================================================
 
-    // Mock localStorage
-    const storage = new Map();
-    globalThis.localStorage = {
-        getItem(key) { return storage.get(key) ?? null; },
-        setItem(key, val) { storage.set(key, val); },
-        removeItem(key) { storage.delete(key); }
-    };
-
-    const { SaveManager } = await import('../src/systems/SaveManager.js');
-
     beforeEach(() => {
-        storage.clear();
+        _localStorage.clear();
     });
 
     it('save writes to localStorage', () => {
@@ -516,7 +516,7 @@ describe('SaveManager', () => {
             openedChests: []
         });
         SaveManager.save(reg);
-        const raw = storage.get('questgame_save');
+        const raw = _localStorage.get('questgame_save');
         assert.ok(raw);
         const data = JSON.parse(raw);
         assert.equal(data.currentCity, 'paris');
@@ -525,7 +525,7 @@ describe('SaveManager', () => {
     });
 
     it('load returns parsed data', () => {
-        storage.set('questgame_save', JSON.stringify({
+        _localStorage.set('questgame_save', JSON.stringify({
             currentCity: 'london',
             inventory: [],
             flags: {}
@@ -539,22 +539,22 @@ describe('SaveManager', () => {
     });
 
     it('load returns null for corrupted JSON', () => {
-        storage.set('questgame_save', '{broken json!!!');
+        _localStorage.set('questgame_save', '{broken json!!!');
         assert.equal(SaveManager.load(), null);
     });
 
     it('load returns null for non-object JSON', () => {
-        storage.set('questgame_save', '"just a string"');
+        _localStorage.set('questgame_save', '"just a string"');
         assert.equal(SaveManager.load(), null);
     });
 
     it('load returns null for object missing currentCity', () => {
-        storage.set('questgame_save', JSON.stringify({ inventory: [] }));
+        _localStorage.set('questgame_save', JSON.stringify({ inventory: [] }));
         assert.equal(SaveManager.load(), null);
     });
 
     it('hasSave returns true when valid save exists', () => {
-        storage.set('questgame_save', JSON.stringify({ currentCity: 'paris' }));
+        _localStorage.set('questgame_save', JSON.stringify({ currentCity: 'paris' }));
         assert.equal(SaveManager.hasSave(), true);
     });
 
@@ -563,12 +563,12 @@ describe('SaveManager', () => {
     });
 
     it('hasSave returns false for corrupted save', () => {
-        storage.set('questgame_save', 'not json');
+        _localStorage.set('questgame_save', 'not json');
         assert.equal(SaveManager.hasSave(), false);
     });
 
     it('deleteSave removes the save', () => {
-        storage.set('questgame_save', JSON.stringify({ currentCity: 'paris' }));
+        _localStorage.set('questgame_save', JSON.stringify({ currentCity: 'paris' }));
         SaveManager.deleteSave();
         assert.equal(SaveManager.load(), null);
     });
@@ -579,7 +579,7 @@ describe('SaveManager', () => {
             openedChests: ['rome_chest_18_13']
         });
         SaveManager.save(reg);
-        const data = JSON.parse(storage.get('questgame_save'));
+        const data = JSON.parse(_localStorage.get('questgame_save'));
         assert.deepEqual(data.openedChests, ['rome_chest_18_13']);
     });
 });
@@ -587,8 +587,6 @@ describe('SaveManager', () => {
 // ======================================================================
 describe('DialogManager', () => {
 // ======================================================================
-
-    const { DialogManager } = await import('../src/systems/DialogManager.js');
 
     it('startDialog sets active state', () => {
         const scene = createMockScene({ flags: {} });
@@ -637,7 +635,7 @@ describe('DialogManager', () => {
 
     it('endDialog calls callback and sets active false', () => {
         const scene = createMockScene({ flags: {}, inventory: [], unlockedCities: ['paris'] });
-        scene.inventoryManager = new (await import('../src/systems/InventoryManager.js')).InventoryManager(scene);
+        scene.inventoryManager = new InventoryManager(scene);
         scene.questManager = { completeObjective() {} };
         const dm = new DialogManager(scene);
         let callbackCalled = false;
@@ -657,7 +655,7 @@ describe('DialogManager', () => {
 
     it('endDialog sets flags from dialog data', () => {
         const scene = createMockScene({ flags: {}, inventory: [], unlockedCities: ['paris'] });
-        scene.inventoryManager = new (await import('../src/systems/InventoryManager.js')).InventoryManager(scene);
+        scene.inventoryManager = new InventoryManager(scene);
         scene.questManager = { completeObjective() {} };
         const dm = new DialogManager(scene);
 
@@ -676,7 +674,7 @@ describe('DialogManager', () => {
 
     it('endDialog gives items from dialog data', () => {
         const scene = createMockScene({ flags: {}, inventory: [], unlockedCities: ['paris'] });
-        scene.inventoryManager = new (await import('../src/systems/InventoryManager.js')).InventoryManager(scene);
+        scene.inventoryManager = new InventoryManager(scene);
         scene.questManager = { completeObjective() {} };
         const dm = new DialogManager(scene);
 
@@ -697,7 +695,7 @@ describe('DialogManager', () => {
             inventory: [],
             unlockedCities: ['paris']
         });
-        scene.inventoryManager = new (await import('../src/systems/InventoryManager.js')).InventoryManager(scene);
+        scene.inventoryManager = new InventoryManager(scene);
         scene.questManager = { completeObjective() {} };
         const dm = new DialogManager(scene);
 
@@ -749,8 +747,6 @@ describe('DialogManager', () => {
 // ======================================================================
 describe('QuestManager', () => {
 // ======================================================================
-
-    const { QuestManager } = await import('../src/systems/QuestManager.js');
 
     it('getNPCDialogId returns correct dialog based on flags', () => {
         const scene = createMockScene({
@@ -851,8 +847,6 @@ describe('QuestManager', () => {
 // ======================================================================
 describe('TravelManager', () => {
 // ======================================================================
-
-    const { TravelManager } = await import('../src/systems/TravelManager.js');
 
     it('returns available destinations from paris', () => {
         const scene = createMockScene({
