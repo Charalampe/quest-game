@@ -13,6 +13,7 @@ export class DialogManager {
         this.isTyping = false;
         this.choiceMode = false;
         this.choices = [];
+        this.advanceCooldown = 0;
         this.selectedChoice = 0;
         this.choiceCallback = null;
     }
@@ -75,6 +76,11 @@ export class DialogManager {
 
     advance() {
         if (this.choiceMode) return;
+
+        // Prevent rapid-fire advancing that skips lines
+        const now = Date.now();
+        if (now - this.advanceCooldown < 100) return;
+        this.advanceCooldown = now;
 
         if (this.isTyping) {
             // Skip typewriter, show full text

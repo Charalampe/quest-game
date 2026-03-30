@@ -114,7 +114,7 @@ export const NPC_DIALOG_ROUTES = {
     ],
     tokyo_gardener: [
         { dialog: 'yuki_with_journal', condition: (flags) => flags.marrakech_complete && !flags.tokyo_chest_unlocked },
-        { dialog: 'yuki_after_quest', condition: (flags) => flags.game_complete },
+        { dialog: 'yuki_after_quest', condition: (flags) => flags.tokyo_chest_unlocked },
         { dialog: 'yuki_intro', condition: () => true }
     ],
     tokyo_monk: [

@@ -1,3 +1,5 @@
+import { SaveManager } from '../systems/SaveManager.js';
+
 export class TitleScene extends Phaser.Scene {
     constructor() {
         super('Title');
@@ -113,22 +115,22 @@ export class TitleScene extends Phaser.Scene {
         this.registry.set('unlockedCities', ['paris']);
         this.registry.set('visitedCities', ['paris']);
         this.registry.set('flags', {});
+        this.registry.set('openedChests', []);
         this.scene.start('Explore', { city: 'paris' });
     }
 
     continueGame() {
-        const saveData = localStorage.getItem('questgame_save');
-        if (saveData) {
-            const data = JSON.parse(saveData);
+        const data = SaveManager.load();
+        if (data) {
             this.registry.set('currentCity', data.currentCity);
             this.registry.set('inventory', data.inventory || []);
             this.registry.set('questState', data.questState || {});
             this.registry.set('unlockedCities', data.unlockedCities || ['paris']);
             this.registry.set('visitedCities', data.visitedCities || ['paris']);
             this.registry.set('flags', data.flags || {});
+            this.registry.set('openedChests', data.openedChests || []);
             this.scene.start('Explore', { city: data.currentCity });
         } else {
-            // No save data, start new game
             this.startNewGame();
         }
     }

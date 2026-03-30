@@ -58,6 +58,9 @@ export class NPC extends Phaser.Physics.Arcade.Sprite {
     }
 
     destroy() {
+        if (this.scene) {
+            this.scene.tweens.killTweensOf(this.indicator);
+        }
         if (this.indicator) this.indicator.destroy();
         if (this.nameLabel) this.nameLabel.destroy();
         super.destroy();

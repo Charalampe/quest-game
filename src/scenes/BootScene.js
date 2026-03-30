@@ -52,10 +52,7 @@ export class BootScene extends Phaser.Scene {
 
         canvas.refresh();
 
-        // Add spritesheet frames
-        this.textures.get('player').add(0, 0, 0, 0, frameW * 4, frameH * 4);
-
-        // Create individual frames for the spritesheet
+        // Create individual frames for the spritesheet (4 dirs x 4 frames)
         for (let row = 0; row < 4; row++) {
             for (let col = 0; col < 4; col++) {
                 const frameIndex = row * 4 + col;

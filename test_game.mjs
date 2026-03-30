@@ -261,7 +261,7 @@ async function test(name, fn) {
             for (let i = 0; i < 30; i++) {
                 if (!dm.active) break;
                 dm.advance();
-                await new Promise(r => setTimeout(r, 50));
+                await new Promise(r => setTimeout(r, 120));
             }
         });
         await page.waitForTimeout(300);
@@ -348,7 +348,7 @@ async function test(name, fn) {
             for (let i = 0; i < 30; i++) {
                 if (!dm.active) break;
                 dm.advance();
-                await new Promise(r => setTimeout(r, 50));
+                await new Promise(r => setTimeout(r, 120));
             }
         });
         await page.waitForTimeout(300);

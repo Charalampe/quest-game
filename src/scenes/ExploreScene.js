@@ -63,12 +63,28 @@ export class ExploreScene extends Phaser.Scene {
         this.interactables = [];
         this.createInteractables(cityData);
 
-        // Input for interaction
-        this.input.keyboard.on('keydown-SPACE', () => this.handleInteract());
-        this.input.keyboard.on('keydown-I', () => this.toggleInventory());
-        this.input.keyboard.on('keydown-Q', () => this.toggleQuestLog());
-        this.input.keyboard.on('keydown-M', () => this.openWorldMap());
-        this.input.keyboard.on('keydown-ESC', () => this.handleEscape());
+        // Input for interaction (store refs for cleanup)
+        this._onSpace = () => this.handleInteract();
+        this._onI = () => this.toggleInventory();
+        this._onQ = () => this.toggleQuestLog();
+        this._onM = () => this.openWorldMap();
+        this._onEsc = () => this.handleEscape();
+        this.input.keyboard.on('keydown-SPACE', this._onSpace);
+        this.input.keyboard.on('keydown-I', this._onI);
+        this.input.keyboard.on('keydown-Q', this._onQ);
+        this.input.keyboard.on('keydown-M', this._onM);
+        this.input.keyboard.on('keydown-ESC', this._onEsc);
+
+        // Cleanup on scene shutdown to prevent listener accumulation
+        this.events.on('shutdown', () => {
+            this.input.keyboard.off('keydown-SPACE', this._onSpace);
+            this.input.keyboard.off('keydown-I', this._onI);
+            this.input.keyboard.off('keydown-Q', this._onQ);
+            this.input.keyboard.off('keydown-M', this._onM);
+            this.input.keyboard.off('keydown-ESC', this._onEsc);
+            for (const npc of this.npcs) { npc.destroy(); }
+            this.npcs = [];
+        });
 
         // Start UI overlay scene
         this.scene.launch('UI', {
@@ -253,7 +269,10 @@ export class ExploreScene extends Phaser.Scene {
     }
 
     openChest(chest) {
-        if (chest.opened) {
+        // Check persisted state
+        const openedChests = this.registry.get('openedChests') || [];
+        if (chest.opened || openedChests.includes(chest.id)) {
+            chest.opened = true;
             this.dialogActive = true;
             this.dialogManager.showMessage("The chest is empty.", () => {
                 this.dialogActive = false;
@@ -264,6 +283,8 @@ export class ExploreScene extends Phaser.Scene {
         const reward = this.questManager.getChestReward(chest.id);
         if (reward) {
             chest.opened = true;
+            openedChests.push(chest.id);
+            this.registry.set('openedChests', openedChests);
             this.inventoryManager.addItem(reward);
             this.dialogActive = true;
             this.dialogManager.showMessage(`Found: ${reward.name}!`, () => {

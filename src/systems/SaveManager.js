@@ -9,6 +9,7 @@ export class SaveManager {
             unlockedCities: registry.get('unlockedCities') || ['paris'],
             visitedCities: registry.get('visitedCities') || ['paris'],
             flags: registry.get('flags') || {},
+            openedChests: registry.get('openedChests') || [],
             timestamp: Date.now()
         };
 
@@ -19,11 +20,19 @@ export class SaveManager {
     static load() {
         const raw = localStorage.getItem(SaveManager.SAVE_KEY);
         if (!raw) return null;
-        return JSON.parse(raw);
+        try {
+            const data = JSON.parse(raw);
+            if (!data || typeof data !== 'object' || !data.currentCity) {
+                return null;
+            }
+            return data;
+        } catch (e) {
+            return null;
+        }
     }
 
     static hasSave() {
-        return localStorage.getItem(SaveManager.SAVE_KEY) !== null;
+        return SaveManager.load() !== null;
     }
 
     static deleteSave() {
