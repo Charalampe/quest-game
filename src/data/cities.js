@@ -289,6 +289,71 @@ function generateParis() {
     // Fountain
     walls[34][24] = 18; walls[34][25] = 18;
 
+    // ── Dense enrichment ──
+
+    // Ground variety: grass patches in open south areas
+    for (let y = 26; y < 32; y++) for (let x = 2; x < 10; x++) { if (walls[y][x] === -1 && ground[y][x] === 0) ground[y][x] = 1; }
+    for (let y = 26; y < 32; y++) for (let x = 32; x < 39; x++) { if (walls[y][x] === -1 && ground[y][x] === 0) ground[y][x] = 1; }
+    // Dirt paths connecting market to residential
+    for (let x = 10; x < 20; x++) { ground[27][x] = 4; ground[28][x] = 4; }
+    for (let x = 31; x < 40; x++) { ground[27][x] = 4; ground[28][x] = 4; }
+    // Sand accents near Seine
+    for (let x = 1; x < 22; x++) ground[15][x] = 3;
+    for (let x = 27; x < 38; x++) ground[15][x] = 3;
+    for (let x = 43; x < W-1; x++) ground[15][x] = 3;
+    for (let x = 1; x < 22; x++) ground[19][x] = 3;
+    for (let x = 27; x < 38; x++) ground[19][x] = 3;
+    for (let x = 43; x < W-1; x++) ground[19][x] = 3;
+
+    // Bookshop row along road
+    walls[11][4] = 26; walls[11][8] = 26; walls[11][14] = 26;
+    walls[11][36] = 26; walls[11][42] = 26; walls[11][46] = 26;
+
+    // More fences along park edges and Eiffel plaza
+    decor[10][19] = 31; decor[10][22] = 31; decor[10][25] = 31; decor[10][28] = 31;
+    decor[10][2] = 31; decor[10][5] = 31; decor[10][8] = 31; decor[10][11] = 31;
+
+    // Dense flowers: south sidewalks, open ground
+    decor[26][3] = 17; decor[26][8] = 17; decor[26][14] = 17; decor[26][18] = 17;
+    decor[26][28] = 17; decor[26][33] = 17; decor[26][38] = 17; decor[26][46] = 17;
+    decor[30][4] = 17; decor[30][8] = 17; decor[30][14] = 17; decor[30][20] = 17;
+    decor[30][28] = 17; decor[30][34] = 17; decor[30][40] = 17; decor[30][46] = 17;
+    decor[37][4] = 17; decor[37][8] = 17; decor[37][14] = 17; decor[37][20] = 17;
+    decor[37][28] = 17; decor[37][36] = 17; decor[37][42] = 17; decor[37][46] = 17;
+    decor[11][16] = 17; decor[11][20] = 17; decor[11][28] = 17; decor[11][32] = 17;
+
+    // Benches along south sidewalks
+    decor[26][10] = 27; decor[26][20] = 27; decor[26][36] = 27; decor[26][42] = 27;
+    decor[30][6] = 27; decor[30][16] = 27; decor[30][22] = 27; decor[30][36] = 27;
+    decor[37][10] = 27; decor[37][18] = 27; decor[37][30] = 27; decor[37][40] = 27;
+
+    // Awnings on ALL building fronts
+    decor[33][3] = 29; decor[33][7] = 29; decor[33][13] = 29; decor[33][17] = 29;
+    decor[33][31] = 29; decor[33][35] = 29; decor[33][41] = 29; decor[33][45] = 29;
+    decor[21][34] = 29; decor[21][36] = 29; decor[21][42] = 29; decor[21][46] = 29;
+
+    // Windows on buildings missing them
+    walls[33][4] = 30; walls[33][8] = 30; walls[33][14] = 30; walls[33][18] = 30;
+    walls[33][32] = 30; walls[33][36] = 30; walls[33][42] = 30; walls[33][46] = 30;
+    walls[27][41] = 30; walls[27][43] = 30; walls[27][46] = 30;
+    walls[21][35] = 30; walls[21][44] = 30;
+
+    // Statues at market square and museum row
+    walls[30][25] = 19; walls[6][36] = 19;
+
+    // Tree-lined boulevard (row 12 open sidewalk)
+    walls[12][4] = 16; walls[12][10] = 16; walls[12][14] = 16;
+    walls[12][30] = 16; walls[12][36] = 16; walls[12][42] = 16;
+
+    // Extra trees in south grass patches
+    walls[28][4] = 16; walls[28][8] = 16; walls[29][34] = 16; walls[29][38] = 16;
+
+    // More lamps in under-lit areas
+    decor[26][16] = 28; decor[26][30] = 28; decor[26][40] = 28;
+    decor[30][12] = 27; decor[30][26] = 28; decor[30][42] = 28;
+    decor[37][6] = 28; decor[37][16] = 28; decor[37][24] = 28; decor[37][34] = 28; decor[37][44] = 28;
+    decor[11][6] = 28; decor[11][10] = 28; decor[11][24] = 28; decor[11][38] = 28; decor[11][44] = 28;
+
     // Borders
     for (let y = 0; y < H; y++) { walls[y][0] = 16; walls[y][W-1] = 16; }
     for (let x = 0; x < W; x++) { walls[0][x] = 16; walls[H-1][x] = 16; }
@@ -465,6 +530,78 @@ function generateLondon() {
     // Signs
     decor[17][22] = 22; decor[29][24] = 22;
 
+    // ── Dense enrichment ──
+
+    // Ground variety: cobblestone accents near terraces
+    for (let y = 1; y < 5; y++) for (let x = 12; x < 37; x++) { if (walls[y][x] === -1 && ground[y][x] === 39) ground[y][x] = 0; }
+    // Grass patches near parks
+    for (let y = 8; y < 17; y++) for (let x = 1; x < 13; x++) { if (walls[y][x] === -1 && ground[y][x] === 39) ground[y][x] = 37; }
+    // Dirt paths in southern areas
+    for (let x = 15; x < 48; x++) { ground[29][x] = 4; }
+    for (let x = 1; x < 15; x++) { ground[29][x] = 0; }
+
+    // Dense flowers in both parks
+    decor[2][3] = 17; decor[2][5] = 17; decor[2][9] = 17; decor[2][11] = 17;
+    decor[4][2] = 17; decor[4][5] = 17; decor[4][8] = 17; decor[4][11] = 17;
+    decor[5][4] = 17; decor[5][7] = 17; decor[5][10] = 17;
+    decor[7][3] = 17; decor[7][6] = 17; decor[7][9] = 17; decor[7][11] = 17;
+    // Southern park flowers
+    decor[30][4] = 17; decor[30][7] = 17; decor[30][11] = 17; decor[30][13] = 17;
+    decor[32][3] = 17; decor[32][5] = 17; decor[32][8] = 17; decor[32][11] = 17; decor[32][13] = 17;
+    decor[34][4] = 17; decor[34][7] = 17; decor[34][13] = 17;
+    decor[35][3] = 17; decor[35][6] = 17; decor[35][10] = 17; decor[35][13] = 17;
+    decor[36][5] = 17; decor[36][9] = 17; decor[36][13] = 17;
+    // Street flowers
+    decor[17][6] = 17; decor[17][12] = 17; decor[17][28] = 17; decor[17][36] = 17; decor[17][44] = 17;
+    decor[28][6] = 17; decor[28][14] = 17; decor[28][24] = 17; decor[28][36] = 17; decor[28][44] = 17;
+
+    // Park benches everywhere
+    decor[3][2] = 27; decor[3][6] = 27; decor[3][10] = 27;
+    decor[5][2] = 27; decor[5][8] = 27;
+    decor[7][4] = 27; decor[7][8] = 27;
+    decor[31][3] = 27; decor[31][7] = 27; decor[31][11] = 27;
+    decor[33][4] = 27; decor[33][8] = 27;
+    decor[35][5] = 27; decor[35][9] = 27;
+    // Along Thames
+    decor[17][8] = 27; decor[17][16] = 27; decor[17][32] = 27; decor[17][42] = 27;
+
+    // More phone boxes
+    walls[5][13] = 32; walls[17][46] = 32; walls[28][10] = 32;
+    walls[35][20] = 32; walls[36][40] = 32; walls[9][13] = 32;
+
+    // Fountains in parks
+    walls[4][7] = 18; walls[33][9] = 18;
+
+    // More statues
+    walls[6][6] = 19; walls[3][42] = 19; walls[32][12] = 19; walls[36][36] = 19;
+
+    // Fences around park perimeters
+    for (let x = 1; x < 12; x += 3) { decor[1][x] = 31; decor[7][x] = 31; }
+    for (let x = 2; x < 15; x += 3) { decor[30][x] = 31; decor[37][x] = 31; }
+
+    // Trees — tree-lined streets and park density
+    walls[9][3] = 16; walls[9][7] = 16; walls[9][11] = 16;
+    walls[3][44] = 16; walls[5][46] = 16;
+    walls[10][3] = 16; walls[10][7] = 16; walls[10][11] = 16;
+    walls[32][4] = 16; walls[32][8] = 16; walls[32][12] = 16;
+    walls[35][4] = 16; walls[35][8] = 16; walls[35][11] = 16;
+    // Street trees
+    walls[17][10] = 16; walls[17][20] = 16; walls[17][34] = 16; walls[17][44] = 16;
+    walls[28][4] = 16; walls[28][12] = 16; walls[28][22] = 16; walls[28][32] = 16; walls[28][42] = 16;
+
+    // Windows on south bank houses
+    walls[23][4] = 30; walls[23][6] = 30; walls[23][13] = 30; walls[23][15] = 30;
+    walls[23][22] = 30; walls[23][24] = 30; walls[23][31] = 30; walls[23][33] = 30;
+
+    // More awnings
+    decor[23][3] = 29; decor[23][8] = 29; decor[23][11] = 29; decor[23][17] = 29;
+    decor[23][20] = 29; decor[23][26] = 29; decor[23][29] = 29; decor[23][35] = 29;
+    decor[23][38] = 29; decor[23][44] = 29;
+
+    // More lamps along under-lit streets
+    decor[5][12] = 28; decor[8][13] = 28; decor[37][6] = 28; decor[37][12] = 28;
+    decor[28][8] = 28; decor[28][18] = 28; decor[28][28] = 28; decor[28][38] = 28; decor[28][46] = 28;
+
     for (let y = 0; y < H; y++) { walls[y][0] = 16; walls[y][W-1] = 16; }
     for (let x = 0; x < W; x++) { walls[0][x] = 16; walls[H-1][x] = 16; }
     walls[H-1][24] = -1; walls[H-1][25] = -1; walls[H-1][26] = -1;
@@ -628,6 +765,72 @@ function generateRome() {
     // Signs at crossroads
     decor[11][24] = 22; decor[25][24] = 22;
 
+    // ── Dense enrichment ──
+
+    // Ground variety: grass patches in side streets, temple floor extensions
+    for (let y = 14; y < 16; y++) for (let x = 2; x < 10; x++) { if (walls[y][x] === -1) ground[y][x] = 1; }
+    for (let y = 14; y < 16; y++) for (let x = 38; x < 48; x++) { if (walls[y][x] === -1) ground[y][x] = 1; }
+    for (let y = 32; y < 38; y++) for (let x = 10; x < 13; x++) ground[y][x] = 1;
+    for (let y = 32; y < 38; y++) for (let x = 38; x < 40; x++) ground[y][x] = 1;
+    // Temple floor approach to Pantheon
+    for (let y = 9; y < 12; y++) for (let x = 15; x < 35; x++) { if (walls[y][x] === -1) ground[y][x] = 44; }
+    // Cobble accent paths
+    for (let x = 2; x < 48; x++) ground[20][x] = 0;
+
+    // Columns along main east-west streets
+    walls[12][3] = 40; walls[12][7] = 40; walls[12][11] = 40;
+    walls[12][30] = 40; walls[12][34] = 40; walls[12][38] = 40; walls[12][46] = 40;
+    walls[26][3] = 40; walls[26][7] = 40; walls[26][11] = 40;
+    walls[26][30] = 40; walls[26][34] = 40; walls[26][38] = 40; walls[26][46] = 40;
+    // Column bases below Pantheon capitals
+    for (let c = 15; c <= 34; c += 3) { if (walls[7][c] === -1) walls[7][c] = 88; }
+
+    // More fountains — Rome should have many
+    walls[6][6] = 18; walls[6][44] = 18; walls[24][8] = 18; walls[24][42] = 18;
+    walls[34][10] = 18; walls[34][40] = 18;
+
+    // Dense vines on residential wall edges
+    decor[13][3] = 45; decor[13][8] = 45; decor[17][3] = 45; decor[17][8] = 45;
+    decor[13][39] = 45; decor[13][46] = 45; decor[17][39] = 45; decor[17][46] = 45;
+    decor[27][3] = 45; decor[27][7] = 45; decor[27][13] = 45; decor[27][19] = 45;
+    decor[27][23] = 45; decor[27][27] = 45; decor[27][34] = 45; decor[27][41] = 45; decor[27][46] = 45;
+    decor[31][3] = 45; decor[31][7] = 45; decor[31][13] = 45; decor[31][19] = 45;
+    decor[31][34] = 45; decor[31][41] = 45; decor[31][46] = 45;
+
+    // More statues at intersections and plazas
+    walls[9][24] = 19; walls[14][24] = 19; walls[20][8] = 19; walls[20][42] = 19;
+    walls[32][8] = 19; walls[32][42] = 19;
+
+    // Dense flowers — lining plazas, near fountains, on paths
+    decor[9][16] = 17; decor[9][18] = 17; decor[9][20] = 17; decor[9][28] = 17; decor[9][30] = 17; decor[9][32] = 17;
+    decor[20][16] = 17; decor[20][22] = 17; decor[20][26] = 17; decor[20][32] = 17;
+    decor[14][16] = 17; decor[14][20] = 17; decor[14][28] = 17; decor[14][32] = 17;
+    decor[14][36] = 17; decor[14][40] = 17; decor[14][44] = 17;
+    decor[24][16] = 17; decor[24][20] = 17; decor[24][28] = 17; decor[24][32] = 17;
+    decor[24][36] = 17; decor[24][40] = 17; decor[24][44] = 17;
+    decor[32][16] = 17; decor[32][20] = 17; decor[32][28] = 17; decor[32][36] = 17; decor[32][44] = 17;
+    decor[36][8] = 17; decor[36][16] = 17; decor[36][28] = 17; decor[36][36] = 17; decor[36][44] = 17;
+
+    // Terracotta ground accents near buildings
+    for (let y = 18; y < 24; y++) { if (ground[y][10] === 43) ground[y][10] = 46; if (ground[y][36] === 43) ground[y][36] = 46; }
+
+    // Park benches along streets
+    decor[9][22] = 27; decor[14][10] = 27; decor[14][38] = 27;
+    decor[20][14] = 27; decor[20][34] = 27;
+    decor[24][10] = 27; decor[24][38] = 27;
+    decor[32][10] = 27; decor[32][24] = 27; decor[32][38] = 27;
+
+    // Trees in open areas
+    walls[14][2] = 16; walls[14][48] = 16;
+    walls[32][2] = 16; walls[32][12] = 16; walls[32][38] = 16; walls[32][48] = 16;
+    walls[36][2] = 16; walls[36][12] = 16; walls[36][38] = 16; walls[36][48] = 16;
+
+    // More lamps
+    decor[9][18] = 28; decor[9][30] = 28; decor[14][6] = 28; decor[14][18] = 28; decor[14][30] = 28; decor[14][42] = 28;
+    decor[20][6] = 28; decor[20][18] = 28; decor[20][30] = 28; decor[20][42] = 28;
+    decor[24][6] = 28; decor[24][18] = 28; decor[24][30] = 28; decor[24][42] = 28;
+    decor[32][6] = 28; decor[32][18] = 28; decor[32][30] = 28; decor[32][40] = 28;
+
     for (let y = 0; y < H; y++) { walls[y][0] = 16; walls[y][W-1] = 16; }
     for (let x = 0; x < W; x++) { walls[0][x] = 16; walls[H-1][x] = 16; }
     walls[H-1][24] = -1; walls[H-1][25] = -1; walls[H-1][26] = -1;
@@ -784,6 +987,76 @@ function generateMarrakech() {
     decor[10][8] = 28; decor[10][18] = 28; decor[10][31] = 28; decor[10][42] = 28;
     decor[20][8] = 28; decor[20][18] = 28; decor[20][31] = 28; decor[20][42] = 28;
     decor[30][8] = 28; decor[30][18] = 28; decor[30][42] = 28;
+
+    // ── Dense enrichment ──
+
+    // Ground variety: mosaic paths between buildings
+    for (let x = 1; x < 12; x++) { ground[7][x] = 49; ground[8][x] = 49; }
+    for (let x = 38; x < 48; x++) { ground[7][x] = 49; ground[8][x] = 49; }
+    for (let x = 1; x < 12; x++) { ground[27][x] = 49; ground[28][x] = 49; }
+    for (let x = 38; x < 48; x++) { ground[27][x] = 49; ground[28][x] = 49; }
+    // Sand corners
+    for (let y = 1; y < 6; y++) for (let x = 8; x < 12; x++) ground[y][x] = 3;
+    for (let y = 1; y < 6; y++) for (let x = 35; x < 38; x++) ground[y][x] = 3;
+    for (let y = 34; y < 38; y++) for (let x = 8; x < 12; x++) ground[y][x] = 3;
+    for (let y = 34; y < 38; y++) for (let x = 35; x < 38; x++) ground[y][x] = 3;
+
+    // Palm trunks below every palm top
+    for (let y = 1; y < H-2; y++) for (let x = 1; x < W-1; x++) {
+        if (walls[y][x] === 89 && y+1 < H-1 && walls[y+1][x] === -1) walls[y+1][x] = 90;
+    }
+
+    // More market stalls along marketplace edges and side areas
+    walls[15][5] = 50; walls[15][8] = 50; walls[15][42] = 50; walls[15][44] = 50;
+    walls[17][5] = 50; walls[17][8] = 50; walls[17][42] = 50; walls[17][44] = 50;
+    walls[25][5] = 50; walls[25][8] = 50; walls[25][42] = 50; walls[25][44] = 50;
+
+    // More fabric drapes between buildings
+    decor[7][3] = 51; decor[7][6] = 51; decor[7][43] = 51; decor[7][46] = 51;
+    decor[11][3] = 51; decor[11][6] = 51; decor[11][43] = 51; decor[11][46] = 51;
+    decor[18][3] = 51; decor[18][6] = 51; decor[18][43] = 51; decor[18][46] = 51;
+    decor[27][3] = 51; decor[27][6] = 51; decor[27][43] = 51; decor[27][46] = 51;
+    decor[15][16] = 51; decor[15][33] = 51; decor[17][16] = 51; decor[17][33] = 51;
+
+    // Dense mosaic tiles in walkways
+    decor[7][16] = 91; decor[7][20] = 92; decor[7][28] = 91; decor[7][33] = 92;
+    decor[8][18] = 92; decor[8][22] = 91; decor[8][26] = 92; decor[8][30] = 91; decor[8][34] = 92;
+    decor[11][16] = 92; decor[11][20] = 91; decor[11][28] = 92; decor[11][33] = 91;
+    decor[18][16] = 91; decor[18][20] = 92; decor[18][28] = 91; decor[18][34] = 92;
+    decor[27][16] = 91; decor[27][20] = 92; decor[27][28] = 91; decor[27][33] = 92;
+
+    // Dense flowers in courtyard and open areas
+    decor[2][3] = 17; decor[2][6] = 17; decor[2][43] = 17; decor[2][46] = 17;
+    decor[4][10] = 17; decor[4][38] = 17;
+    decor[7][10] = 17; decor[7][14] = 17; decor[7][36] = 17; decor[7][40] = 17;
+    decor[11][10] = 17; decor[11][14] = 17; decor[11][36] = 17; decor[11][40] = 17;
+    decor[18][10] = 17; decor[18][14] = 17; decor[18][36] = 17; decor[18][40] = 17;
+    decor[27][10] = 17; decor[27][14] = 17; decor[27][36] = 17; decor[27][40] = 17;
+    decor[33][3] = 17; decor[33][6] = 17; decor[33][10] = 17;
+    decor[33][38] = 17; decor[33][43] = 17; decor[33][46] = 17;
+    decor[36][3] = 17; decor[36][6] = 17; decor[36][43] = 17; decor[36][46] = 17;
+
+    // More fountains — water features in courtyards
+    walls[4][25] = 18; walls[34][25] = 18;
+
+    // Statues at Souk entrance and main crossroads
+    walls[12][25] = 19; walls[28][25] = 19;
+
+    // Dark archways on building fronts
+    decor[6][16] = 54; decor[6][28] = 54; decor[6][34] = 54;
+    decor[31][16] = 54; decor[31][28] = 54; decor[31][34] = 54;
+
+    // More lamps filling streets
+    decor[7][8] = 28; decor[7][18] = 28; decor[7][31] = 28; decor[7][42] = 28;
+    decor[11][8] = 28; decor[11][18] = 28; decor[11][31] = 28; decor[11][42] = 28;
+    decor[18][8] = 28; decor[18][18] = 28; decor[18][31] = 28; decor[18][42] = 28;
+    decor[27][8] = 28; decor[27][18] = 28; decor[27][31] = 28; decor[27][42] = 28;
+    decor[33][8] = 28; decor[33][18] = 28; decor[33][31] = 28; decor[33][42] = 28;
+
+    // Benches in open areas
+    decor[8][4] = 27; decor[8][10] = 27; decor[8][40] = 27; decor[8][46] = 27;
+    decor[11][10] = 27; decor[18][10] = 27; decor[27][10] = 27;
+    decor[36][10] = 27; decor[36][40] = 27;
 
     for (let y = 0; y < H; y++) { walls[y][0] = 53; walls[y][W-1] = 53; }
     for (let x = 0; x < W; x++) { walls[0][x] = 53; walls[H-1][x] = 53; }
@@ -960,6 +1233,85 @@ function generateTokyo() {
 
     // Signs near shrine and districts
     decor[10][22] = 22; decor[20][22] = 22;
+
+    // ── Dense enrichment ──
+
+    // Ground variety: jade paths connecting shrine to cherry garden
+    for (let y = 8; y < 12; y++) { ground[y][14] = 59; ground[y][15] = 59; ground[y][34] = 59; ground[y][35] = 59; }
+    // Sand extensions in zen garden
+    for (let y = 11; y < 17; y++) for (let x = 36; x < 38; x++) ground[y][x] = 3;
+    // Grass patches in open areas
+    for (let y = 17; y < 19; y++) for (let x = 2; x < 12; x++) { if (walls[y][x] === -1) ground[y][x] = 1; }
+    for (let y = 17; y < 19; y++) for (let x = 38; x < 48; x++) { if (walls[y][x] === -1) ground[y][x] = 1; }
+    for (let y = 28; y < 30; y++) for (let x = 2; x < 12; x++) { if (walls[y][x] === -1) ground[y][x] = 1; }
+    for (let y = 28; y < 30; y++) for (let x = 38; x < 48; x++) { if (walls[y][x] === -1) ground[y][x] = 1; }
+    // Cobble accents in neon district
+    for (let x = 10; x < 14; x++) ground[21][x] = 0;
+    for (let x = 22; x < 28; x++) ground[21][x] = 0;
+    for (let x = 34; x < 38; x++) ground[21][x] = 0;
+
+    // Dense bamboo clusters at all borders and corners
+    walls[4][2] = 63; walls[4][3] = 63; walls[4][46] = 63; walls[4][47] = 63;
+    walls[6][2] = 63; walls[6][47] = 63;
+    walls[12][2] = 63; walls[12][3] = 63; walls[12][46] = 63; walls[12][47] = 63;
+    walls[16][2] = 63; walls[16][3] = 63; walls[16][46] = 63; walls[16][47] = 63;
+    walls[22][2] = 63; walls[22][47] = 63;
+    walls[26][2] = 63; walls[26][47] = 63;
+    walls[34][2] = 63; walls[34][3] = 63; walls[34][46] = 63; walls[34][47] = 63;
+    walls[36][2] = 63; walls[36][3] = 63; walls[36][46] = 63; walls[36][47] = 63;
+
+    // More cherry trees along paths
+    walls[9][18] = 93; walls[9][22] = 94; walls[9][28] = 93; walls[9][32] = 94;
+    walls[19][16] = 93; walls[19][22] = 94; walls[19][28] = 93; walls[19][34] = 94;
+    walls[29][16] = 93; walls[29][22] = 94; walls[29][28] = 93; walls[29][34] = 94;
+    // Cherry trunks below canopies where space allows
+    for (let y = 1; y < H-2; y++) for (let x = 1; x < W-1; x++) {
+        if ((walls[y][x] === 93 || walls[y][x] === 94) && y+1 < H-1 && walls[y+1][x] === -1 && decor[y+1][x] === -1) walls[y+1][x] = 95;
+    }
+
+    // Dense lanterns — every intersection and along paths
+    decor[4][14] = 60; decor[4][36] = 60;
+    decor[6][14] = 60; decor[6][36] = 60;
+    decor[9][6] = 60; decor[9][10] = 60; decor[9][14] = 60; decor[9][36] = 60; decor[9][40] = 60;
+    decor[14][12] = 60; decor[14][16] = 60; decor[14][34] = 60; decor[14][38] = 60;
+    decor[17][6] = 60; decor[17][10] = 60; decor[17][40] = 60; decor[17][44] = 60;
+    decor[19][6] = 60; decor[19][10] = 60; decor[19][14] = 60; decor[19][36] = 60; decor[19][40] = 60;
+    decor[21][6] = 60; decor[21][14] = 60; decor[21][36] = 60; decor[21][44] = 60;
+    decor[29][6] = 60; decor[29][14] = 60; decor[29][36] = 60;
+    decor[31][6] = 60; decor[31][10] = 60; decor[31][40] = 60; decor[31][44] = 60;
+    decor[37][6] = 60; decor[37][14] = 60; decor[37][36] = 60; decor[37][44] = 60;
+
+    // Torii accents at major entrances
+    walls[9][24] = 96; walls[9][25] = 97;
+    walls[19][24] = 96; walls[19][25] = 97;
+    walls[29][24] = 96; walls[29][25] = 97;
+    walls[37][24] = 98; walls[37][25] = 98;
+
+    // Fountains — zen garden water feature and near shrine
+    walls[13][8] = 18;
+
+    // Dense flowers — cherry garden floor, along jade paths, near buildings
+    decor[2][18] = 17; decor[2][20] = 17; decor[2][24] = 17; decor[2][30] = 17; decor[2][32] = 17;
+    decor[4][17] = 17; decor[4][20] = 17; decor[4][22] = 17; decor[4][28] = 17; decor[4][33] = 17;
+    decor[6][18] = 17; decor[6][20] = 17; decor[6][24] = 17; decor[6][26] = 17; decor[6][30] = 17; decor[6][32] = 17;
+    decor[8][18] = 17; decor[8][22] = 17; decor[8][28] = 17; decor[8][32] = 17;
+    decor[14][4] = 17; decor[14][8] = 17; decor[14][40] = 17; decor[14][46] = 17;
+    decor[17][8] = 17; decor[17][14] = 17; decor[17][36] = 17; decor[17][42] = 17;
+    decor[21][8] = 17; decor[21][10] = 17; decor[21][40] = 17; decor[21][46] = 17;
+    decor[28][6] = 17; decor[28][10] = 17; decor[28][40] = 17; decor[28][44] = 17;
+    decor[31][8] = 17; decor[31][14] = 17; decor[31][36] = 17; decor[31][42] = 17;
+    decor[37][8] = 17; decor[37][16] = 17; decor[37][34] = 17; decor[37][42] = 17;
+
+    // Street lamps in neon district (28)
+    decor[21][16] = 28; decor[21][22] = 28; decor[21][28] = 28; decor[21][34] = 28;
+    decor[31][16] = 28; decor[31][22] = 28; decor[31][28] = 28; decor[31][34] = 28;
+
+    // Zen garden stones (more statues)
+    walls[13][40] = 19; walls[15][46] = 19;
+
+    // Benches along paths
+    decor[8][14] = 27; decor[8][36] = 27; decor[17][12] = 27; decor[17][38] = 27;
+    decor[28][12] = 27; decor[28][38] = 27; decor[37][12] = 27; decor[37][38] = 27;
 
     for (let y = 0; y < H; y++) { walls[y][0] = 63; walls[y][W-1] = 63; }
     for (let x = 0; x < W; x++) { walls[0][x] = 63; walls[H-1][x] = 63; }
