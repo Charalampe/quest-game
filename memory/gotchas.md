@@ -8,7 +8,8 @@
 - Symptom: mysterious DataManager errors when accessing NPC properties
 
 ### Asset generation timing
-- `this.textures.createCanvas()` only works in `create()`, not `preload()`
+- `this.scene.textures.createCanvas()` only works during scene `create()`, not `preload()`
+- BootScene delegates to ProceduralAssetProvider (strategy pattern) — provider uses `this.scene.textures`
 - Assets are synchronous, so progress bar won't update during generation
 - All assets must be generated before any scene that uses them
 

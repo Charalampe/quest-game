@@ -115,14 +115,15 @@
 
 ### SaveManager.js
 - Static class, saves/loads to `localStorage` key `questgame_save`
-- Saves: currentCity, inventory, questState, unlockedCities, visitedCities, flags, openedChests
+- Saves: currentCity, currentRoom, inventory, questState, unlockedCities, visitedCities, flags, openedChests
 - `load()` validates: must be valid JSON, must be object, must have `currentCity`
 
 ## Data (`src/data/`)
 
 ### cities.js
-- 5 cities: paris (30x25), london (30x25), rome (30x20), marrakech (30x20), tokyo (30x20)
-- Each city: `{ name, description, width, height, ground[][], walls[][], decor[][], playerStart: {x,y} }`
+- 5 cities, all 50x40 main rooms, plus 15 sub-rooms (20 rooms total)
+- Each city: `{ name, description, width, height, ground[][], walls[][], decor[][], playerStart: {x,y}, rooms: {} }`
+- `ROOM_TRANSITIONS` table maps doorId → targetCity/targetRoom/spawnAt
 - Ground tiles: 0=cobblestone, 1=grass, 2=water, 3=sand, etc.
 - Wall tiles: -1=walkable, 0-63=collision
 - Decor tiles: -1=none, 20=chest, 21=portal, 22=sign, 23=door
@@ -130,8 +131,8 @@
 
 ### npcs.js
 - `NPC_DATA[cityId]`: Array of NPC definitions per city
-- Each NPC: `{ id, name, x, y, sprite, defaultDialog, requiresFlag? }`
-- 3 NPCs per city, 15 total
+- Each NPC: `{ id, name, x, y, sprite, defaultDialog, room, requiresFlag? }`
+- 40 NPCs total (7-8 per city), distributed across main rooms and sub-rooms
 
 ### quests.js
 - `QUEST_DATA`: Single main quest "The Locket of Worlds" with 8 chained objectives
@@ -144,9 +145,13 @@
 - `DIALOGUES[dialogId]`: `{ lines: string[], givesItem?, setsFlag?, unlocksCity?, unlocksPortal?, completesObjective? }`
 - ~30 dialog entries across all NPCs and quest stages
 
+### i18n/ (localization)
+- `en.js`, `fr.js` — translation dictionaries
+- `index.js` — exports `t()` helper for localized string lookup
+
 ## Tests
 
-### tests/test_systems.mjs (168 unit tests)
+### tests/test_systems.mjs (295 unit tests)
 - All `await import()` at top level (NOT inside describe/it callbacks)
 - localStorage mock (`_localStorage`) defined before imports
 - Covers: dialog data integrity, NPC routing, quest chain, chest rewards, city maps, NPC placement, travel routes, InventoryManager, SaveManager, DialogManager, QuestManager, TravelManager, full playthrough, water collision, travel flags, menu guards, NPC sprites, dialog rewards, city connections, portal tiles

@@ -4,7 +4,7 @@
 - Phaser 3.60.0 game with 5 scenes: Boot, Title, Explore, WorldMap, UI
 - **960x720 native resolution**, ExploreScene uses camera zoom 3 for pixel art
 - UIScene runs at zoom 1 as parallel overlay — all text is crisp
-- All assets generated programmatically in BootScene (no external files)
+- All assets generated programmatically via **ProceduralAssetProvider** (strategy pattern, swappable)
 - Data-driven: cities, NPCs, quests, dialogues all in `src/data/`
 - **i18n system** in `src/data/i18n/` — `en.js`, `fr.js`, `index.js` with `t()` helper
 - Quest progression drives NPC dialog via flag-based routing in `quests.js`
@@ -15,7 +15,7 @@
 - Room maps range from 12x10 to 24x20; each has own playerStart, ground/walls/decor
 - **20 total rooms** (5 main + 15 sub-rooms), **40 NPCs** (up from 15)
 - **Player 16x24**, NPC 16x24 with 4-frame idle + breathing tween
-- 29 NPC sprite types in BootScene (6 original + 23 new)
+- 29 NPC sprite types in ProceduralAssetProvider (6 original + 23 new)
 - Tileset 10 rows (indices 64-65 = water variants), particle textures for effects
 
 ## Key Patterns
@@ -31,7 +31,9 @@
 - Registry now stores `currentRoom` alongside `currentCity`
 - SaveManager persists `currentRoom` to localStorage
 - Sign at `tokyo_shrine_sign_5_4` sets `tokyo_riddle_part3` flag when read
-- Canvas textures created via `this.textures.createCanvas()` in BootScene's `create()` (not preload)
+- Canvas textures created via `this.scene.textures.createCanvas()` in ProceduralAssetProvider
+- BootScene is a thin orchestrator (~25 lines) — imports and calls the provider
+- `src/assets/` has AssetProvider base, ProceduralAssetProvider, and data definition files
 
 ## Gotchas — see [gotchas.md](gotchas.md) for full list
 

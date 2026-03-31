@@ -24,7 +24,7 @@ npm start       # Opens at http://localhost:8080
 ## Testing
 
 ```bash
-node tests/test_systems.mjs   # 168 unit tests — pure data/logic, no Phaser runtime
+node tests/test_systems.mjs   # 295 unit tests — pure data/logic, no Phaser runtime
 node test_game.mjs             # 24 Playwright integration tests — requires server on port 8080
 ```
 
@@ -41,10 +41,11 @@ Both test suites must pass before merging changes.
 
 ### File Structure
 - `src/main.js` — Phaser config + scene registration
-- `src/scenes/` — BootScene (asset gen), TitleScene, ExploreScene (core gameplay), WorldMapScene, UIScene (HUD overlay)
+- `src/scenes/` — BootScene (thin orchestrator), TitleScene, ExploreScene (core gameplay), WorldMapScene, UIScene (HUD overlay)
+- `src/assets/` — AssetProvider (base), ProceduralAssetProvider (canvas drawing), npcDefinitions, itemDefinitions, tileDefinitions
 - `src/systems/` — DialogManager, QuestManager, InventoryManager, TravelManager, SaveManager
 - `src/entities/` — Player, NPC
-- `src/data/` — cities.js (map data), npcs.js, quests.js (dialog routes + chest rewards), dialogues.js
+- `src/data/` — cities.js (map data + rooms), npcs.js, quests.js (dialog routes + chest rewards), dialogues.js, i18n/
 
 ### State Management
 - Phaser Registry for global state: `currentCity`, `inventory`, `questState`, `unlockedCities`, `visitedCities`, `flags`, `openedChests`
@@ -68,7 +69,8 @@ Both test suites must pass before merging changes.
 ## Key Gotchas
 
 - NPC property named `npcData` (not `data`) to avoid Phaser's built-in DataManager conflict
-- Generate assets in BootScene `create()` not `preload()` — they're synchronous
+- Asset generation uses strategy pattern: BootScene delegates to ProceduralAssetProvider
+- Canvas textures via `this.scene.textures.createCanvas()` in provider (not `preload()`)
 - Water tiles need BOTH ground tile (visual) AND wall tile (collision)
 - Exit zone checks in `update()` must be debounced (`exitTriggered` flag) to prevent dialog loops
 - Menus (I/Q keys) must check `dialogActive` before opening
