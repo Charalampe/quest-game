@@ -101,6 +101,10 @@ export class QuestManager {
                 }
             }
         }
+        if (chestData.unlocksPortal) {
+            flags.portal_unlocked = true;
+            this.scene.registry.set('flags', flags);
+        }
 
         return chestData.item;
     }

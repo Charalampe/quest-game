@@ -1,6 +1,6 @@
 import { Player } from '../entities/Player.js';
 import { NPC } from '../entities/NPC.js';
-import { CITIES } from '../data/cities.js';
+import { CITIES, ROOM_TRANSITIONS } from '../data/cities.js';
 import { NPC_DATA } from '../data/npcs.js';
 import { DialogManager } from '../systems/DialogManager.js';
 import { QuestManager } from '../systems/QuestManager.js';
@@ -15,38 +15,54 @@ export class ExploreScene extends Phaser.Scene {
 
     init(data) {
         this.cityId = data.city || 'paris';
+        this.roomId = data.room || 'main';
         this.dialogActive = false;
         this.menuOpen = false;
         this.exitTriggered = false;
     }
 
+    getRoomData() {
+        const cityData = CITIES[this.cityId];
+        if (!cityData) return null;
+        if (cityData.rooms && cityData.rooms[this.roomId]) {
+            return cityData.rooms[this.roomId];
+        }
+        // Fallback: use city-level data for main room (backward compat)
+        return cityData;
+    }
+
     create() {
         const cityData = CITIES[this.cityId];
         if (!cityData) return;
+        const roomData = this.getRoomData();
+        if (!roomData) return;
 
         this.registry.set('currentCity', this.cityId);
+        this.registry.set('currentRoom', this.roomId);
 
-        // Track visited cities
-        const visited = this.registry.get('visitedCities') || ['paris'];
-        if (!visited.includes(this.cityId)) {
-            visited.push(this.cityId);
-            this.registry.set('visitedCities', visited);
+        // Track visited cities (only on main room)
+        if (this.roomId === 'main') {
+            const visited = this.registry.get('visitedCities') || ['paris'];
+            if (!visited.includes(this.cityId)) {
+                visited.push(this.cityId);
+                this.registry.set('visitedCities', visited);
+            }
         }
 
-        // Create tilemap from city data
-        this.buildTilemap(cityData);
+        // Create tilemap from room data
+        this.buildTilemap(roomData);
 
         // Create player
-        const startX = cityData.playerStart.x * 16 + 8;
-        const startY = cityData.playerStart.y * 16 + 8;
+        const startX = roomData.playerStart.x * 16 + 8;
+        const startY = roomData.playerStart.y * 16 + 8;
         this.player = new Player(this, startX, startY);
         this.player.setDepth(5);
 
         // Camera follows player (zoom 3 for pixel art)
         this.cameras.main.setZoom(3);
         this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
-        this.cameras.main.setBounds(0, 0, cityData.width * 16, cityData.height * 16);
-        this.physics.world.setBounds(0, 0, cityData.width * 16, cityData.height * 16);
+        this.cameras.main.setBounds(0, 0, roomData.width * 16, roomData.height * 16);
+        this.physics.world.setBounds(0, 0, roomData.width * 16, roomData.height * 16);
 
         // Collisions
         this.physics.add.collider(this.player, this.wallLayer);
@@ -64,11 +80,11 @@ export class ExploreScene extends Phaser.Scene {
 
         // Create interactable objects
         this.interactables = [];
-        this.createInteractables(cityData);
+        this.createInteractables(roomData);
 
         // Create particle effects and environmental animations
-        this.createParticles(cityData);
-        this.createEnvironmentalAnimations(cityData);
+        this.createParticles(roomData);
+        this.createEnvironmentalAnimations(roomData);
 
         // Input for interaction (store refs for cleanup)
         this._onSpace = () => this.handleInteract();
@@ -115,18 +131,22 @@ export class ExploreScene extends Phaser.Scene {
         });
 
         // Start UI overlay scene
+        const displayName = roomData.displayName || cityData.name;
+        const displayDesc = roomData.displayName ? (roomData.description || '') : t(`cities.${this.cityId}`);
         this.scene.launch('UI', {
             dialogManager: this.dialogManager,
             questManager: this.questManager,
             inventoryManager: this.inventoryManager,
-            cityName: cityData.name,
-            cityDescription: t(`cities.${this.cityId}`)
+            cityName: displayName,
+            cityDescription: displayDesc
         });
 
-        // Check for quest triggers on entering city
-        this.questManager.onEnterCity(this.cityId);
+        // Check for quest triggers on entering city (only main room)
+        if (this.roomId === 'main') {
+            this.questManager.onEnterCity(this.cityId);
+        }
 
-        // Auto-save on entering city
+        // Auto-save on entering city/room
         SaveManager.save(this.registry);
 
         // Fade in
@@ -196,6 +216,10 @@ export class ExploreScene extends Phaser.Scene {
     createNPCs() {
         const cityNPCs = NPC_DATA[this.cityId] || [];
         cityNPCs.forEach(npcData => {
+            // Filter NPCs by room (default to 'main' if not specified)
+            const npcRoom = npcData.room || 'main';
+            if (npcRoom !== this.roomId) return;
+
             // Check if NPC should be visible based on quest state
             if (npcData.requiresFlag) {
                 const flags = this.registry.get('flags') || {};
@@ -208,11 +232,12 @@ export class ExploreScene extends Phaser.Scene {
         });
     }
 
-    createInteractables(cityData) {
-        // Find chests, signs, doors in decor layer
-        for (let y = 0; y < cityData.height; y++) {
-            for (let x = 0; x < cityData.width; x++) {
-                const tileIdx = cityData.decor[y][x];
+    createInteractables(roomData) {
+        const roomPrefix = this.roomId === 'main' ? this.cityId : `${this.cityId}_${this.roomId}`;
+        // Find chests, signs, doors, portals in decor layer
+        for (let y = 0; y < roomData.height; y++) {
+            for (let x = 0; x < roomData.width; x++) {
+                const tileIdx = roomData.decor[y][x];
                 if (tileIdx === 20) { // chest
                     this.interactables.push({
                         type: 'chest',
@@ -221,7 +246,7 @@ export class ExploreScene extends Phaser.Scene {
                         tileX: x,
                         tileY: y,
                         opened: false,
-                        id: `${this.cityId}_chest_${x}_${y}`
+                        id: `${roomPrefix}_chest_${x}_${y}`
                     });
                 } else if (tileIdx === 22) { // sign
                     this.interactables.push({
@@ -230,7 +255,7 @@ export class ExploreScene extends Phaser.Scene {
                         y: y * 16 + 8,
                         tileX: x,
                         tileY: y,
-                        id: `${this.cityId}_sign_${x}_${y}`
+                        id: `${roomPrefix}_sign_${x}_${y}`
                     });
                 } else if (tileIdx === 21) { // portal
                     this.interactables.push({
@@ -239,20 +264,35 @@ export class ExploreScene extends Phaser.Scene {
                         y: y * 16 + 8,
                         tileX: x,
                         tileY: y,
-                        id: `${this.cityId}_portal_${x}_${y}`
+                        id: `${roomPrefix}_portal_${x}_${y}`
                     });
+                } else if (tileIdx === 23) { // door (room transition)
+                    const doorId = `${roomPrefix}_door_${x}_${y}`;
+                    const transition = ROOM_TRANSITIONS[doorId];
+                    if (transition) {
+                        this.interactables.push({
+                            type: 'door',
+                            x: x * 16 + 8,
+                            y: y * 16 + 8,
+                            tileX: x,
+                            tileY: y,
+                            id: doorId,
+                            transition
+                        });
+                    }
                 }
             }
         }
 
-        // Check for exit zones at map edges
+        // Check for exit zones at map edges (only on main rooms)
         this.exitZones = [];
-        // South exit (dynamic center based on map width)
-        const exitX = Math.floor(cityData.width / 2 - 1) * 16;
-        this.exitZones.push({
-            rect: new Phaser.Geom.Rectangle(exitX, (cityData.height - 1) * 16, 3 * 16, 16),
-            action: 'worldmap'
-        });
+        if (this.roomId === 'main') {
+            const exitX = Math.floor(roomData.width / 2 - 1) * 16;
+            this.exitZones.push({
+                rect: new Phaser.Geom.Rectangle(exitX, (roomData.height - 1) * 16, 3 * 16, 16),
+                action: 'worldmap'
+            });
+        }
     }
 
     handleInteract() {
@@ -304,6 +344,9 @@ export class ExploreScene extends Phaser.Scene {
             case 'portal':
                 this.usePortal(obj);
                 break;
+            case 'door':
+                this.enterDoor(obj);
+                break;
         }
     }
 
@@ -345,10 +388,23 @@ export class ExploreScene extends Phaser.Scene {
         this.dialogActive = true;
         this.dialogManager.showMessage(text, () => {
             this.dialogActive = false;
+            // Some signs set flags when read
+            const signFlags = {
+                'tokyo_shrine_sign_5_4': 'tokyo_riddle_part3'
+            };
+            const flagToSet = signFlags[sign.id];
+            if (flagToSet) {
+                const flags = this.registry.get('flags') || {};
+                if (!flags[flagToSet]) {
+                    flags[flagToSet] = true;
+                    this.registry.set('flags', flags);
+                }
+            }
         });
     }
 
     getSignText(signId) {
+        // Try room-specific sign key first, then generic
         const text = t(`signs.${signId}`);
         return text !== `signs.${signId}` ? text : t('ui.signDefault');
     }
@@ -430,11 +486,36 @@ export class ExploreScene extends Phaser.Scene {
         }
     }
 
+    enterDoor(door) {
+        const transition = door.transition;
+        // Check if door requires a flag
+        if (transition.requiresFlag) {
+            const flags = this.registry.get('flags') || {};
+            if (!flags[transition.requiresFlag]) {
+                this.dialogActive = true;
+                const msg = transition.lockedMessage || t('ui.doorLocked');
+                this.dialogManager.showMessage(msg, () => {
+                    this.dialogActive = false;
+                });
+                return;
+            }
+        }
+        this.enterRoom(transition.targetCity || this.cityId, transition.targetRoom);
+    }
+
+    enterRoom(cityId, roomId) {
+        this.cameras.main.fadeOut(400, 0, 0, 0);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.stop('UI');
+            this.scene.restart({ city: cityId, room: roomId });
+        });
+    }
+
     travelToCity(cityId) {
         this.cameras.main.fadeOut(500, 0, 0, 0);
         this.cameras.main.once('camerafadeoutcomplete', () => {
             this.scene.stop('UI');
-            this.scene.restart({ city: cityId });
+            this.scene.restart({ city: cityId, room: 'main' });
         });
     }
 

@@ -235,7 +235,7 @@ export class WorldMapScene extends Phaser.Scene {
             onComplete: () => {
                 this.cameras.main.fadeOut(300, 0, 0, 0);
                 this.cameras.main.once('camerafadeoutcomplete', () => {
-                    this.scene.start('Explore', { city: this.selectedCity });
+                    this.scene.start('Explore', { city: this.selectedCity, room: 'main' });
                 });
             }
         });
@@ -266,7 +266,7 @@ export class WorldMapScene extends Phaser.Scene {
     returnToExplore() {
         this.cameras.main.fadeOut(300, 0, 0, 0);
         this.cameras.main.once('camerafadeoutcomplete', () => {
-            this.scene.start('Explore', { city: this.fromCity });
+            this.scene.start('Explore', { city: this.fromCity, room: 'main' });
         });
     }
 }

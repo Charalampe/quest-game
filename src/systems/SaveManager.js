@@ -4,6 +4,7 @@ export class SaveManager {
     static save(registry) {
         const data = {
             currentCity: registry.get('currentCity'),
+            currentRoom: registry.get('currentRoom') || 'main',
             inventory: registry.get('inventory') || [],
             questState: registry.get('questState') || {},
             unlockedCities: registry.get('unlockedCities') || ['paris'],

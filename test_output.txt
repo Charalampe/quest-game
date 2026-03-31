@@ -1,0 +1,1554 @@
+TAP version 13
+# Subtest: Dialog Data Integrity
+    # Subtest: every dialog ID referenced in NPC_DIALOG_ROUTES exists in DIALOGUES
+    ok 1 - every dialog ID referenced in NPC_DIALOG_ROUTES exists in DIALOGUES
+      ---
+      duration_ms: 0.648
+      ...
+    # Subtest: every NPC defaultDialog exists in DIALOGUES
+    ok 2 - every NPC defaultDialog exists in DIALOGUES
+      ---
+      duration_ms: 0.1536
+      ...
+    # Subtest: every dialog has at least one line
+    ok 3 - every dialog has at least one line
+      ---
+      duration_ms: 0.2166
+      ...
+    # Subtest: dialog objective references match quest objective IDs
+    ok 4 - dialog objective references match quest objective IDs
+      ---
+      duration_ms: 0.2191
+      ...
+    # Subtest: chest reward objective references match quest objective IDs
+    ok 5 - chest reward objective references match quest objective IDs
+      ---
+      duration_ms: 0.1254
+      ...
+    1..5
+ok 1 - Dialog Data Integrity
+  ---
+  duration_ms: 2.124
+  type: 'suite'
+  ...
+# Subtest: NPC Dialog Routing
+    # Subtest: each NPC in NPC_DATA has a route entry in NPC_DIALOG_ROUTES
+    ok 1 - each NPC in NPC_DATA has a route entry in NPC_DIALOG_ROUTES
+      ---
+      duration_ms: 0.1563
+      ...
+    # Subtest: each route list has at least one matching condition for empty flags
+    ok 2 - each route list has at least one matching condition for empty flags
+      ---
+      duration_ms: 0.5133
+      ...
+    # Subtest: grandma shows intro before quest, after_locket after
+    ok 3 - grandma shows intro before quest, after_locket after
+      ---
+      duration_ms: 0.2085
+      ...
+    # Subtest: librarian shows intro, then with_letter, then after_quest
+    ok 4 - librarian shows intro, then with_letter, then after_quest
+      ---
+      duration_ms: 0.2509
+      ...
+    # Subtest: curator shows intro, then with_letter, then after_quest
+    ok 5 - curator shows intro, then with_letter, then after_quest
+      ---
+      duration_ms: 0.1802
+      ...
+    # Subtest: rome historian has 4 stages of dialog
+    ok 6 - rome historian has 4 stages of dialog
+      ---
+      duration_ms: 0.1357
+      ...
+    # Subtest: tokyo gardener has no gap between jade_key and game_complete
+    ok 7 - tokyo gardener has no gap between jade_key and game_complete
+      ---
+      duration_ms: 0.1579
+      ...
+    1..7
+ok 2 - NPC Dialog Routing
+  ---
+  duration_ms: 2.1053
+  type: 'suite'
+  ...
+# Subtest: Quest Objective Chain
+    # Subtest: has 18 objectives
+    ok 1 - has 18 objectives
+      ---
+      duration_ms: 0.4167
+      ...
+    # Subtest: first objective has no requires
+    ok 2 - first objective has no requires
+      ---
+      duration_ms: 0.1768
+      ...
+    # Subtest: each subsequent objective requires the previous one (linear chain)
+    ok 3 - each subsequent objective requires the previous one (linear chain)
+      ---
+      duration_ms: 0.2141
+      ...
+    # Subtest: objective IDs are unique
+    ok 4 - objective IDs are unique
+      ---
+      duration_ms: 0.1332
+      ...
+    # Subtest: every objective references a valid city
+    ok 5 - every objective references a valid city
+      ---
+      duration_ms: 0.1905
+      ...
+    1..5
+ok 3 - Quest Objective Chain
+  ---
+  duration_ms: 1.4156
+  type: 'suite'
+  ...
+# Subtest: Chest Rewards
+    # Subtest: each chest ID follows city_chest_x_y format
+    ok 1 - each chest ID follows city_chest_x_y format
+      ---
+      duration_ms: 0.6427
+      ...
+    # Subtest: each chest reward has item with id, name, icon
+    ok 2 - each chest reward has item with id, name, icon
+      ---
+      duration_ms: 0.196
+      ...
+    # Subtest: chest at rome_chest_30_22 unlocks marrakech
+    ok 3 - chest at rome_chest_30_22 unlocks marrakech
+      ---
+      duration_ms: 0.0999
+      ...
+    # Subtest: chest at tokyo_chest_25_3 completes the game
+    ok 4 - chest at tokyo_chest_25_3 completes the game
+      ---
+      duration_ms: 0.2292
+      ...
+    # Subtest: each chest requiresFlag to prevent early opening
+    ok 5 - each chest requiresFlag to prevent early opening
+      ---
+      duration_ms: 0.1039
+      ...
+    1..5
+ok 4 - Chest Rewards
+  ---
+  duration_ms: 2.336
+  type: 'suite'
+  ...
+# Subtest: City Map Data
+    # Subtest: Paris (paris)
+        # Subtest: has correct dimensions
+        ok 1 - has correct dimensions
+          ---
+          duration_ms: 0.1073
+          ...
+        # Subtest: ground layer is correct size
+        ok 2 - ground layer is correct size
+          ---
+          duration_ms: 0.143
+          ...
+        # Subtest: walls layer is correct size
+        ok 3 - walls layer is correct size
+          ---
+          duration_ms: 0.0873
+          ...
+        # Subtest: decor layer is correct size
+        ok 4 - decor layer is correct size
+          ---
+          duration_ms: 0.1318
+          ...
+        # Subtest: player start is within bounds
+        ok 5 - player start is within bounds
+          ---
+          duration_ms: 0.1297
+          ...
+        # Subtest: player start is on a walkable tile (no wall)
+        ok 6 - player start is on a walkable tile (no wall)
+          ---
+          duration_ms: 0.1149
+          ...
+        # Subtest: has exit gap at south edge
+        ok 7 - has exit gap at south edge
+          ---
+          duration_ms: 0.0871
+          ...
+        # Subtest: ground tiles are in valid range (0-63)
+        ok 8 - ground tiles are in valid range (0-63)
+          ---
+          duration_ms: 0.3248
+          ...
+        # Subtest: wall tiles are -1 or in valid range (0-63)
+        ok 9 - wall tiles are -1 or in valid range (0-63)
+          ---
+          duration_ms: 0.3396
+          ...
+        1..9
+    ok 1 - Paris (paris)
+      ---
+      duration_ms: 1.6393
+      type: 'suite'
+      ...
+    # Subtest: London (london)
+        # Subtest: has correct dimensions
+        ok 1 - has correct dimensions
+          ---
+          duration_ms: 0.0902
+          ...
+        # Subtest: ground layer is correct size
+        ok 2 - ground layer is correct size
+          ---
+          duration_ms: 0.042
+          ...
+        # Subtest: walls layer is correct size
+        ok 3 - walls layer is correct size
+          ---
+          duration_ms: 0.0373
+          ...
+        # Subtest: decor layer is correct size
+        ok 4 - decor layer is correct size
+          ---
+          duration_ms: 0.1123
+          ...
+        # Subtest: player start is within bounds
+        ok 5 - player start is within bounds
+          ---
+          duration_ms: 0.0412
+          ...
+        # Subtest: player start is on a walkable tile (no wall)
+        ok 6 - player start is on a walkable tile (no wall)
+          ---
+          duration_ms: 0.034
+          ...
+        # Subtest: has exit gap at south edge
+        ok 7 - has exit gap at south edge
+          ---
+          duration_ms: 0.0317
+          ...
+        # Subtest: ground tiles are in valid range (0-63)
+        ok 8 - ground tiles are in valid range (0-63)
+          ---
+          duration_ms: 0.9045
+          ...
+        # Subtest: wall tiles are -1 or in valid range (0-63)
+        ok 9 - wall tiles are -1 or in valid range (0-63)
+          ---
+          duration_ms: 0.2137
+          ...
+        1..9
+    ok 2 - London (london)
+      ---
+      duration_ms: 1.6615
+      type: 'suite'
+      ...
+    # Subtest: Rome (rome)
+        # Subtest: has correct dimensions
+        ok 1 - has correct dimensions
+          ---
+          duration_ms: 0.0825
+          ...
+        # Subtest: ground layer is correct size
+        ok 2 - ground layer is correct size
+          ---
+          duration_ms: 0.0871
+          ...
+        # Subtest: walls layer is correct size
+        ok 3 - walls layer is correct size
+          ---
+          duration_ms: 0.0384
+          ...
+        # Subtest: decor layer is correct size
+        ok 4 - decor layer is correct size
+          ---
+          duration_ms: 0.0387
+          ...
+        # Subtest: player start is within bounds
+        ok 5 - player start is within bounds
+          ---
+          duration_ms: 0.0364
+          ...
+        # Subtest: player start is on a walkable tile (no wall)
+        ok 6 - player start is on a walkable tile (no wall)
+          ---
+          duration_ms: 0.033
+          ...
+        # Subtest: has exit gap at south edge
+        ok 7 - has exit gap at south edge
+          ---
+          duration_ms: 0.0352
+          ...
+        # Subtest: ground tiles are in valid range (0-63)
+        ok 8 - ground tiles are in valid range (0-63)
+          ---
+          duration_ms: 0.1819
+          ...
+        # Subtest: wall tiles are -1 or in valid range (0-63)
+        ok 9 - wall tiles are -1 or in valid range (0-63)
+          ---
+          duration_ms: 0.2361
+          ...
+        1..9
+    ok 3 - Rome (rome)
+      ---
+      duration_ms: 0.8994
+      type: 'suite'
+      ...
+    # Subtest: Marrakech (marrakech)
+        # Subtest: has correct dimensions
+        ok 1 - has correct dimensions
+          ---
+          duration_ms: 0.1083
+          ...
+        # Subtest: ground layer is correct size
+        ok 2 - ground layer is correct size
+          ---
+          duration_ms: 0.0411
+          ...
+        # Subtest: walls layer is correct size
+        ok 3 - walls layer is correct size
+          ---
+          duration_ms: 0.0338
+          ...
+        # Subtest: decor layer is correct size
+        ok 4 - decor layer is correct size
+          ---
+          duration_ms: 0.0306
+          ...
+        # Subtest: player start is within bounds
+        ok 5 - player start is within bounds
+          ---
+          duration_ms: 0.0327
+          ...
+        # Subtest: player start is on a walkable tile (no wall)
+        ok 6 - player start is on a walkable tile (no wall)
+          ---
+          duration_ms: 0.0305
+          ...
+        # Subtest: has exit gap at south edge
+        ok 7 - has exit gap at south edge
+          ---
+          duration_ms: 0.0391
+          ...
+        # Subtest: ground tiles are in valid range (0-63)
+        ok 8 - ground tiles are in valid range (0-63)
+          ---
+          duration_ms: 0.1537
+          ...
+        # Subtest: wall tiles are -1 or in valid range (0-63)
+        ok 9 - wall tiles are -1 or in valid range (0-63)
+          ---
+          duration_ms: 0.1461
+          ...
+        1..9
+    ok 4 - Marrakech (marrakech)
+      ---
+      duration_ms: 0.7581
+      type: 'suite'
+      ...
+    # Subtest: Tokyo (tokyo)
+        # Subtest: has correct dimensions
+        ok 1 - has correct dimensions
+          ---
+          duration_ms: 0.0852
+          ...
+        # Subtest: ground layer is correct size
+        ok 2 - ground layer is correct size
+          ---
+          duration_ms: 0.044
+          ...
+        # Subtest: walls layer is correct size
+        ok 3 - walls layer is correct size
+          ---
+          duration_ms: 0.0398
+          ...
+        # Subtest: decor layer is correct size
+        ok 4 - decor layer is correct size
+          ---
+          duration_ms: 0.0605
+          ...
+        # Subtest: player start is within bounds
+        ok 5 - player start is within bounds
+          ---
+          duration_ms: 0.0403
+          ...
+        # Subtest: player start is on a walkable tile (no wall)
+        ok 6 - player start is on a walkable tile (no wall)
+          ---
+          duration_ms: 0.0306
+          ...
+        # Subtest: has exit gap at south edge
+        ok 7 - has exit gap at south edge
+          ---
+          duration_ms: 0.0318
+          ...
+        # Subtest: ground tiles are in valid range (0-63)
+        ok 8 - ground tiles are in valid range (0-63)
+          ---
+          duration_ms: 0.1444
+          ...
+        # Subtest: wall tiles are -1 or in valid range (0-63)
+        ok 9 - wall tiles are -1 or in valid range (0-63)
+          ---
+          duration_ms: 0.2367
+          ...
+        1..9
+    ok 5 - Tokyo (tokyo)
+      ---
+      duration_ms: 0.8637
+      type: 'suite'
+      ...
+    1..5
+ok 5 - City Map Data
+  ---
+  duration_ms: 6.0163
+  type: 'suite'
+  ...
+# Subtest: NPC Placement
+    # Subtest: Grand-mère Elise in paris is on walkable tile
+    ok 1 - Grand-mère Elise in paris is on walkable tile
+      ---
+      duration_ms: 0.3557
+      ...
+    # Subtest: Monsieur Dupont in paris is on walkable tile
+    ok 2 - Monsieur Dupont in paris is on walkable tile
+      ---
+      duration_ms: 0.0467
+      ...
+    # Subtest: Sophie in paris is on walkable tile
+    ok 3 - Sophie in paris is on walkable tile
+      ---
+      duration_ms: 0.0348
+      ...
+    # Subtest: Pierre in paris is on walkable tile
+    ok 4 - Pierre in paris is on walkable tile
+      ---
+      duration_ms: 0.0314
+      ...
+    # Subtest: Madame Colette in paris is on walkable tile
+    ok 5 - Madame Colette in paris is on walkable tile
+      ---
+      duration_ms: 0.0291
+      ...
+    # Subtest: Tourist Claude in paris is on walkable tile
+    ok 6 - Tourist Claude in paris is on walkable tile
+      ---
+      duration_ms: 0.0327
+      ...
+    # Subtest: Ticket Attendant in paris is on walkable tile
+    ok 7 - Ticket Attendant in paris is on walkable tile
+      ---
+      duration_ms: 0.0398
+      ...
+    # Subtest: Marie in paris is on walkable tile
+    ok 8 - Marie in paris is on walkable tile
+      ---
+      duration_ms: 0.0509
+      ...
+    # Subtest: Emma in london is on walkable tile
+    ok 9 - Emma in london is on walkable tile
+      ---
+      duration_ms: 0.0423
+      ...
+    # Subtest: Bobby in london is on walkable tile
+    ok 10 - Bobby in london is on walkable tile
+      ---
+      duration_ms: 0.0407
+      ...
+    # Subtest: Mrs. Pemberton in london is on walkable tile
+    ok 11 - Mrs. Pemberton in london is on walkable tile
+      ---
+      duration_ms: 0.0307
+      ...
+    # Subtest: Dr. Wellington in london is on walkable tile
+    ok 12 - Dr. Wellington in london is on walkable tile
+      ---
+      duration_ms: 0.5308
+      ...
+    # Subtest: Guard Roberts in london is on walkable tile
+    ok 13 - Guard Roberts in london is on walkable tile
+      ---
+      duration_ms: 0.0519
+      ...
+    # Subtest: Olivia in london is on walkable tile
+    ok 14 - Olivia in london is on walkable tile
+      ---
+      duration_ms: 0.0455
+      ...
+    # Subtest: Professor Higgins in london is on walkable tile
+    ok 15 - Professor Higgins in london is on walkable tile
+      ---
+      duration_ms: 0.032
+      ...
+    # Subtest: Thomas in london is on walkable tile
+    ok 16 - Thomas in london is on walkable tile
+      ---
+      duration_ms: 0.0298
+      ...
+    # Subtest: Giulia in rome is on walkable tile
+    ok 17 - Giulia in rome is on walkable tile
+      ---
+      duration_ms: 0.0377
+      ...
+    # Subtest: Lorenzo in rome is on walkable tile
+    ok 18 - Lorenzo in rome is on walkable tile
+      ---
+      duration_ms: 0.0286
+      ...
+    # Subtest: Enzo in rome is on walkable tile
+    ok 19 - Enzo in rome is on walkable tile
+      ---
+      duration_ms: 0.0322
+      ...
+    # Subtest: Professoressa Rossi in rome is on walkable tile
+    ok 20 - Professoressa Rossi in rome is on walkable tile
+      ---
+      duration_ms: 0.0283
+      ...
+    # Subtest: Alessandra in rome is on walkable tile
+    ok 21 - Alessandra in rome is on walkable tile
+      ---
+      duration_ms: 0.0288
+      ...
+    # Subtest: Bianca in rome is on walkable tile
+    ok 22 - Bianca in rome is on walkable tile
+      ---
+      duration_ms: 0.0284
+      ...
+    # Subtest: Marco in rome is on walkable tile
+    ok 23 - Marco in rome is on walkable tile
+      ---
+      duration_ms: 0.0273
+      ...
+    # Subtest: Fatima in marrakech is on walkable tile
+    ok 24 - Fatima in marrakech is on walkable tile
+      ---
+      duration_ms: 0.0283
+      ...
+    # Subtest: Amina in marrakech is on walkable tile
+    ok 25 - Amina in marrakech is on walkable tile
+      ---
+      duration_ms: 0.0293
+      ...
+    # Subtest: Karim in marrakech is on walkable tile
+    not ok 26 - Karim in marrakech is on walkable tile
+      ---
+      duration_ms: 1.1086
+      location: 'C:\\Users\\harrisb\\Documents\\questGame\\tests\\test_systems.mjs:385:13'
+      failureType: 'testCodeFailure'
+      error: |-
+        NPC Karim placed on wall tile at (18,15)
+        
+        50 !== -1
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: -1
+      actual: 50
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///C:/Users/harrisb/Documents/questGame/tests/test_systems.mjs:391:24)
+        Test.runInAsyncScope (node:async_hooks:206:9)
+        Test.run (node:internal/test_runner/test:796:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:526:18)
+        Test.postRun (node:internal/test_runner/test:889:19)
+        Test.run (node:internal/test_runner/test:835:12)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:526:7)
+      ...
+    # Subtest: Hassan in marrakech is on walkable tile
+    ok 27 - Hassan in marrakech is on walkable tile
+      ---
+      duration_ms: 0.0587
+      ...
+    # Subtest: Youssef in marrakech is on walkable tile
+    ok 28 - Youssef in marrakech is on walkable tile
+      ---
+      duration_ms: 0.035
+      ...
+    # Subtest: Tariq in marrakech is on walkable tile
+    ok 29 - Tariq in marrakech is on walkable tile
+      ---
+      duration_ms: 0.0308
+      ...
+    # Subtest: Zahra in marrakech is on walkable tile
+    ok 30 - Zahra in marrakech is on walkable tile
+      ---
+      duration_ms: 0.029
+      ...
+    # Subtest: Nadia in marrakech is on walkable tile
+    ok 31 - Nadia in marrakech is on walkable tile
+      ---
+      duration_ms: 0.0293
+      ...
+    # Subtest: Takeshi in tokyo is on walkable tile
+    ok 32 - Takeshi in tokyo is on walkable tile
+      ---
+      duration_ms: 0.0317
+      ...
+    # Subtest: Sakura in tokyo is on walkable tile
+    ok 33 - Sakura in tokyo is on walkable tile
+      ---
+      duration_ms: 0.0287
+      ...
+    # Subtest: Hiro in tokyo is on walkable tile
+    ok 34 - Hiro in tokyo is on walkable tile
+      ---
+      duration_ms: 0.0276
+      ...
+    # Subtest: Aiko in tokyo is on walkable tile
+    not ok 35 - Aiko in tokyo is on walkable tile
+      ---
+      duration_ms: 0.109
+      location: 'C:\\Users\\harrisb\\Documents\\questGame\\tests\\test_systems.mjs:385:13'
+      failureType: 'testCodeFailure'
+      error: |-
+        NPC Aiko placed on wall tile at (18,25)
+        
+        57 !== -1
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: -1
+      actual: 57
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///C:/Users/harrisb/Documents/questGame/tests/test_systems.mjs:391:24)
+        Test.runInAsyncScope (node:async_hooks:206:9)
+        Test.run (node:internal/test_runner/test:796:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:526:18)
+        Test.postRun (node:internal/test_runner/test:889:19)
+        Test.run (node:internal/test_runner/test:835:12)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:526:7)
+      ...
+    # Subtest: Tanaka in tokyo is on walkable tile
+    ok 36 - Tanaka in tokyo is on walkable tile
+      ---
+      duration_ms: 0.1836
+      ...
+    # Subtest: Yuki-san in tokyo is on walkable tile
+    ok 37 - Yuki-san in tokyo is on walkable tile
+      ---
+      duration_ms: 0.0521
+      ...
+    # Subtest: Spirit Fox in tokyo is on walkable tile
+    ok 38 - Spirit Fox in tokyo is on walkable tile
+      ---
+      duration_ms: 0.0418
+      ...
+    # Subtest: Ghost of Madeleine in tokyo is on walkable tile
+    ok 39 - Ghost of Madeleine in tokyo is on walkable tile
+      ---
+      duration_ms: 0.0419
+      ...
+    1..39
+not ok 6 - NPC Placement
+  ---
+  duration_ms: 4.0963
+  type: 'suite'
+  location: 'C:\\Users\\harrisb\\Documents\\questGame\\tests\\test_systems.mjs:378:1'
+  failureType: 'subtestsFailed'
+  error: '2 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: Travel Routes
+    # Subtest: every city in CITIES has an entry in CITY_MAP_POSITIONS
+    ok 1 - every city in CITIES has an entry in CITY_MAP_POSITIONS
+      ---
+      duration_ms: 0.1093
+      ...
+    # Subtest: every city with connections has matching routes
+    ok 2 - every city with connections has matching routes
+      ---
+      duration_ms: 0.0913
+      ...
+    # Subtest: routes are bidirectional (A->B implies B->A)
+    ok 3 - routes are bidirectional (A->B implies B->A)
+      ---
+      duration_ms: 0.0934
+      ...
+    # Subtest: route types are valid
+    ok 4 - route types are valid
+      ---
+      duration_ms: 0.0905
+      ...
+    # Subtest: portal routes require portal_unlocked flag
+    ok 5 - portal routes require portal_unlocked flag
+      ---
+      duration_ms: 0.0821
+      ...
+    1..5
+ok 7 - Travel Routes
+  ---
+  duration_ms: 0.5584
+  type: 'suite'
+  ...
+# Subtest: InventoryManager
+    # Subtest: starts empty on new game
+    ok 1 - starts empty on new game
+      ---
+      duration_ms: 0.5134
+      ...
+    # Subtest: loads existing items from registry
+    ok 2 - loads existing items from registry
+      ---
+      duration_ms: 0.0864
+      ...
+    # Subtest: addItem adds to inventory and persists
+    ok 3 - addItem adds to inventory and persists
+      ---
+      duration_ms: 0.2544
+      ...
+    # Subtest: addItem prevents duplicates by id
+    ok 4 - addItem prevents duplicates by id
+      ---
+      duration_ms: 0.1017
+      ...
+    # Subtest: removeItem removes by id
+    ok 5 - removeItem removes by id
+      ---
+      duration_ms: 0.0897
+      ...
+    # Subtest: hasItem returns correct boolean
+    ok 6 - hasItem returns correct boolean
+      ---
+      duration_ms: 0.0827
+      ...
+    # Subtest: getItems returns a copy, not the internal array
+    ok 7 - getItems returns a copy, not the internal array
+      ---
+      duration_ms: 0.0706
+      ...
+    1..7
+ok 8 - InventoryManager
+  ---
+  duration_ms: 1.4178
+  type: 'suite'
+  ...
+# Subtest: SaveManager
+    # Subtest: save writes to localStorage
+    ok 1 - save writes to localStorage
+      ---
+      duration_ms: 0.3472
+      ...
+    # Subtest: load returns parsed data
+    ok 2 - load returns parsed data
+      ---
+      duration_ms: 0.134
+      ...
+    # Subtest: load returns null for missing save
+    ok 3 - load returns null for missing save
+      ---
+      duration_ms: 0.138
+      ...
+    # Subtest: load returns null for corrupted JSON
+    ok 4 - load returns null for corrupted JSON
+      ---
+      duration_ms: 0.1486
+      ...
+    # Subtest: load returns null for non-object JSON
+    ok 5 - load returns null for non-object JSON
+      ---
+      duration_ms: 0.0859
+      ...
+    # Subtest: load returns null for object missing currentCity
+    ok 6 - load returns null for object missing currentCity
+      ---
+      duration_ms: 0.0914
+      ...
+    # Subtest: hasSave returns true when valid save exists
+    ok 7 - hasSave returns true when valid save exists
+      ---
+      duration_ms: 0.0921
+      ...
+    # Subtest: hasSave returns false when no save
+    ok 8 - hasSave returns false when no save
+      ---
+      duration_ms: 0.0709
+      ...
+    # Subtest: hasSave returns false for corrupted save
+    ok 9 - hasSave returns false for corrupted save
+      ---
+      duration_ms: 0.0913
+      ...
+    # Subtest: deleteSave removes the save
+    ok 10 - deleteSave removes the save
+      ---
+      duration_ms: 0.0997
+      ...
+    # Subtest: save includes openedChests
+    ok 11 - save includes openedChests
+      ---
+      duration_ms: 0.2303
+      ...
+    # Subtest: save includes currentRoom
+    ok 12 - save includes currentRoom
+      ---
+      duration_ms: 0.2269
+      ...
+    # Subtest: save defaults currentRoom to main when not set
+    ok 13 - save defaults currentRoom to main when not set
+      ---
+      duration_ms: 0.127
+      ...
+    1..13
+ok 9 - SaveManager
+  ---
+  duration_ms: 2.292
+  type: 'suite'
+  ...
+# Subtest: DialogManager
+    # Subtest: startDialog sets active state
+    ok 1 - startDialog sets active state
+      ---
+      duration_ms: 0.2757
+      ...
+    # Subtest: startDialog with unknown dialog shows fallback message
+    ok 2 - startDialog with unknown dialog shows fallback message
+      ---
+      duration_ms: 0.3091
+      ...
+    # Subtest: advance skips typewriter on first press
+    ok 3 - advance skips typewriter on first press
+      ---
+      duration_ms: 0.1911
+      ...
+    # Subtest: advance moves to next line after typewriter complete
+    ok 4 - advance moves to next line after typewriter complete
+      ---
+      duration_ms: 0.1905
+      ...
+    # Subtest: endDialog calls callback and sets active false
+    ok 5 - endDialog calls callback and sets active false
+      ---
+      duration_ms: 0.1977
+      ...
+    # Subtest: endDialog sets flags from dialog data
+    ok 6 - endDialog sets flags from dialog data
+      ---
+      duration_ms: 0.166
+      ...
+    # Subtest: endDialog gives items from dialog data
+    ok 7 - endDialog gives items from dialog data
+      ---
+      duration_ms: 0.2106
+      ...
+    # Subtest: endDialog unlocks cities from dialog data
+    ok 8 - endDialog unlocks cities from dialog data
+      ---
+      duration_ms: 0.1638
+      ...
+    # Subtest: advance respects cooldown
+    ok 9 - advance respects cooldown
+      ---
+      duration_ms: 0.127
+      ...
+    # Subtest: showMessage creates a single-line dialog
+    ok 10 - showMessage creates a single-line dialog
+      ---
+      duration_ms: 0.1029
+      ...
+    1..10
+ok 10 - DialogManager
+  ---
+  duration_ms: 2.1191
+  type: 'suite'
+  ...
+# Subtest: QuestManager
+    # Subtest: getNPCDialogId returns correct dialog based on flags
+    ok 1 - getNPCDialogId returns correct dialog based on flags
+      ---
+      duration_ms: 0.2942
+      ...
+    # Subtest: getNPCDialogId returns null for unknown NPC
+    ok 2 - getNPCDialogId returns null for unknown NPC
+      ---
+      duration_ms: 0.0716
+      ...
+    # Subtest: completeObjective adds to completedObjectives
+    ok 3 - completeObjective adds to completedObjectives
+      ---
+      duration_ms: 0.1575
+      ...
+    # Subtest: completeObjective is idempotent
+    ok 4 - completeObjective is idempotent
+      ---
+      duration_ms: 0.1366
+      ...
+    # Subtest: getActiveQuests returns empty before quest starts
+    ok 5 - getActiveQuests returns empty before quest starts
+      ---
+      duration_ms: 0.1057
+      ...
+    # Subtest: getActiveQuests returns quest after started
+    ok 6 - getActiveQuests returns quest after started
+      ---
+      duration_ms: 0.1216
+      ...
+    # Subtest: getActiveQuests only shows objectives whose requirements are met
+    ok 7 - getActiveQuests only shows objectives whose requirements are met
+      ---
+      duration_ms: 0.1214
+      ...
+    # Subtest: getChestReward returns null when flag not met
+    ok 8 - getChestReward returns null when flag not met
+      ---
+      duration_ms: 0.1342
+      ...
+    # Subtest: getChestReward returns item when flag is met
+    ok 9 - getChestReward returns item when flag is met
+      ---
+      duration_ms: 0.0762
+      ...
+    # Subtest: getChestReward returns null for unknown chest
+    ok 10 - getChestReward returns null for unknown chest
+      ---
+      duration_ms: 0.0928
+      ...
+    # Subtest: getCurrentObjective returns the next uncompleted objective
+    ok 11 - getCurrentObjective returns the next uncompleted objective
+      ---
+      duration_ms: 0.0989
+      ...
+    1..11
+ok 11 - QuestManager
+  ---
+  duration_ms: 1.6065
+  type: 'suite'
+  ...
+# Subtest: TravelManager
+    # Subtest: returns available destinations from paris
+    ok 1 - returns available destinations from paris
+      ---
+      duration_ms: 0.2089
+      ...
+    # Subtest: filters out locked cities
+    ok 2 - filters out locked cities
+      ---
+      duration_ms: 0.094
+      ...
+    # Subtest: filters out portal routes without portal_unlocked flag
+    ok 3 - filters out portal routes without portal_unlocked flag
+      ---
+      duration_ms: 0.0684
+      ...
+    # Subtest: includes portal routes when portal_unlocked flag is set
+    ok 4 - includes portal routes when portal_unlocked flag is set
+      ---
+      duration_ms: 0.0845
+      ...
+    # Subtest: getRoute returns route data for valid pair
+    ok 5 - getRoute returns route data for valid pair
+      ---
+      duration_ms: 0.1715
+      ...
+    # Subtest: getRoute returns null for invalid pair
+    ok 6 - getRoute returns null for invalid pair
+      ---
+      duration_ms: 0.0556
+      ...
+    1..6
+ok 12 - TravelManager
+  ---
+  duration_ms: 0.7961
+  type: 'suite'
+  ...
+# Subtest: Full Quest Playthrough (data layer)
+    # Subtest: complete quest chain produces correct flag sequence
+    ok 1 - complete quest chain produces correct flag sequence
+      ---
+      duration_ms: 0.3214
+      ...
+    1..1
+ok 13 - Full Quest Playthrough (data layer)
+  ---
+  duration_ms: 0.3615
+  type: 'suite'
+  ...
+# Subtest: Water Tile Collision (Bug Fix)
+    # Subtest: Paris Seine tiles (rows 16-18) have walls except at bridges
+    ok 1 - Paris Seine tiles (rows 16-18) have walls except at bridges
+      ---
+      duration_ms: 0.2182
+      ...
+    # Subtest: London Thames tiles (rows 18-21) have walls except at bridges
+    ok 2 - London Thames tiles (rows 18-21) have walls except at bridges
+      ---
+      duration_ms: 0.1318
+      ...
+    # Subtest: Paris bridge tiles have cobblestone ground, not water
+    ok 3 - Paris bridge tiles have cobblestone ground, not water
+      ---
+      duration_ms: 0.075
+      ...
+    # Subtest: London bridge tiles have pavement ground, not water
+    ok 4 - London bridge tiles have pavement ground, not water
+      ---
+      duration_ms: 0.0633
+      ...
+    1..4
+ok 14 - Water Tile Collision (Bug Fix)
+  ---
+  duration_ms: 0.5599
+  type: 'suite'
+  ...
+# Subtest: Travel Route Flag Validation (Bug Fix)
+    # Subtest: portal route from marrakech to tokyo requires portal_unlocked
+    ok 1 - portal route from marrakech to tokyo requires portal_unlocked
+      ---
+      duration_ms: 0.07
+      ...
+    # Subtest: TravelManager filters portal routes without flag
+    ok 2 - TravelManager filters portal routes without flag
+      ---
+      duration_ms: 0.0672
+      ...
+    # Subtest: TravelManager includes portal routes with flag
+    ok 3 - TravelManager includes portal routes with flag
+      ---
+      duration_ms: 0.0701
+      ...
+    # Subtest: getRoute returns raw route even without flag (caller must validate)
+    ok 4 - getRoute returns raw route even without flag (caller must validate)
+      ---
+      duration_ms: 0.0577
+      ...
+    1..4
+ok 15 - Travel Route Flag Validation (Bug Fix)
+  ---
+  duration_ms: 0.3412
+  type: 'suite'
+  ...
+# Subtest: Menu State Guards (Bug Fix)
+    # Subtest: inventory should not open during active dialog (ExploreScene logic)
+    ok 1 - inventory should not open during active dialog (ExploreScene logic)
+      ---
+      duration_ms: 0.0658
+      ...
+    # Subtest: quest log should not open during active dialog (ExploreScene logic)
+    ok 2 - quest log should not open during active dialog (ExploreScene logic)
+      ---
+      duration_ms: 0.0465
+      ...
+    # Subtest: inventory can open when no dialog active
+    ok 3 - inventory can open when no dialog active
+      ---
+      duration_ms: 0.0407
+      ...
+    1..3
+ok 16 - Menu State Guards (Bug Fix)
+  ---
+  duration_ms: 0.2098
+  type: 'suite'
+  ...
+# Subtest: NPC Sprite Types (Data Integrity)
+    # Subtest: Grand-mère Elise has valid sprite type 'grandma'
+    ok 1 - Grand-mère Elise has valid sprite type 'grandma'
+      ---
+      duration_ms: 0.1875
+      ...
+    # Subtest: Monsieur Dupont has valid sprite type 'librarian'
+    ok 2 - Monsieur Dupont has valid sprite type 'librarian'
+      ---
+      duration_ms: 0.0421
+      ...
+    # Subtest: Sophie has valid sprite type 'guide'
+    ok 3 - Sophie has valid sprite type 'guide'
+      ---
+      duration_ms: 0.0414
+      ...
+    # Subtest: Pierre has valid sprite type 'artist'
+    ok 4 - Pierre has valid sprite type 'artist'
+      ---
+      duration_ms: 0.0274
+      ...
+    # Subtest: Madame Colette has valid sprite type 'flower_seller'
+    ok 5 - Madame Colette has valid sprite type 'flower_seller'
+      ---
+      duration_ms: 0.0257
+      ...
+    # Subtest: Tourist Claude has valid sprite type 'tourist'
+    ok 6 - Tourist Claude has valid sprite type 'tourist'
+      ---
+      duration_ms: 0.0265
+      ...
+    # Subtest: Ticket Attendant has valid sprite type 'attendant'
+    ok 7 - Ticket Attendant has valid sprite type 'attendant'
+      ---
+      duration_ms: 0.0235
+      ...
+    # Subtest: Marie has valid sprite type 'photographer'
+    ok 8 - Marie has valid sprite type 'photographer'
+      ---
+      duration_ms: 0.0223
+      ...
+    # Subtest: Emma has valid sprite type 'guide'
+    ok 9 - Emma has valid sprite type 'guide'
+      ---
+      duration_ms: 0.0688
+      ...
+    # Subtest: Bobby has valid sprite type 'policeman'
+    ok 10 - Bobby has valid sprite type 'policeman'
+      ---
+      duration_ms: 0.0287
+      ...
+    # Subtest: Mrs. Pemberton has valid sprite type 'grandma'
+    ok 11 - Mrs. Pemberton has valid sprite type 'grandma'
+      ---
+      duration_ms: 0.0267
+      ...
+    # Subtest: Dr. Wellington has valid sprite type 'curator'
+    ok 12 - Dr. Wellington has valid sprite type 'curator'
+      ---
+      duration_ms: 0.0232
+      ...
+    # Subtest: Guard Roberts has valid sprite type 'librarian'
+    ok 13 - Guard Roberts has valid sprite type 'librarian'
+      ---
+      duration_ms: 0.0216
+      ...
+    # Subtest: Olivia has valid sprite type 'clerk'
+    ok 14 - Olivia has valid sprite type 'clerk'
+      ---
+      duration_ms: 0.0219
+      ...
+    # Subtest: Professor Higgins has valid sprite type 'professor'
+    ok 15 - Professor Higgins has valid sprite type 'professor'
+      ---
+      duration_ms: 0.0266
+      ...
+    # Subtest: Thomas has valid sprite type 'schoolkid'
+    ok 16 - Thomas has valid sprite type 'schoolkid'
+      ---
+      duration_ms: 0.0503
+      ...
+    # Subtest: Giulia has valid sprite type 'guide'
+    ok 17 - Giulia has valid sprite type 'guide'
+      ---
+      duration_ms: 0.0266
+      ...
+    # Subtest: Lorenzo has valid sprite type 'gelato'
+    ok 18 - Lorenzo has valid sprite type 'gelato'
+      ---
+      duration_ms: 0.0217
+      ...
+    # Subtest: Enzo has valid sprite type 'musician'
+    ok 19 - Enzo has valid sprite type 'musician'
+      ---
+      duration_ms: 0.0245
+      ...
+    # Subtest: Professoressa Rossi has valid sprite type 'curator'
+    ok 20 - Professoressa Rossi has valid sprite type 'curator'
+      ---
+      duration_ms: 0.0247
+      ...
+    # Subtest: Alessandra has valid sprite type 'tour_guide'
+    ok 21 - Alessandra has valid sprite type 'tour_guide'
+      ---
+      duration_ms: 0.0238
+      ...
+    # Subtest: Bianca has valid sprite type 'cat_lady'
+    ok 22 - Bianca has valid sprite type 'cat_lady'
+      ---
+      duration_ms: 0.0235
+      ...
+    # Subtest: Marco has valid sprite type 'merchant'
+    ok 23 - Marco has valid sprite type 'merchant'
+      ---
+      duration_ms: 0.0244
+      ...
+    # Subtest: Fatima has valid sprite type 'grandma'
+    ok 24 - Fatima has valid sprite type 'grandma'
+      ---
+      duration_ms: 0.0217
+      ...
+    # Subtest: Amina has valid sprite type 'guide'
+    ok 25 - Amina has valid sprite type 'guide'
+      ---
+      duration_ms: 0.0225
+      ...
+    # Subtest: Karim has valid sprite type 'spice_merchant'
+    ok 26 - Karim has valid sprite type 'spice_merchant'
+      ---
+      duration_ms: 0.0234
+      ...
+    # Subtest: Hassan has valid sprite type 'merchant'
+    ok 27 - Hassan has valid sprite type 'merchant'
+      ---
+      duration_ms: 0.0246
+      ...
+    # Subtest: Youssef has valid sprite type 'storyteller'
+    ok 28 - Youssef has valid sprite type 'storyteller'
+      ---
+      duration_ms: 0.0212
+      ...
+    # Subtest: Tariq has valid sprite type 'carpet_merchant'
+    ok 29 - Tariq has valid sprite type 'carpet_merchant'
+      ---
+      duration_ms: 0.0226
+      ...
+    # Subtest: Zahra has valid sprite type 'riad_keeper'
+    ok 30 - Zahra has valid sprite type 'riad_keeper'
+      ---
+      duration_ms: 0.0244
+      ...
+    # Subtest: Nadia has valid sprite type 'desert_guide'
+    ok 31 - Nadia has valid sprite type 'desert_guide'
+      ---
+      duration_ms: 0.0273
+      ...
+    # Subtest: Takeshi has valid sprite type 'librarian'
+    ok 32 - Takeshi has valid sprite type 'librarian'
+      ---
+      duration_ms: 0.0214
+      ...
+    # Subtest: Sakura has valid sprite type 'guide'
+    ok 33 - Sakura has valid sprite type 'guide'
+      ---
+      duration_ms: 0.0214
+      ...
+    # Subtest: Hiro has valid sprite type 'ramen_chef'
+    ok 34 - Hiro has valid sprite type 'ramen_chef'
+      ---
+      duration_ms: 0.0228
+      ...
+    # Subtest: Aiko has valid sprite type 'manga_artist'
+    ok 35 - Aiko has valid sprite type 'manga_artist'
+      ---
+      duration_ms: 0.025
+      ...
+    # Subtest: Tanaka has valid sprite type 'shrine_keeper'
+    ok 36 - Tanaka has valid sprite type 'shrine_keeper'
+      ---
+      duration_ms: 0.0239
+      ...
+    # Subtest: Yuki-san has valid sprite type 'gardener'
+    ok 37 - Yuki-san has valid sprite type 'gardener'
+      ---
+      duration_ms: 0.0244
+      ...
+    # Subtest: Spirit Fox has valid sprite type 'spirit_fox'
+    ok 38 - Spirit Fox has valid sprite type 'spirit_fox'
+      ---
+      duration_ms: 0.0232
+      ...
+    # Subtest: Ghost of Madeleine has valid sprite type 'ghost'
+    ok 39 - Ghost of Madeleine has valid sprite type 'ghost'
+      ---
+      duration_ms: 0.0282
+      ...
+    1..39
+ok 17 - NPC Sprite Types (Data Integrity)
+  ---
+  duration_ms: 1.6022
+  type: 'suite'
+  ...
+# Subtest: Dialog Reward Integrity
+    # Subtest: every dialog givesItem has required fields
+    ok 1 - every dialog givesItem has required fields
+      ---
+      duration_ms: 0.1397
+      ...
+    # Subtest: every dialog unlocksCity references a valid city
+    ok 2 - every dialog unlocksCity references a valid city
+      ---
+      duration_ms: 0.1376
+      ...
+    # Subtest: every dialog setsFlag is a non-empty string
+    ok 3 - every dialog setsFlag is a non-empty string
+      ---
+      duration_ms: 0.1079
+      ...
+    # Subtest: every chest unlocksCity references a valid city
+    ok 4 - every chest unlocksCity references a valid city
+      ---
+      duration_ms: 0.0708
+      ...
+    1..4
+ok 18 - Dialog Reward Integrity
+  ---
+  duration_ms: 0.5303
+  type: 'suite'
+  ...
+# Subtest: City Connections Consistency
+    # Subtest: every city connection has a matching TRAVEL_ROUTE
+    ok 1 - every city connection has a matching TRAVEL_ROUTE
+      ---
+      duration_ms: 0.0938
+      ...
+    # Subtest: every TRAVEL_ROUTE references valid cities
+    ok 2 - every TRAVEL_ROUTE references valid cities
+      ---
+      duration_ms: 0.0922
+      ...
+    1..2
+ok 19 - City Connections Consistency
+  ---
+  duration_ms: 0.2287
+  type: 'suite'
+  ...
+# Subtest: Portal Tile Placement (Bug Fix)
+    # Subtest: Marrakech has a portal tile for portal travel
+    ok 1 - Marrakech has a portal tile for portal travel
+      ---
+      duration_ms: 0.3356
+      ...
+    # Subtest: Tokyo has a portal tile
+    ok 2 - Tokyo has a portal tile
+      ---
+      duration_ms: 0.1425
+      ...
+    # Subtest: cities with portal connections have portal tiles
+    ok 3 - cities with portal connections have portal tiles
+      ---
+      duration_ms: 0.2182
+      ...
+    1..3
+ok 20 - Portal Tile Placement (Bug Fix)
+  ---
+  duration_ms: 0.7604
+  type: 'suite'
+  ...
+# Subtest: i18n System
+    # Subtest: initLanguage defaults to French when no preference stored
+    ok 1 - initLanguage defaults to French when no preference stored
+      ---
+      duration_ms: 0.1924
+      ...
+    # Subtest: setLanguage persists to localStorage
+    ok 2 - setLanguage persists to localStorage
+      ---
+      duration_ms: 0.0685
+      ...
+    # Subtest: toggleLanguage switches between en and fr
+    ok 3 - toggleLanguage switches between en and fr
+      ---
+      duration_ms: 0.0796
+      ...
+    # Subtest: t() returns translated string for simple key
+    ok 4 - t() returns translated string for simple key
+      ---
+      duration_ms: 0.095
+      ...
+    # Subtest: t() supports placeholder replacement
+    ok 5 - t() supports placeholder replacement
+      ---
+      duration_ms: 0.0829
+      ...
+    # Subtest: t() returns key path for missing keys
+    ok 6 - t() returns key path for missing keys
+      ---
+      duration_ms: 0.0652
+      ...
+    # Subtest: getDialogueLines returns array for valid dialogue
+    ok 7 - getDialogueLines returns array for valid dialogue
+      ---
+      duration_ms: 0.0817
+      ...
+    # Subtest: getItemText returns name and description
+    ok 8 - getItemText returns name and description
+      ---
+      duration_ms: 0.07
+      ...
+    # Subtest: getQuestText returns quest data
+    ok 9 - getQuestText returns quest data
+      ---
+      duration_ms: 0.0679
+      ...
+    # Subtest: every dialogue in DIALOGUES has a matching EN i18n entry
+    not ok 10 - every dialogue in DIALOGUES has a matching EN i18n entry
+      ---
+      duration_ms: 0.4014
+      location: 'C:\\Users\\harrisb\\Documents\\questGame\\tests\\test_systems.mjs:1431:5'
+      failureType: 'testCodeFailure'
+      error: |-
+        Missing EN dialogues: guard_with_pass
+        
+        1 !== 0
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 0
+      actual: 1
+      operator: 'strictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///C:/Users/harrisb/Documents/questGame/tests/test_systems.mjs:1437:16)
+        Test.runInAsyncScope (node:async_hooks:206:9)
+        Test.run (node:internal/test_runner/test:796:25)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:526:7)
+      ...
+    # Subtest: every dialogue in DIALOGUES has a matching FR i18n entry
+    ok 11 - every dialogue in DIALOGUES has a matching FR i18n entry
+      ---
+      duration_ms: 0.1427
+      ...
+    # Subtest: EN and FR dialogue entries have the same line count
+    ok 12 - EN and FR dialogue entries have the same line count
+      ---
+      duration_ms: 0.127
+      ...
+    # Subtest: every item in CHEST_REWARDS and DIALOGUES has i18n entry (EN)
+    ok 13 - every item in CHEST_REWARDS and DIALOGUES has i18n entry (EN)
+      ---
+      duration_ms: 0.1285
+      ...
+    # Subtest: every item in CHEST_REWARDS and DIALOGUES has i18n entry (FR)
+    ok 14 - every item in CHEST_REWARDS and DIALOGUES has i18n entry (FR)
+      ---
+      duration_ms: 1.6507
+      ...
+    # Subtest: all travel route labelKeys have i18n entries
+    ok 15 - all travel route labelKeys have i18n entries
+      ---
+      duration_ms: 0.2114
+      ...
+    1..15
+not ok 21 - i18n System
+  ---
+  duration_ms: 3.7292
+  type: 'suite'
+  location: 'C:\\Users\\harrisb\\Documents\\questGame\\tests\\test_systems.mjs:1362:1'
+  failureType: 'subtestsFailed'
+  error: '1 subtest failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: Graphics Overhaul Regression
+    # Subtest: paris is 50x40 with playerStart at (25,33)
+    ok 1 - paris is 50x40 with playerStart at (25,33)
+      ---
+      duration_ms: 0.1504
+      ...
+    # Subtest: london is 50x40 with playerStart at (25,33)
+    ok 2 - london is 50x40 with playerStart at (25,33)
+      ---
+      duration_ms: 0.0314
+      ...
+    # Subtest: rome is 50x40 with playerStart at (25,33)
+    ok 3 - rome is 50x40 with playerStart at (25,33)
+      ---
+      duration_ms: 0.0255
+      ...
+    # Subtest: marrakech is 50x40 with playerStart at (25,33)
+    ok 4 - marrakech is 50x40 with playerStart at (25,33)
+      ---
+      duration_ms: 0.0232
+      ...
+    # Subtest: tokyo is 50x40 with playerStart at (25,33)
+    ok 5 - tokyo is 50x40 with playerStart at (25,33)
+      ---
+      duration_ms: 0.0245
+      ...
+    # Subtest: every CHEST_REWARDS key matches an actual chest decor tile in the map
+    ok 6 - every CHEST_REWARDS key matches an actual chest decor tile in the map
+      ---
+      duration_ms: 0.2485
+      ...
+    # Subtest: every chest decor tile (20) in every city map and room has a walkable ground tile
+    ok 7 - every chest decor tile (20) in every city map and room has a walkable ground tile
+      ---
+      duration_ms: 0.4859
+      ...
+    # Subtest: all portal decor tiles (21) are on walkable ground
+    ok 8 - all portal decor tiles (21) are on walkable ground
+      ---
+      duration_ms: 0.2949
+      ...
+    # Subtest: no tile has both a chest and a portal on the same decor cell
+    ok 9 - no tile has both a chest and a portal on the same decor cell
+      ---
+      duration_ms: 0.1345
+      ...
+    # Subtest: paris exit zone aligns with south gap in wall border
+    ok 10 - paris exit zone aligns with south gap in wall border
+      ---
+      duration_ms: 0.0807
+      ...
+    # Subtest: london exit zone aligns with south gap in wall border
+    ok 11 - london exit zone aligns with south gap in wall border
+      ---
+      duration_ms: 0.0331
+      ...
+    # Subtest: rome exit zone aligns with south gap in wall border
+    ok 12 - rome exit zone aligns with south gap in wall border
+      ---
+      duration_ms: 0.0285
+      ...
+    # Subtest: marrakech exit zone aligns with south gap in wall border
+    ok 13 - marrakech exit zone aligns with south gap in wall border
+      ---
+      duration_ms: 0.0313
+      ...
+    # Subtest: tokyo exit zone aligns with south gap in wall border
+    ok 14 - tokyo exit zone aligns with south gap in wall border
+      ---
+      duration_ms: 0.0352
+      ...
+    # Subtest: every water ground tile (2) in cities with rivers has a corresponding wall
+    ok 15 - every water ground tile (2) in cities with rivers has a corresponding wall
+      ---
+      duration_ms: 0.3333
+      ...
+    # Subtest: no NPC is placed on a water tile
+    ok 16 - no NPC is placed on a water tile
+      ---
+      duration_ms: 0.1648
+      ...
+    # Subtest: no NPC is placed on the border (row 0, last row, col 0, last col)
+    ok 17 - no NPC is placed on the border (row 0, last row, col 0, last col)
+      ---
+      duration_ms: 0.1595
+      ...
+    # Subtest: paris player start is not on water
+    ok 18 - paris player start is not on water
+      ---
+      duration_ms: 0.0616
+      ...
+    # Subtest: london player start is not on water
+    ok 19 - london player start is not on water
+      ---
+      duration_ms: 0.0282
+      ...
+    # Subtest: rome player start is not on water
+    ok 20 - rome player start is not on water
+      ---
+      duration_ms: 0.0252
+      ...
+    # Subtest: marrakech player start is not on water
+    ok 21 - marrakech player start is not on water
+      ---
+      duration_ms: 0.0241
+      ...
+    # Subtest: tokyo player start is not on water
+    ok 22 - tokyo player start is not on water
+      ---
+      duration_ms: 0.0239
+      ...
+    # Subtest: all sign tiles (22 in decor) are on walkable ground
+    ok 23 - all sign tiles (22 in decor) are on walkable ground
+      ---
+      duration_ms: 0.2968
+      ...
+    # Subtest: NPC collision body (12x12 with offset 2,12) fits within 16x24 sprite
+    ok 24 - NPC collision body (12x12 with offset 2,12) fits within 16x24 sprite
+      ---
+      duration_ms: 0.0555
+      ...
+    # Subtest: Player collision body (10x10 with offset 3,14) fits within 16x24 sprite
+    ok 25 - Player collision body (10x10 with offset 3,14) fits within 16x24 sprite
+      ---
+      duration_ms: 0.0521
+      ...
+    1..25
+ok 22 - Graphics Overhaul Regression
+  ---
+  duration_ms: 3.2266
+  type: 'suite'
+  ...
+1..22
+# tests 258
+# suites 27
+# pass 255
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 92.2745

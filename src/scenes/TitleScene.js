@@ -131,26 +131,28 @@ export class TitleScene extends Phaser.Scene {
     startNewGame() {
         // Reset game state
         this.registry.set('currentCity', 'paris');
+        this.registry.set('currentRoom', 'main');
         this.registry.set('inventory', []);
         this.registry.set('questState', {});
         this.registry.set('unlockedCities', ['paris']);
         this.registry.set('visitedCities', ['paris']);
         this.registry.set('flags', {});
         this.registry.set('openedChests', []);
-        this.scene.start('Explore', { city: 'paris' });
+        this.scene.start('Explore', { city: 'paris', room: 'main' });
     }
 
     continueGame() {
         const data = SaveManager.load();
         if (data) {
             this.registry.set('currentCity', data.currentCity);
+            this.registry.set('currentRoom', data.currentRoom || 'main');
             this.registry.set('inventory', data.inventory || []);
             this.registry.set('questState', data.questState || {});
             this.registry.set('unlockedCities', data.unlockedCities || ['paris']);
             this.registry.set('visitedCities', data.visitedCities || ['paris']);
             this.registry.set('flags', data.flags || {});
             this.registry.set('openedChests', data.openedChests || []);
-            this.scene.start('Explore', { city: data.currentCity });
+            this.scene.start('Explore', { city: data.currentCity, room: data.currentRoom || 'main' });
         } else {
             this.startNewGame();
         }

@@ -181,13 +181,13 @@ describe('NPC Dialog Routing', () => {
         assert.equal(find({ quest_started: true }), 'grandma_after_locket');
     });
 
-    it('librarian shows intro, then with_locket, then after_quest', () => {
+    it('librarian shows intro, then with_letter, then after_quest', () => {
         const routes = NPC_DIALOG_ROUTES.paris_librarian;
         const find = (flags) => routes.find(r => r.condition(flags)).dialog;
 
         assert.equal(find({}), 'librarian_intro');
-        assert.equal(find({ quest_started: true }), 'librarian_with_locket');
-        assert.equal(find({ quest_started: true, paris_complete: true }), 'librarian_after_quest');
+        assert.equal(find({ paris_has_eiffel_letter: true }), 'librarian_with_letter');
+        assert.equal(find({ paris_has_eiffel_letter: true, paris_complete: true }), 'librarian_after_quest');
     });
 
     it('curator shows intro, then with_letter, then after_quest', () => {
@@ -196,7 +196,7 @@ describe('NPC Dialog Routing', () => {
 
         assert.equal(find({}), 'curator_intro');
         assert.equal(find({ paris_complete: true }), 'curator_with_letter');
-        assert.equal(find({ paris_complete: true, london_complete: true }), 'curator_after_quest');
+        assert.equal(find({ paris_complete: true, london_met_curator: true, london_complete: true }), 'curator_after_quest');
     });
 
     it('rome historian has 4 stages of dialog', () => {
@@ -209,7 +209,7 @@ describe('NPC Dialog Routing', () => {
         assert.equal(find({ rome_complete: true }), 'rossi_after_quest');
     });
 
-    it('tokyo gardener has no gap between chest_unlocked and game_complete', () => {
+    it('tokyo gardener has no gap between jade_key and game_complete', () => {
         const routes = NPC_DIALOG_ROUTES.tokyo_gardener;
         const find = (flags) => routes.find(r => r.condition(flags)).dialog;
 
@@ -217,10 +217,10 @@ describe('NPC Dialog Routing', () => {
         assert.equal(find({}), 'yuki_intro');
         // With journal
         assert.equal(find({ marrakech_complete: true }), 'yuki_with_journal');
-        // After talking (chest unlocked, game not yet complete)
-        assert.equal(find({ marrakech_complete: true, tokyo_chest_unlocked: true }), 'yuki_after_quest');
+        // After talking (jade key obtained, game not yet complete)
+        assert.equal(find({ marrakech_complete: true, tokyo_has_jade_key: true }), 'yuki_after_quest');
         // After game complete
-        assert.equal(find({ marrakech_complete: true, tokyo_chest_unlocked: true, game_complete: true }), 'yuki_after_quest');
+        assert.equal(find({ marrakech_complete: true, tokyo_has_jade_key: true, game_complete: true }), 'yuki_after_quest');
     });
 });
 
@@ -230,8 +230,8 @@ describe('Quest Objective Chain', () => {
 
     const objectives = QUESTS.main_quest.objectives;
 
-    it('has 8 objectives', () => {
-        assert.equal(objectives.length, 8);
+    it('has 18 objectives', () => {
+        assert.equal(objectives.length, 18);
     });
 
     it('first objective has no requires', () => {
@@ -267,7 +267,7 @@ describe('Chest Rewards', () => {
 
     it('each chest ID follows city_chest_x_y format', () => {
         for (const id of Object.keys(CHEST_REWARDS)) {
-            assert.match(id, /^[a-z]+_chest_\d+_\d+$/, `Invalid chest ID format: ${id}`);
+            assert.match(id, /^[a-z_]+_chest_\d+_\d+$/, `Invalid chest ID format: ${id}`);
         }
     });
 
@@ -383,9 +383,12 @@ describe('NPC Placement', () => {
 
         for (const npc of npcs) {
             it(`${npc.name} in ${cityId} is on walkable tile`, () => {
-                assert.ok(npc.x >= 0 && npc.x < city.width, `X ${npc.x} out of bounds`);
-                assert.ok(npc.y >= 0 && npc.y < city.height, `Y ${npc.y} out of bounds`);
-                assert.equal(city.walls[npc.y][npc.x], -1,
+                const room = npc.room || 'main';
+                const mapData = (room === 'main') ? city : (city.rooms[room]);
+                assert.ok(mapData, `Room '${room}' not found for ${npc.name}`);
+                assert.ok(npc.x >= 0 && npc.x < mapData.width, `X ${npc.x} out of bounds`);
+                assert.ok(npc.y >= 0 && npc.y < mapData.height, `Y ${npc.y} out of bounds`);
+                assert.equal(mapData.walls[npc.y][npc.x], -1,
                     `NPC ${npc.name} placed on wall tile at (${npc.x},${npc.y})`);
             });
         }
@@ -587,6 +590,25 @@ describe('SaveManager', () => {
         const data = JSON.parse(_localStorage.get('questgame_save'));
         assert.deepEqual(data.openedChests, ['rome_chest_30_22']);
     });
+
+    it('save includes currentRoom', () => {
+        const reg = createMockRegistry({
+            currentCity: 'paris',
+            currentRoom: 'eiffel_top'
+        });
+        SaveManager.save(reg);
+        const data = JSON.parse(_localStorage.get('questgame_save'));
+        assert.equal(data.currentRoom, 'eiffel_top');
+    });
+
+    it('save defaults currentRoom to main when not set', () => {
+        const reg = createMockRegistry({
+            currentCity: 'paris'
+        });
+        SaveManager.save(reg);
+        const data = JSON.parse(_localStorage.get('questgame_save'));
+        assert.equal(data.currentRoom, 'main');
+    });
 });
 
 // ======================================================================
@@ -696,7 +718,7 @@ describe('DialogManager', () => {
 
     it('endDialog unlocks cities from dialog data', () => {
         const scene = createMockScene({
-            flags: { quest_started: true },
+            flags: { paris_has_eiffel_letter: true },
             inventory: [],
             unlockedCities: ['paris']
         });
@@ -704,7 +726,7 @@ describe('DialogManager', () => {
         scene.questManager = { completeObjective() {} };
         const dm = new DialogManager(scene);
 
-        dm.startDialog('librarian_with_locket', 'Dupont', () => {});
+        dm.startDialog('librarian_with_letter', 'Dupont', () => {});
 
         for (let i = 0; i < 40; i++) {
             if (!dm.active) break;
@@ -755,11 +777,11 @@ describe('QuestManager', () => {
 
     it('getNPCDialogId returns correct dialog based on flags', () => {
         const scene = createMockScene({
-            flags: { quest_started: true, paris_complete: false },
+            flags: { paris_has_eiffel_letter: true },
             questState: {}
         });
         const qm = new QuestManager(scene);
-        assert.equal(qm.getNPCDialogId('paris_librarian'), 'librarian_with_locket');
+        assert.equal(qm.getNPCDialogId('paris_librarian'), 'librarian_with_letter');
     });
 
     it('getNPCDialogId returns null for unknown NPC', () => {
@@ -805,13 +827,13 @@ describe('QuestManager', () => {
         let quests = qm.getActiveQuests();
         let visibleIds = quests[0].objectives.map(o => o.id);
         assert.ok(visibleIds.includes('paris_find_locket'));
-        assert.ok(!visibleIds.includes('paris_visit_librarian')); // requires paris_find_locket
+        assert.ok(!visibleIds.includes('paris_find_paintbrush')); // requires paris_find_locket
 
         // Complete first objective
         qm.completeObjective('paris_find_locket');
         quests = qm.getActiveQuests();
         visibleIds = quests[0].objectives.map(o => o.id);
-        assert.ok(visibleIds.includes('paris_visit_librarian')); // now visible
+        assert.ok(visibleIds.includes('paris_find_paintbrush')); // now visible
     });
 
     it('getChestReward returns null when flag not met', () => {
@@ -845,7 +867,7 @@ describe('QuestManager', () => {
         });
         const qm = new QuestManager(scene);
         const obj = qm.getCurrentObjective();
-        assert.equal(obj.id, 'paris_visit_librarian');
+        assert.equal(obj.id, 'paris_find_paintbrush');
     });
 });
 
@@ -940,6 +962,7 @@ describe('Full Quest Playthrough (data layer)', () => {
             if (chest.unlocksCity && !unlocked.includes(chest.unlocksCity)) {
                 unlocked.push(chest.unlocksCity);
             }
+            if (chest.unlocksPortal) flags.portal_unlocked = true;
             return true;
         }
 
@@ -948,48 +971,116 @@ describe('Full Quest Playthrough (data layer)', () => {
             return routes.find(r => r.condition(flags)).dialog;
         }
 
-        // 1. Paris: Talk to grandma
+        // 1. Paris: Talk to grandma -> get locket
         assert.equal(getDialog('paris_grandma'), 'grandma_intro');
         simulateDialog('grandma_intro');
         assert.ok(flags.quest_started);
         assert.ok(inventory.includes('locket'));
 
-        // 2. Paris: Talk to librarian
-        assert.equal(getDialog('paris_librarian'), 'librarian_with_locket');
-        simulateDialog('librarian_with_locket');
+        // 2. Paris: Talk to Colette -> get paintbrush
+        assert.equal(getDialog('paris_florist'), 'colette_intro');
+        simulateDialog('colette_intro');
+        assert.ok(flags.paris_has_paintbrush);
+        assert.ok(inventory.includes('paintbrush'));
+
+        // 3. Paris: Return paintbrush to Pierre -> get fastpass
+        assert.equal(getDialog('paris_artist'), 'pierre_has_brush');
+        simulateDialog('pierre_has_brush');
+        assert.ok(flags.paris_has_fastpass);
+        assert.ok(inventory.includes('fastpass'));
+
+        // 4. Paris: Open eiffel_top chest -> get eiffel_letter
+        assert.ok(simulateChest('paris_eiffel_top_chest_6_3'));
+        assert.ok(flags.paris_has_eiffel_letter);
+        assert.ok(inventory.includes('eiffel_letter'));
+
+        // 5. Paris: Talk to librarian with letter -> paris_complete, unlock london
+        assert.equal(getDialog('paris_librarian'), 'librarian_with_letter');
+        simulateDialog('librarian_with_letter');
         assert.ok(flags.paris_complete);
         assert.ok(unlocked.includes('london'));
 
-        // 3. London: Talk to curator
+        // 6. London: Talk to curator with letter -> london_met_curator
         assert.equal(getDialog('london_curator'), 'curator_with_letter');
         simulateDialog('curator_with_letter');
+        assert.ok(flags.london_met_curator);
+
+        // 7. London: Talk to Thomas -> get reading_glasses
+        assert.equal(getDialog('london_schoolkid'), 'thomas_intro');
+        simulateDialog('thomas_intro');
+        assert.ok(flags.london_has_glasses);
+        assert.ok(inventory.includes('reading_glasses'));
+
+        // 8. London: Return glasses to Higgins -> get research_pass
+        assert.equal(getDialog('london_professor'), 'higgins_with_glasses');
+        simulateDialog('higgins_with_glasses');
+        assert.ok(flags.london_has_research_pass);
+        assert.ok(inventory.includes('research_pass'));
+
+        // 9. London: Open museum_basement chest -> london_complete, unlock rome
+        assert.ok(simulateChest('london_museum_basement_chest_8_6'));
         assert.ok(flags.london_complete);
         assert.ok(unlocked.includes('rome'));
 
-        // 4. Rome: Talk to historian
+        // 10. Rome: Talk to historian -> get ancient key
         assert.equal(getDialog('rome_historian'), 'rossi_with_map');
         simulateDialog('rossi_with_map');
         assert.ok(flags.rome_have_key);
+        assert.ok(inventory.includes('key'));
 
-        // 5. Rome: Open chest
-        assert.ok(simulateChest('rome_chest_30_22'));
+        // 11. Rome: Open catacombs_lower chest -> rome_complete, unlock marrakech
+        assert.ok(simulateChest('rome_catacombs_lower_chest_7_5'));
         assert.ok(flags.rome_complete);
         assert.ok(unlocked.includes('marrakech'));
 
-        // 6. Marrakech: Talk to merchant
+        // 12. Marrakech: Talk to Hassan -> get journal
         assert.equal(getDialog('marrakech_merchant'), 'hassan_with_locket');
         simulateDialog('hassan_with_locket');
+        assert.ok(flags.marrakech_has_journal);
+        assert.ok(inventory.includes('journal'));
+
+        // 13. Marrakech: Open riad chest -> get amulet
+        assert.ok(simulateChest('marrakech_riad_chest_10_7'));
+        assert.ok(flags.marrakech_has_amulet);
+        assert.ok(inventory.includes('amulet'));
+
+        // 14. Marrakech: Return amulet to Nadia -> met nadia
+        assert.equal(getDialog('marrakech_nadia'), 'nadia_with_amulet');
+        simulateDialog('nadia_with_amulet');
+        assert.ok(flags.marrakech_met_nadia);
+
+        // 15. Marrakech: Open oasis chest -> portal stone, portal_unlocked, unlock tokyo
+        assert.ok(simulateChest('marrakech_oasis_chest_10_10'));
         assert.ok(flags.marrakech_complete);
         assert.ok(flags.portal_unlocked);
         assert.ok(unlocked.includes('tokyo'));
+        assert.ok(inventory.includes('portal_stone'));
 
-        // 7. Tokyo: Talk to gardener
+        // 16. Tokyo: Talk to Hiro and Aiko -> riddle parts 1 & 2, plus manual part 3
+        assert.equal(getDialog('tokyo_chef'), 'hiro_intro');
+        simulateDialog('hiro_intro');
+        assert.ok(flags.tokyo_riddle_part1);
+
+        assert.equal(getDialog('tokyo_manga'), 'aiko_intro');
+        simulateDialog('aiko_intro');
+        assert.ok(flags.tokyo_riddle_part2);
+
+        // Part 3 is set by reading the shrine sign (manual flag)
+        flags.tokyo_riddle_part3 = true;
+
+        // 17. Tokyo: Talk to Tanaka -> riddle solved
+        assert.equal(getDialog('tokyo_shrine_keeper'), 'tanaka_riddle_complete');
+        simulateDialog('tanaka_riddle_complete');
+        assert.ok(flags.tokyo_riddle_solved);
+
+        // 18. Tokyo: Talk to Yuki -> jade key
         assert.equal(getDialog('tokyo_gardener'), 'yuki_with_journal');
         simulateDialog('yuki_with_journal');
-        assert.ok(flags.tokyo_chest_unlocked);
+        assert.ok(flags.tokyo_has_jade_key);
+        assert.ok(inventory.includes('jade_key'));
 
-        // 8. Tokyo: Open treasure chest
-        assert.ok(simulateChest('tokyo_chest_25_3'));
+        // 19. Tokyo: Open sacred_garden chest -> game complete
+        assert.ok(simulateChest('tokyo_sacred_garden_chest_7_5'));
         assert.ok(flags.game_complete);
 
         // Verify all objectives completed
@@ -1125,7 +1216,7 @@ describe('Menu State Guards (Bug Fix)', () => {
 describe('NPC Sprite Types (Data Integrity)', () => {
 // ======================================================================
 
-    const validSprites = ['librarian', 'curator', 'merchant', 'guide', 'gardener', 'grandma'];
+    const validSprites = ['librarian', 'curator', 'merchant', 'guide', 'gardener', 'grandma', 'artist', 'flower_seller', 'tourist', 'attendant', 'photographer', 'policeman', 'professor', 'schoolkid', 'clerk', 'gelato', 'musician', 'tour_guide', 'cat_lady', 'spice_merchant', 'storyteller', 'carpet_merchant', 'riad_keeper', 'desert_guide', 'ramen_chef', 'manga_artist', 'shrine_keeper', 'spirit_fox', 'ghost'];
 
     for (const [cityId, npcs] of Object.entries(NPC_DATA)) {
         for (const npc of npcs) {
@@ -1439,28 +1530,56 @@ describe('Graphics Overhaul Regression', () => {
     it('every CHEST_REWARDS key matches an actual chest decor tile in the map', () => {
         const missing = [];
         for (const chestId of Object.keys(CHEST_REWARDS)) {
-            const m = chestId.match(/^([a-z]+)_chest_(\d+)_(\d+)$/);
+            const m = chestId.match(/^([a-z_]+)_chest_(\d+)_(\d+)$/);
             assert.ok(m, `Invalid chest ID format: ${chestId}`);
-            const [, cityId, xStr, yStr] = m;
+            const [, prefix, xStr, yStr] = m;
             const cx = parseInt(xStr), cy = parseInt(yStr);
-            const city = CITIES[cityId];
-            assert.ok(city, `Chest ${chestId} references unknown city '${cityId}'`);
-            assert.equal(city.decor[cy][cx], 20,
-                `Chest ${chestId} expects decor tile 20 at (${cx},${cy}) but found ${city.decor[cy][cx]}`);
+            // Resolve city and room from prefix (e.g. 'paris_eiffel_top' -> city 'paris', room 'eiffel_top')
+            let cityId = prefix;
+            let mapData = CITIES[cityId];
+            if (!mapData) {
+                // Try progressively shorter prefixes to find the city
+                const parts = prefix.split('_');
+                for (let i = 1; i < parts.length; i++) {
+                    const tryCity = parts.slice(0, i).join('_');
+                    if (CITIES[tryCity]) {
+                        cityId = tryCity;
+                        const roomName = parts.slice(i).join('_');
+                        mapData = CITIES[cityId].rooms[roomName];
+                        break;
+                    }
+                }
+            }
+            assert.ok(mapData, `Chest ${chestId} references unknown city/room from prefix '${prefix}'`);
+            assert.equal(mapData.decor[cy][cx], 20,
+                `Chest ${chestId} expects decor tile 20 at (${cx},${cy}) but found ${mapData.decor[cy][cx]}`);
         }
     });
 
-    it('every chest decor tile (20) in every city map has a matching CHEST_REWARDS entry or is non-quest', () => {
-        // Verify that quest-critical chests have reward entries
-        const rewardIds = new Set(Object.keys(CHEST_REWARDS));
+    it('every chest decor tile (20) in every city map and room has a walkable ground tile', () => {
+        // Verify that chests are on walkable ground in main maps and rooms
         for (const [cityId, city] of Object.entries(CITIES)) {
+            // Check main map
             for (let y = 0; y < city.height; y++) {
                 for (let x = 0; x < city.width; x++) {
                     if (city.decor[y][x] === 20) {
                         const id = `${cityId}_chest_${x}_${y}`;
-                        // At minimum, the chest tile exists — it may or may not have rewards
                         assert.ok(city.walls[y][x] === -1,
                             `Chest at ${id} is on a wall tile — player cannot reach it`);
+                    }
+                }
+            }
+            // Check rooms
+            if (city.rooms) {
+                for (const [roomName, room] of Object.entries(city.rooms)) {
+                    for (let y = 0; y < room.height; y++) {
+                        for (let x = 0; x < room.width; x++) {
+                            if (room.decor[y][x] === 20) {
+                                const id = `${cityId}_${roomName}_chest_${x}_${y}`;
+                                assert.ok(room.walls[y][x] === -1,
+                                    `Chest at ${id} is on a wall tile — player cannot reach it`);
+                            }
+                        }
                     }
                 }
             }
@@ -1487,10 +1606,24 @@ describe('Graphics Overhaul Regression', () => {
         // If chest (20) and portal (21) share a cell, one gets overwritten
         // This checks that every quest chest is really a chest and not overwritten
         for (const chestId of Object.keys(CHEST_REWARDS)) {
-            const m = chestId.match(/^([a-z]+)_chest_(\d+)_(\d+)$/);
-            const [, cityId, xStr, yStr] = m;
+            const m = chestId.match(/^([a-z_]+)_chest_(\d+)_(\d+)$/);
+            const [, prefix, xStr, yStr] = m;
             const cx = parseInt(xStr), cy = parseInt(yStr);
-            assert.notEqual(CITIES[cityId].decor[cy][cx], 21,
+            // Resolve city and room from prefix
+            let mapData = CITIES[prefix];
+            if (!mapData) {
+                const parts = prefix.split('_');
+                for (let i = 1; i < parts.length; i++) {
+                    const tryCity = parts.slice(0, i).join('_');
+                    if (CITIES[tryCity]) {
+                        const roomName = parts.slice(i).join('_');
+                        mapData = CITIES[tryCity].rooms[roomName];
+                        break;
+                    }
+                }
+            }
+            assert.ok(mapData, `Cannot resolve map for chest ${chestId}`);
+            assert.notEqual(mapData.decor[cy][cx], 21,
                 `Quest chest ${chestId} was overwritten by portal tile at (${cx},${cy})`);
         }
     });
@@ -1529,8 +1662,11 @@ describe('Graphics Overhaul Regression', () => {
         for (const [cityId, npcs] of Object.entries(NPC_DATA)) {
             const city = CITIES[cityId];
             for (const npc of npcs) {
-                assert.notEqual(city.ground[npc.y][npc.x], 2,
-                    `${npc.name} in ${cityId} at (${npc.x},${npc.y}) is on water`);
+                const room = npc.room || 'main';
+                const mapData = (room === 'main') ? city : (city.rooms[room]);
+                assert.ok(mapData, `Room '${room}' not found for ${npc.name}`);
+                assert.notEqual(mapData.ground[npc.y][npc.x], 2,
+                    `${npc.name} in ${cityId} (${room}) at (${npc.x},${npc.y}) is on water`);
             }
         }
     });
@@ -1540,10 +1676,13 @@ describe('Graphics Overhaul Regression', () => {
         for (const [cityId, npcs] of Object.entries(NPC_DATA)) {
             const city = CITIES[cityId];
             for (const npc of npcs) {
-                assert.ok(npc.x > 0 && npc.x < city.width - 1,
-                    `${npc.name} in ${cityId} at x=${npc.x} is on border column`);
-                assert.ok(npc.y > 0 && npc.y < city.height - 1,
-                    `${npc.name} in ${cityId} at y=${npc.y} is on border row`);
+                const room = npc.room || 'main';
+                const mapData = (room === 'main') ? city : (city.rooms[room]);
+                assert.ok(mapData, `Room '${room}' not found for ${npc.name}`);
+                assert.ok(npc.x > 0 && npc.x < mapData.width - 1,
+                    `${npc.name} in ${cityId} (${room}) at x=${npc.x} is on border column`);
+                assert.ok(npc.y > 0 && npc.y < mapData.height - 1,
+                    `${npc.name} in ${cityId} (${room}) at y=${npc.y} is on border row`);
             }
         }
     });
