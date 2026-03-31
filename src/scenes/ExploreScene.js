@@ -843,7 +843,8 @@ export class ExploreScene extends Phaser.Scene {
     update(time, delta) {
         this.player.update();
 
-        // Animate water tiles
+        // Animate water tiles (must update BOTH ground and wall layers —
+        // wall layer at depth 2 covers ground, so both must cycle)
         if (this.waterTiles && this.waterTiles.length > 0) {
             this.waterTimer += delta;
             if (this.waterTimer > 350) {
@@ -852,8 +853,11 @@ export class ExploreScene extends Phaser.Scene {
                 const waterIndices = [2, 64, 65];
                 const tileIdx = waterIndices[this.waterFrame];
                 const groundLayer = this.map.getLayer('ground').tilemapLayer;
+                const wallLayer = this.map.getLayer('walls').tilemapLayer;
                 for (const wt of this.waterTiles) {
                     groundLayer.putTileAt(tileIdx, wt.x, wt.y);
+                    const wallTile = wallLayer.putTileAt(tileIdx, wt.x, wt.y);
+                    wallTile.setCollision(true);
                 }
             }
         }
