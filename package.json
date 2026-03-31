@@ -7,6 +7,7 @@
     "start": "http-server -p 8080 -c-1 --cors -o"
   },
   "devDependencies": {
+    "canvas": "^3.2.3",
     "http-server": "^14.1.1",
     "playwright": "^1.58.2"
   }

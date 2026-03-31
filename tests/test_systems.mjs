@@ -362,11 +362,11 @@ describe('City Map Data', () => {
                 }
             });
 
-            it('wall tiles are -1 or in valid range (0-63)', () => {
+            it('wall tiles are -1 or in valid range (0-98)', () => {
                 for (let y = 0; y < city.height; y++) {
                     for (let x = 0; x < city.width; x++) {
                         const t = city.walls[y][x];
-                        assert.ok(t === -1 || (t >= 0 && t <= 63), `Invalid wall tile ${t} at (${x},${y})`);
+                        assert.ok(t === -1 || (t >= 0 && t <= 98), `Invalid wall tile ${t} at (${x},${y})`);
                     }
                 }
             });

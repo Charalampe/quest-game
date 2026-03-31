@@ -1,0 +1,136 @@
+{
+  "tiles": {
+    "eiffel_spire_L": {
+      "file": "eiffel_spire_L.png",
+      "index": 66
+    },
+    "eiffel_spire_CL": {
+      "file": "eiffel_spire_CL.png",
+      "index": 67
+    },
+    "eiffel_spire_CR": {
+      "file": "eiffel_spire_CR.png",
+      "index": 68
+    },
+    "eiffel_spire_R": {
+      "file": "eiffel_spire_R.png",
+      "index": 69
+    },
+    "eiffel_upper_L": {
+      "file": "eiffel_upper_L.png",
+      "index": 70
+    },
+    "eiffel_upper_CL": {
+      "file": "eiffel_upper_CL.png",
+      "index": 71
+    },
+    "eiffel_upper_CR": {
+      "file": "eiffel_upper_CR.png",
+      "index": 72
+    },
+    "eiffel_upper_R": {
+      "file": "eiffel_upper_R.png",
+      "index": 73
+    },
+    "eiffel_deck_L": {
+      "file": "eiffel_deck_L.png",
+      "index": 74
+    },
+    "eiffel_deck_CL": {
+      "file": "eiffel_deck_CL.png",
+      "index": 75
+    },
+    "eiffel_deck_CR": {
+      "file": "eiffel_deck_CR.png",
+      "index": 76
+    },
+    "eiffel_deck_R": {
+      "file": "eiffel_deck_R.png",
+      "index": 77
+    },
+    "bigben_spire_L": {
+      "file": "bigben_spire_L.png",
+      "index": 78
+    },
+    "bigben_spire_R": {
+      "file": "bigben_spire_R.png",
+      "index": 79
+    },
+    "bigben_clock_TL": {
+      "file": "bigben_clock_TL.png",
+      "index": 80
+    },
+    "bigben_clock_TR": {
+      "file": "bigben_clock_TR.png",
+      "index": 81
+    },
+    "bigben_clock_BL": {
+      "file": "bigben_clock_BL.png",
+      "index": 82
+    },
+    "bigben_clock_BR": {
+      "file": "bigben_clock_BR.png",
+      "index": 83
+    },
+    "bigben_tower_L": {
+      "file": "bigben_tower_L.png",
+      "index": 84
+    },
+    "bigben_tower_R": {
+      "file": "bigben_tower_R.png",
+      "index": 85
+    },
+    "column_capital": {
+      "file": "column_capital.png",
+      "index": 86
+    },
+    "column_shaft": {
+      "file": "column_shaft.png",
+      "index": 87
+    },
+    "column_base": {
+      "file": "column_base.png",
+      "index": 88
+    },
+    "palm_top": {
+      "file": "palm_top.png",
+      "index": 89
+    },
+    "palm_trunk": {
+      "file": "palm_trunk.png",
+      "index": 90
+    },
+    "mosaic_star": {
+      "file": "mosaic_star.png",
+      "index": 91
+    },
+    "mosaic_diamond": {
+      "file": "mosaic_diamond.png",
+      "index": 92
+    },
+    "cherry_canopy_L": {
+      "file": "cherry_canopy_L.png",
+      "index": 93
+    },
+    "cherry_canopy_R": {
+      "file": "cherry_canopy_R.png",
+      "index": 94
+    },
+    "cherry_trunk": {
+      "file": "cherry_trunk.png",
+      "index": 95
+    },
+    "torii_beam_L": {
+      "file": "torii_beam_L.png",
+      "index": 96
+    },
+    "torii_beam_R": {
+      "file": "torii_beam_R.png",
+      "index": 97
+    },
+    "torii_post": {
+      "file": "torii_post.png",
+      "index": 98
+    }
+  }
+}

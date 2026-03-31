@@ -177,7 +177,7 @@ export class ExploreScene extends Phaser.Scene {
                 }
             }
         }
-        this.wallLayer.setCollisionBetween(0, 63);
+        this.wallLayer.setCollisionBetween(0, 199);
         this.wallLayer.setDepth(2);
 
         // Decoration layer (no collision, visual only)

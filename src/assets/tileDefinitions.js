@@ -77,5 +77,55 @@ export const TILE_DEFS = [
     { color: '#f9e79f', detail: 'lantern' },    // 60: paper lantern
     { color: '#dc7633', detail: 'torii' },      // 61: torii gate
     { color: '#5d6d7e', detail: null },          // 62: slate
-    { color: '#2ecc71', detail: 'bamboo' }      // 63: bamboo
+    { color: '#2ecc71', detail: 'bamboo' },      // 63: bamboo
+
+    // Row 8: Water animation variants (64-65) generated in MangaSpriteProvider
+    // Indices 64-65 are reserved for water — placeholders here
+    { color: '#3b7dd8', detail: null },          // 64: water anim 1
+    { color: '#3b7dd8', detail: null },          // 65: water anim 2
+
+    // ── Monument section tiles (indices 66+) — PNG art in src/assets/tiles/ ──
+
+    // Paris Eiffel Tower sections
+    { color: '#2c3e50', detail: 'eiffel_spire_L', file: 'eiffel_spire_L.png' },     // 66
+    { color: '#2c3e50', detail: 'eiffel_spire_CL', file: 'eiffel_spire_CL.png' },   // 67
+    { color: '#2c3e50', detail: 'eiffel_spire_CR', file: 'eiffel_spire_CR.png' },   // 68
+    { color: '#2c3e50', detail: 'eiffel_spire_R', file: 'eiffel_spire_R.png' },     // 69
+    { color: '#2c3e50', detail: 'eiffel_upper_L', file: 'eiffel_upper_L.png' },     // 70
+    { color: '#2c3e50', detail: 'eiffel_upper_CL', file: 'eiffel_upper_CL.png' },   // 71
+    { color: '#2c3e50', detail: 'eiffel_upper_CR', file: 'eiffel_upper_CR.png' },   // 72
+    { color: '#2c3e50', detail: 'eiffel_upper_R', file: 'eiffel_upper_R.png' },     // 73
+    { color: '#2c3e50', detail: 'eiffel_deck_L', file: 'eiffel_deck_L.png' },       // 74
+    { color: '#2c3e50', detail: 'eiffel_deck_CL', file: 'eiffel_deck_CL.png' },     // 75
+    { color: '#2c3e50', detail: 'eiffel_deck_CR', file: 'eiffel_deck_CR.png' },     // 76
+    { color: '#2c3e50', detail: 'eiffel_deck_R', file: 'eiffel_deck_R.png' },       // 77
+
+    // London Big Ben sections
+    { color: '#873600', detail: 'bigben_spire_L', file: 'bigben_spire_L.png' },     // 78
+    { color: '#873600', detail: 'bigben_spire_R', file: 'bigben_spire_R.png' },     // 79
+    { color: '#873600', detail: 'bigben_clock_TL', file: 'bigben_clock_TL.png' },   // 80
+    { color: '#873600', detail: 'bigben_clock_TR', file: 'bigben_clock_TR.png' },   // 81
+    { color: '#873600', detail: 'bigben_clock_BL', file: 'bigben_clock_BL.png' },   // 82
+    { color: '#873600', detail: 'bigben_clock_BR', file: 'bigben_clock_BR.png' },   // 83
+    { color: '#873600', detail: 'bigben_tower_L', file: 'bigben_tower_L.png' },     // 84
+    { color: '#873600', detail: 'bigben_tower_R', file: 'bigben_tower_R.png' },     // 85
+
+    // Rome column variants
+    { color: '#f5eef8', detail: 'column_capital', file: 'column_capital.png' },      // 86
+    { color: '#f5eef8', detail: 'column_shaft', file: 'column_shaft.png' },          // 87
+    { color: '#f5eef8', detail: 'column_base', file: 'column_base.png' },            // 88
+
+    // Marrakech variants
+    { color: '#28b463', detail: 'palm_top', file: 'palm_top.png' },                  // 89
+    { color: '#7D5A1E', detail: 'palm_trunk', file: 'palm_trunk.png' },              // 90
+    { color: '#d4ac0d', detail: 'mosaic_star', file: 'mosaic_star.png' },            // 91
+    { color: '#d4ac0d', detail: 'mosaic_diamond', file: 'mosaic_diamond.png' },      // 92
+
+    // Tokyo variants
+    { color: '#f5b7b1', detail: 'cherry_canopy_L', file: 'cherry_canopy_L.png' },   // 93
+    { color: '#f5b7b1', detail: 'cherry_canopy_R', file: 'cherry_canopy_R.png' },   // 94
+    { color: '#6B4226', detail: 'cherry_trunk', file: 'cherry_trunk.png' },          // 95
+    { color: '#dc7633', detail: 'torii_beam_L', file: 'torii_beam_L.png' },          // 96
+    { color: '#dc7633', detail: 'torii_beam_R', file: 'torii_beam_R.png' },          // 97
+    { color: '#dc7633', detail: 'torii_post', file: 'torii_post.png' }               // 98
 ];

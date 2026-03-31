@@ -194,12 +194,13 @@ function generateParis() {
 
     // Eiffel Tower plaza (top-center)
     for (let y = 1; y < 10; y++) for (let x = 18; x < 31; x++) ground[y][x] = 5;
-    walls[1][23] = 24; walls[1][24] = 24; walls[1][25] = 24; walls[1][26] = 24;
-    walls[2][23] = 24; walls[2][24] = 24; walls[2][25] = 24; walls[2][26] = 24;
-    walls[3][23] = 24; walls[3][24] = 24; walls[3][25] = 24; walls[3][26] = 24;
-    walls[4][22] = 24; walls[4][23] = 24; walls[4][24] = 24; walls[4][25] = 24; walls[4][26] = 24; walls[4][27] = 24;
-    walls[5][22] = 24; walls[5][27] = 24;
-    walls[6][21] = 24; walls[6][28] = 24;
+    // Eiffel Tower — section-specific tiles (PNGs in src/assets/tiles/)
+    walls[1][23] = 66; walls[1][24] = 67; walls[1][25] = 68; walls[1][26] = 69; // spire
+    walls[2][23] = 70; walls[2][24] = 71; walls[2][25] = 72; walls[2][26] = 73; // upper
+    walls[3][23] = 70; walls[3][24] = 71; walls[3][25] = 72; walls[3][26] = 73; // upper (repeat)
+    walls[4][22] = 74; walls[4][23] = 74; walls[4][24] = 75; walls[4][25] = 76; walls[4][26] = 77; walls[4][27] = 77; // deck
+    walls[5][22] = 74; walls[5][27] = 77; // arch legs
+    walls[6][21] = 74; walls[6][28] = 77; // base legs
     decor[9][19] = 31; decor[9][22] = 31; decor[9][27] = 31; decor[9][30] = 31;
     walls[8][24] = 19;
     decor[9][24] = 23; // Door to Eiffel Tower Ground Floor
@@ -365,9 +366,12 @@ function generateLondon() {
 
     // Big Ben
     for (let y = 1; y < 9; y++) for (let x = 38; x < 48; x++) ground[y][x] = 5;
-    walls[1][42] = 33; walls[2][42] = 33; walls[3][42] = 33; walls[4][42] = 33;
-    walls[1][43] = 33; walls[2][43] = 33; walls[3][43] = 33;
-    walls[5][41] = 33; walls[5][44] = 33;
+    // Big Ben — section-specific tiles
+    walls[1][42] = 78; walls[1][43] = 79; // spire
+    walls[2][42] = 80; walls[2][43] = 81; // clock top
+    walls[3][42] = 82; walls[3][43] = 83; // clock bottom
+    walls[4][42] = 84; walls[4][43] = 85; // tower
+    walls[5][41] = 84; walls[5][44] = 85; // base
     for (let y = 6; y < 9; y++) { for (let x = 39; x < 42; x++) walls[y][x] = 35; for (let x = 44; x < 47; x++) walls[y][x] = 35; }
 
     // British Museum (door goes to museum_hall)
@@ -501,7 +505,8 @@ function generateRome() {
 
     // Pantheon
     for (let y = 1; y < 9; y++) for (let x = 15; x < 35; x++) ground[y][x] = 44;
-    for (let c = 15; c <= 34; c += 3) { walls[1][c] = 40; walls[8][c] = 40; }
+    // Columns — capital at top row, base at bottom row
+    for (let c = 15; c <= 34; c += 3) { walls[1][c] = 86; walls[8][c] = 88; }
     for (let x = 15; x < 35; x++) walls[1][x] = walls[1][x] === -1 ? 41 : walls[1][x];
 
     for (let y = 1; y < 6; y++) { for (let x = 2; x < 9; x++) walls[y][x] = 47; for (let x = 40; x < 48; x++) walls[y][x] = 14; }
@@ -670,16 +675,17 @@ function generateMarrakech() {
     }
     walls[31][4] = 23; walls[31][19] = 54; walls[31][31] = 54; walls[31][45] = 23;
 
-    walls[1][10] = 52; walls[1][14] = 52; walls[1][35] = 52; walls[1][40] = 52;
-    walls[12][5] = 52; walls[12][44] = 52; walls[28][3] = 52; walls[28][46] = 52;
-    walls[31][10] = 52; walls[31][38] = 52;
+    // Palm trees — top canopy and trunk variants
+    walls[1][10] = 89; walls[1][14] = 89; walls[1][35] = 89; walls[1][40] = 89;
+    walls[12][5] = 89; walls[12][44] = 89; walls[28][3] = 89; walls[28][46] = 89;
+    walls[31][10] = 89; walls[31][38] = 89;
 
     for (let y = 22; y < 27; y++) for (let x = 38; x < 46; x++) ground[y][x] = 49;
     decor[23][39] = 51; decor[23][42] = 51; decor[25][40] = 51; decor[25][44] = 51;
 
     decor[24][25] = 21; // portal
     walls[20][24] = 18; walls[20][25] = 18;
-    decor[19][18] = 49; decor[19][30] = 49;
+    decor[19][18] = 91; decor[19][30] = 92; // mosaic star / diamond variants
 
     for (let y = 0; y < H; y++) { walls[y][0] = 53; walls[y][W-1] = 53; }
     for (let x = 0; x < W; x++) { walls[0][x] = 53; walls[H-1][x] = 53; }
@@ -774,18 +780,20 @@ function generateTokyo() {
 
     // Cherry blossom garden (top)
     for (let y = 1; y < 8; y++) for (let x = 16; x < 34; x++) ground[y][x] = 59;
-    walls[1][18] = 56; walls[1][22] = 56; walls[1][26] = 56; walls[1][30] = 56;
-    walls[3][20] = 56; walls[3][24] = 56; walls[3][28] = 56; walls[3][32] = 56;
-    walls[5][17] = 56; walls[5][23] = 56; walls[5][29] = 56; walls[5][33] = 56;
+    // Cherry blossom trees — canopy L/R variants
+    walls[1][18] = 93; walls[1][22] = 93; walls[1][26] = 94; walls[1][30] = 94;
+    walls[3][20] = 93; walls[3][24] = 94; walls[3][28] = 93; walls[3][32] = 94;
+    walls[5][17] = 93; walls[5][23] = 94; walls[5][29] = 93; walls[5][33] = 94;
     decor[2][21] = 17; decor[2][27] = 17; decor[4][19] = 17; decor[4][31] = 17;
     decor[6][22] = 17; decor[6][28] = 17;
-    walls[7][24] = 61; walls[7][25] = 61;
+    // Torii gate — beam L/R
+    walls[7][24] = 96; walls[7][25] = 97;
     decor[4][25] = 21; // portal
     decor[3][25] = 20; // treasure chest
 
     // Shrine area (left)
     for (let y = 11; y < 17; y++) for (let x = 2; x < 12; x++) ground[y][x] = 57;
-    walls[11][4] = 61; walls[11][7] = 61; walls[11][10] = 61;
+    walls[11][4] = 96; walls[11][7] = 97; walls[11][10] = 96; // torii beam variants
     for (let y = 12; y < 16; y++) { for (let x = 3; x < 6; x++) walls[y][x] = 58; for (let x = 8; x < 11; x++) walls[y][x] = 58; }
     walls[15][4] = 23; walls[15][9] = 23;
     decor[13][6] = 60; decor[13][7] = 60;

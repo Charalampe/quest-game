@@ -29,6 +29,8 @@ export class MangaSpriteProvider extends AssetProvider {
     loadSpriteSheets() {
         // Only load the manifest — 1 request. If it 404s, no sprite loads are attempted.
         this.scene.load.json('sprite_manifest', 'src/assets/sprites/manifest.json');
+        // Also load tile manifest for external monument tile PNGs
+        this.scene.load.json('tile_manifest', 'src/assets/tiles/manifest.json');
     }
 
     /**
@@ -72,9 +74,43 @@ export class MangaSpriteProvider extends AssetProvider {
         });
     }
 
+    /**
+     * Load external tile PNGs listed in the tile manifest.
+     * Falls back to procedural tiles for any that fail to load.
+     */
+    _loadExternalTiles() {
+        const cache = this.scene.cache;
+        if (!cache.json.has('tile_manifest')) return Promise.resolve();
+        const manifest = cache.json.get('tile_manifest');
+        if (!manifest || !manifest.tiles) return Promise.resolve();
+
+        const loader = this.scene.load;
+        let queued = false;
+        this.loadedTiles = new Set();
+
+        for (const [name, info] of Object.entries(manifest.tiles)) {
+            loader.image(`tile_${name}`, `src/assets/tiles/${info.file}`);
+            queued = true;
+        }
+
+        if (!queued) return Promise.resolve();
+
+        return new Promise(resolve => {
+            const onComplete = (key) => { this.loadedTiles.add(key); };
+            loader.on('filecomplete', onComplete);
+            loader.once('complete', () => {
+                loader.off('filecomplete', onComplete);
+                resolve();
+            });
+            loader.start();
+        });
+    }
+
     async generateTextures() {
         // Load external sprites if manifest was found during preload
         await this._loadExternalSprites();
+        // Load external tile PNGs if tile manifest was found
+        await this._loadExternalTiles();
 
         this.generatePlayerSpritesheet();
         this.generateNPCSpritesheet();
@@ -672,7 +708,7 @@ export class MangaSpriteProvider extends AssetProvider {
     generateTileset() {
         const tileSize = 32;
         const cols = 8;
-        const rows = 10;
+        const rows = 16; // expanded from 10 to fit monument tiles (indices 66-98)
         const canvas = this.scene.textures.createCanvas('tileset', tileSize * cols, tileSize * rows);
         const ctx = canvas.getContext();
 
@@ -730,9 +766,30 @@ export class MangaSpriteProvider extends AssetProvider {
             ctx.fillRect(wx + 12 + v.waveShift, wy + 24, 2, 2);
         });
 
+        // Composite external tile PNGs over procedural tiles
+        const cache = this.scene.cache;
+        if (this.loadedTiles && cache.json.has('tile_manifest')) {
+            const manifest = cache.json.get('tile_manifest');
+            if (manifest && manifest.tiles) {
+                for (const [name, info] of Object.entries(manifest.tiles)) {
+                    const key = `tile_${name}`;
+                    if (this.loadedTiles.has(key)) {
+                        const tex = this.scene.textures.get(key);
+                        if (tex && tex.source && tex.source[0]) {
+                            const img = tex.source[0].image;
+                            const col2 = info.index % cols;
+                            const row2 = Math.floor(info.index / cols);
+                            ctx.drawImage(img, col2 * tileSize, row2 * tileSize, tileSize, tileSize);
+                        }
+                    }
+                }
+            }
+        }
+
         canvas.refresh();
 
-        const totalTiles = TILE_DEFS.length + waterVariants.length;
+        // Register all tile indices (TILE_DEFS covers 0-98, water at 64-65 already included)
+        const totalTiles = Math.max(TILE_DEFS.length, 99);
         for (let i = 0; i < totalTiles; i++) {
             const col = i % cols;
             const row = Math.floor(i / cols);
@@ -1871,6 +1928,67 @@ export class MangaSpriteProvider extends AssetProvider {
                 ctx.fillRect(x+8, y+11, 2, 3);
                 ctx.fillRect(x+13, y+11, 2, 3);
                 ctx.fillRect(x+18, y+11, 2, 3);
+                break;
+            }
+
+            // ── Monument section tile fallbacks (PNG overrides these) ──
+            case 'eiffel_spire_L': case 'eiffel_spire_CL': case 'eiffel_spire_CR': case 'eiffel_spire_R':
+            case 'eiffel_upper_L': case 'eiffel_upper_CL': case 'eiffel_upper_CR': case 'eiffel_upper_R':
+            case 'eiffel_deck_L': case 'eiffel_deck_CL': case 'eiffel_deck_CR': case 'eiffel_deck_R': {
+                ctx.fillStyle = '#1a0d00';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#4A5A6A';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#7D8D9E';
+                ctx.fillRect(x+4, y+4, s-8, s-8);
+                break;
+            }
+            case 'bigben_spire_L': case 'bigben_spire_R':
+            case 'bigben_clock_TL': case 'bigben_clock_TR': case 'bigben_clock_BL': case 'bigben_clock_BR':
+            case 'bigben_tower_L': case 'bigben_tower_R': {
+                ctx.fillStyle = '#1a0d00';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#6E4B00';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#8E7B20';
+                ctx.fillRect(x+4, y+4, s-8, s-8);
+                break;
+            }
+            case 'column_capital': case 'column_shaft': case 'column_base': {
+                ctx.fillStyle = '#1a0d00';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#E8E0D0';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#F8F0E0';
+                ctx.fillRect(x+4, y+4, s-8, s-8);
+                break;
+            }
+            case 'palm_top': case 'palm_trunk': {
+                ctx.fillStyle = '#1a0d00';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#1B7D3A';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                break;
+            }
+            case 'mosaic_star': case 'mosaic_diamond': {
+                ctx.fillStyle = '#1a0d00';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#D4AC0D';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                break;
+            }
+            case 'cherry_canopy_L': case 'cherry_canopy_R': case 'cherry_trunk': {
+                ctx.fillStyle = '#1a0d00';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#e8859a';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                break;
+            }
+            case 'torii_beam_L': case 'torii_beam_R': case 'torii_post': {
+                ctx.fillStyle = '#1a0d00';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#AA2211';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
                 break;
             }
         }
