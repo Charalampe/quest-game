@@ -2553,10 +2553,19 @@ describe('MangaSpriteProvider Source Correctness', () => {
         assert.ok(mangaSrc.includes('const tileSize = 32'));
     });
 
-    it('has loadSpriteSheets method that cleans up listeners', () => {
+    it('has manifest-based sprite loading (no blind 404s)', () => {
         assert.ok(mangaSrc.includes('loadSpriteSheets()'));
-        assert.ok(mangaSrc.includes("loader.once('complete'"));
-        assert.ok(mangaSrc.includes("loader.off('filecomplete'"));
+        // Should load manifest.json, not individual PNGs directly
+        assert.ok(mangaSrc.includes("'sprite_manifest'"),
+            'Should load sprite_manifest JSON');
+        assert.ok(mangaSrc.includes('_loadExternalSprites'),
+            'Should have _loadExternalSprites method');
+        // Should NOT unconditionally load lea.png or NPC PNGs in loadSpriteSheets
+        const loadMethod = mangaSrc.match(/loadSpriteSheets\(\)\s*\{([\s\S]*?)\n\s{4}\}/);
+        if (loadMethod) {
+            assert.ok(!loadMethod[1].includes('lea.png'),
+                'loadSpriteSheets should not directly load lea.png (use manifest)');
+        }
     });
 
     it('has _remapExternalSprite with PIPOYA [0,1,0,2] mapping', () => {

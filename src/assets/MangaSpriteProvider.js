@@ -17,36 +17,67 @@ export class MangaSpriteProvider extends AssetProvider {
 
     /**
      * Load external PIPOYA sprite sheets during preload phase.
-     * Falls back to procedural generation for any sprites that fail to load.
+     * Only attempts loads when src/assets/sprites/manifest.json exists.
+     * Falls back to procedural generation for any sprites not listed or that fail to load.
+     *
+     * To enable external sprites:
+     * 1. Place PNG spritesheets in src/assets/sprites/
+     * 2. Create src/assets/sprites/manifest.json listing available files:
+     *    { "player": "lea.png", "npcs": { "librarian": "npc_librarian.png", ... } }
+     * 3. The system auto-detects and uses them on next load.
      */
     loadSpriteSheets() {
+        // Only load the manifest — 1 request. If it 404s, no sprite loads are attempted.
+        this.scene.load.json('sprite_manifest', 'src/assets/sprites/manifest.json');
+    }
+
+    /**
+     * If manifest was loaded, queue sprite sheets and wait for them.
+     * Returns a Promise that resolves when all sprites are loaded (or immediately if none).
+     */
+    _loadExternalSprites() {
+        const cache = this.scene.cache;
+        if (!cache.json.has('sprite_manifest')) return Promise.resolve();
+
+        const manifest = cache.json.get('sprite_manifest');
+        if (!manifest) return Promise.resolve();
+
         const loader = this.scene.load;
         const frameConfig = { frameWidth: SPRITE_W, frameHeight: SPRITE_H };
+        let queued = false;
 
-        // Attempt to load player sprite
-        loader.spritesheet('player_ext', 'src/assets/sprites/lea.png', frameConfig);
+        // Queue player sprite
+        if (manifest.player) {
+            loader.spritesheet('player_ext', `src/assets/sprites/${manifest.player}`, frameConfig);
+            queued = true;
+        }
 
-        // Attempt to load NPC sprites (only those with file field)
-        NPC_DEFS.forEach(npc => {
-            if (npc.file) {
-                loader.spritesheet(`npc_${npc.name}_ext`, `src/assets/sprites/${npc.file}`, frameConfig);
+        // Queue NPC sprites listed in manifest
+        if (manifest.npcs) {
+            for (const [name, file] of Object.entries(manifest.npcs)) {
+                loader.spritesheet(`npc_${name}_ext`, `src/assets/sprites/${file}`, frameConfig);
+                queued = true;
             }
-        });
+        }
 
-        // Track successful loads (use named handler for cleanup)
-        this._onFileComplete = (key) => { this.loadedSprites.add(key); };
-        this._onLoadError = () => {}; // silently ignore — procedural fallback will be used
-        loader.on('filecomplete', this._onFileComplete);
-        loader.on('loaderror', this._onLoadError);
+        if (!queued) return Promise.resolve();
 
-        // Clean up listeners after loading completes
-        loader.once('complete', () => {
-            loader.off('filecomplete', this._onFileComplete);
-            loader.off('loaderror', this._onLoadError);
+        // Return a promise that resolves when this load batch finishes
+        return new Promise(resolve => {
+            const onComplete = (key) => { this.loadedSprites.add(key); };
+            loader.on('filecomplete', onComplete);
+            loader.once('complete', () => {
+                loader.off('filecomplete', onComplete);
+                resolve();
+            });
+            loader.start();
         });
     }
 
     async generateTextures() {
+        // Load external sprites if manifest was found during preload
+        await this._loadExternalSprites();
+
         this.generatePlayerSpritesheet();
         this.generateNPCSpritesheet();
         this.generateTileset();
