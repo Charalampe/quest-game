@@ -1,0 +1,32 @@
+{
+  "player": "lea.png",
+  "npcs": {
+    "librarian": "npc_librarian.png",
+    "curator": "npc_curator.png",
+    "merchant": "npc_merchant.png",
+    "guide": "npc_guide.png",
+    "gardener": "npc_gardener.png",
+    "grandma": "npc_grandma.png",
+    "artist": "npc_artist.png",
+    "flower_seller": "npc_flower_seller.png",
+    "tourist": "npc_tourist.png",
+    "attendant": "npc_attendant.png",
+    "photographer": "npc_photographer.png",
+    "policeman": "npc_policeman.png",
+    "professor": "npc_professor.png",
+    "schoolkid": "npc_schoolkid.png",
+    "clerk": "npc_clerk.png",
+    "gelato": "npc_gelato.png",
+    "musician": "npc_musician.png",
+    "tour_guide": "npc_tour_guide.png",
+    "cat_lady": "npc_cat_lady.png",
+    "spice_merchant": "npc_spice_merchant.png",
+    "storyteller": "npc_storyteller.png",
+    "carpet_merchant": "npc_carpet_merchant.png",
+    "riad_keeper": "npc_riad_keeper.png",
+    "desert_guide": "npc_desert_guide.png",
+    "ramen_chef": "npc_ramen_chef.png",
+    "manga_artist": "npc_manga_artist.png",
+    "shrine_keeper": "npc_shrine_keeper.png"
+  }
+}

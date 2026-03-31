@@ -43,26 +43,24 @@ export class MangaSpriteProvider extends AssetProvider {
         if (!manifest) return Promise.resolve();
 
         const loader = this.scene.load;
-        const frameConfig = { frameWidth: SPRITE_W, frameHeight: SPRITE_H };
+        // Load as plain images — we'll slice frames ourselves in _remapExternalSprite
+        // because PIPOYA frames are 32x32, not 32x48
         let queued = false;
 
-        // Queue player sprite
         if (manifest.player) {
-            loader.spritesheet('player_ext', `src/assets/sprites/${manifest.player}`, frameConfig);
+            loader.image('player_ext', `src/assets/sprites/${manifest.player}`);
             queued = true;
         }
 
-        // Queue NPC sprites listed in manifest
         if (manifest.npcs) {
             for (const [name, file] of Object.entries(manifest.npcs)) {
-                loader.spritesheet(`npc_${name}_ext`, `src/assets/sprites/${file}`, frameConfig);
+                loader.image(`npc_${name}_ext`, `src/assets/sprites/${file}`);
                 queued = true;
             }
         }
 
         if (!queued) return Promise.resolve();
 
-        // Return a promise that resolves when this load batch finishes
         return new Promise(resolve => {
             const onComplete = (key) => { this.loadedSprites.add(key); };
             loader.on('filecomplete', onComplete);
@@ -128,12 +126,13 @@ export class MangaSpriteProvider extends AssetProvider {
     }
 
     /**
-     * Remap a PIPOYA-format external spritesheet to the game's expected frame layout.
-     * PIPOYA uses 3 frames/direction (4 rows = down/left/right/up, 3 cols).
-     * Game expects 4 frames/direction in a single row per direction.
-     * Animation mapping: game frames 0,1,2,3 → PIPOYA frames 0,1,0,2 (stand/step1/stand/step2).
+     * Remap an external spritesheet to the game's expected frame layout (32x48, 4 cols × 4 rows).
      *
-     * If the external texture has ≥4 columns, it's already in our format — just copy frames.
+     * Handles PIPOYA format: 96x128 = 3 cols × 4 rows at 32x32 per frame.
+     * Detects source frame size from the image and pads vertically to fit 32x48
+     * (sprite drawn at bottom of frame so feet align with collision box).
+     *
+     * Animation mapping: game frames 0,1,2,3 → PIPOYA cols 0,1,0,2 (stand/step1/stand/step2).
      */
     _remapExternalSprite(extKey, targetKey) {
         const textures = this.scene.textures;
@@ -141,47 +140,43 @@ export class MangaSpriteProvider extends AssetProvider {
         if (!srcTex || !srcTex.source || !srcTex.source[0]) return;
 
         const srcImg = srcTex.source[0].image;
-        const fw = SPRITE_W;
-        const fh = SPRITE_H;
-        const srcCols = Math.floor(srcImg.width / fw);
-        const srcRows = Math.floor(srcImg.height / fh);
+        const dstFW = SPRITE_W;  // 32 — target frame width
+        const dstFH = SPRITE_H;  // 48 — target frame height
 
-        // Create target canvas (4 cols × 4 rows for procedural compat)
-        const canvas = textures.createCanvas(targetKey, fw * 4, fh * 4);
+        // Detect source frame size from image dimensions
+        // PIPOYA 32x32 pack: 96x128 = 3 cols × 4 rows, each frame 32x32
+        // PIPOYA 32x48 pack: 96x192 = 3 cols × 4 rows, each frame 32x48
+        const srcRows = 4; // always 4 directions (down, left, right, up)
+        const srcFH = Math.floor(srcImg.height / srcRows);
+        const srcFW = Math.floor(srcImg.width / 3);  // PIPOYA always 3 cols
+        const srcCols = Math.floor(srcImg.width / srcFW);
+
+        // Vertical offset: bottom-align sprite in the taller frame
+        const yPad = dstFH - srcFH; // e.g. 48 - 32 = 16px padding at top
+
+        // Create target canvas (4 cols × 4 rows at 32x48)
+        const canvas = textures.createCanvas(targetKey, dstFW * 4, dstFH * 4);
         const ctx = canvas.getContext();
 
-        // PIPOYA layout: 3 cols × 4 rows (down, left, right, up)
-        // Game layout: 4 cols × 4 rows (each row = 1 direction, 4 frames)
-        const isPipoya = (srcCols === 3 && srcRows >= 4);
+        const isPipoya = (srcCols === 3);
+        const frameMap = [0, 1, 0, 2]; // PIPOYA 3-frame → 4-frame mapping
 
         for (let row = 0; row < 4; row++) {
-            if (isPipoya) {
-                // Map 3-frame PIPOYA to 4-frame: stand, step1, stand, step2
-                const frameMap = [0, 1, 0, 2]; // PIPOYA col indices
-                for (let col = 0; col < 4; col++) {
-                    const srcCol = frameMap[col];
-                    ctx.drawImage(srcImg,
-                        srcCol * fw, row * fh, fw, fh,
-                        col * fw, row * fh, fw, fh);
-                }
-            } else {
-                // Already 4+ columns — copy directly
-                for (let col = 0; col < 4; col++) {
-                    const srcCol = Math.min(col, srcCols - 1);
-                    ctx.drawImage(srcImg,
-                        srcCol * fw, row * fh, fw, fh,
-                        col * fw, row * fh, fw, fh);
-                }
+            for (let col = 0; col < 4; col++) {
+                const srcCol = isPipoya ? frameMap[col] : Math.min(col, srcCols - 1);
+                ctx.drawImage(srcImg,
+                    srcCol * srcFW, row * srcFH, srcFW, srcFH,         // source rect
+                    col * dstFW, row * dstFH + yPad, srcFW, srcFH);    // dest rect (bottom-aligned)
             }
         }
 
         canvas.refresh();
 
-        // Register frame indices
+        // Register frame indices at target frame size
         for (let row = 0; row < 4; row++) {
             for (let col = 0; col < 4; col++) {
                 const frameIndex = row * 4 + col;
-                textures.get(targetKey).add(frameIndex, 0, col * fw, row * fh, fw, fh);
+                textures.get(targetKey).add(frameIndex, 0, col * dstFW, row * dstFH, dstFW, dstFH);
             }
         }
     }
