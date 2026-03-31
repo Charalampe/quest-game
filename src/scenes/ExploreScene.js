@@ -686,6 +686,28 @@ export class ExploreScene extends Phaser.Scene {
         this.envTweens = [];
         this.envObjects = [];
 
+        // Water shimmer overlays — one per water tile, staggered phase
+        if (this.waterTiles) {
+            for (let i = 0; i < this.waterTiles.length; i++) {
+                const wt = this.waterTiles[i];
+                const wx = wt.x * TILE_W + TILE_W / 2;
+                const wy = wt.y * TILE_H + TILE_H / 2;
+                const shimmer = this.add.rectangle(wx, wy, TILE_W, TILE_H, 0x80c0ff, 0);
+                shimmer.setDepth(1);
+                this.envObjects.push(shimmer);
+                const tween = this.tweens.add({
+                    targets: shimmer,
+                    alpha: 0.15,
+                    duration: 800 + (i % 5) * 200,
+                    yoyo: true,
+                    repeat: -1,
+                    delay: (i % 7) * 150,
+                    ease: 'Sine.easeInOut'
+                });
+                this.envTweens.push(tween);
+            }
+        }
+
         for (let y = 0; y < cityData.height; y++) {
             for (let x = 0; x < cityData.width; x++) {
                 const decorTile = cityData.decor[y][x];
@@ -824,7 +846,7 @@ export class ExploreScene extends Phaser.Scene {
         // Animate water tiles
         if (this.waterTiles && this.waterTiles.length > 0) {
             this.waterTimer += delta;
-            if (this.waterTimer > 500) {
+            if (this.waterTimer > 350) {
                 this.waterTimer = 0;
                 this.waterFrame = (this.waterFrame + 1) % 3;
                 const waterIndices = [2, 64, 65];

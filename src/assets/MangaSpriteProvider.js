@@ -725,9 +725,12 @@ export class MangaSpriteProvider extends AssetProvider {
         });
 
         // Draw water animation variants (indices 64 and 65)
+        // Frame 0 = tile 2 (base water in drawTileDetail 'water' case)
+        // Frame 1 = tile 64: waves shifted down, different sparkle pattern
+        // Frame 2 = tile 65: waves shifted further, brighter highlights
         const waterVariants = [
-            { index: 64, waveShift: 2 },
-            { index: 65, waveShift: 4 }
+            { index: 64, waveYOff: 3, hue: '#5090e0', sparkleHue: '#c0e0ff' },
+            { index: 65, waveYOff: 6, hue: '#4088d8', sparkleHue: '#ffffff' }
         ];
         waterVariants.forEach(v => {
             const col = v.index % cols;
@@ -746,24 +749,28 @@ export class MangaSpriteProvider extends AssetProvider {
             ctx.fillStyle = '#2a6ab8';
             ctx.fillRect(wx + 2, wy + 2, tileSize - 4, tileSize - 4);
 
-            // Gradient layers
-            ctx.fillStyle = '#3b7dd8';
-            ctx.fillRect(wx + 2, wy + 2, tileSize - 4, 12);
+            // Gradient layers — shift tint per frame
+            ctx.fillStyle = v.hue;
+            ctx.fillRect(wx + 2, wy + 2, tileSize - 4, 14);
             ctx.fillStyle = '#4a8de8';
-            ctx.fillRect(wx + 2, wy + 2, tileSize - 4, 6);
+            ctx.fillRect(wx + 2, wy + 2, tileSize - 4, 7);
 
-            // Wave crests (manga-style)
+            // Wave crests shifted vertically per frame
+            const wo = v.waveYOff;
             ctx.fillStyle = '#ffffff';
-            ctx.fillRect(wx + 4 + v.waveShift, wy + 8, 8, 2);
-            ctx.fillRect(wx + 20 - v.waveShift, wy + 8, 6, 2);
-            ctx.fillRect(wx + 2 + v.waveShift, wy + 16, 10, 2);
-            ctx.fillRect(wx + 18 - v.waveShift, wy + 18, 8, 2);
-            ctx.fillRect(wx + 8 + v.waveShift, wy + 26, 12, 2);
+            ctx.fillRect(wx + 6, wy + 6 + wo, 10, 2);
+            ctx.fillRect(wx + 18, wy + 10 + wo, 8, 2);
+            ctx.fillRect(wx + 3, wy + 14 + wo, 12, 2);
+            ctx.fillRect(wx + 16, wy + 20 + wo, 10, 2);
+            ctx.fillRect(wx + 6, wy + 24 + wo, 14, 2);
 
-            // Sparkle highlights
-            ctx.fillRect(wx + 6 + v.waveShift, wy + 6, 2, 2);
-            ctx.fillRect(wx + 22 - v.waveShift, wy + 14, 2, 2);
-            ctx.fillRect(wx + 12 + v.waveShift, wy + 24, 2, 2);
+            // Semi-transparent shimmer band
+            ctx.fillStyle = v.sparkleHue;
+            ctx.fillRect(wx + 4, wy + 3, 6, 2);
+            ctx.fillRect(wx + 22, wy + 12 + wo, 4, 2);
+            ctx.fillRect(wx + 10, wy + 22 + wo, 6, 2);
+            ctx.fillRect(wx + 26, wy + 8, 3, 2);
+            ctx.fillRect(wx + 2, wy + 28 - wo, 4, 2);
         });
 
         // Composite external tile PNGs over procedural tiles
