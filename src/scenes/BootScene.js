@@ -304,14 +304,6 @@ export class BootScene extends Phaser.Scene {
         ctx.fillStyle = '#e07c6a';
         ctx.fillRect(cx - 1, by + 7, 2, 1);
 
-        // === Necklace for curator ===
-        if (npc.accessory === 'necklace_blazer') {
-            ctx.fillStyle = '#F5E6CA';
-            ctx.fillRect(cx - 2, by + 8, 4, 1);
-            ctx.fillStyle = '#FFD700';
-            ctx.fillRect(cx, by + 8, 1, 1);
-        }
-
         // === Shirt/Body (rows 8-14) ===
         ctx.fillStyle = npc.shirt;
         const bodyW = npc.accessory === 'apron_mustache' ? 9 : 8;
@@ -337,6 +329,11 @@ export class BootScene extends Phaser.Scene {
             ctx.fillStyle = '#1F3A5F';
             ctx.fillRect(cx - 4 + swayOffset, by + 9, 2, 5);
             ctx.fillRect(cx + 2 + swayOffset, by + 9, 2, 5);
+            // Necklace (drawn on top of blazer)
+            ctx.fillStyle = '#F5E6CA';
+            ctx.fillRect(cx - 2 + swayOffset, by + 8, 4, 1);
+            ctx.fillStyle = '#FFD700';
+            ctx.fillRect(cx + swayOffset, by + 9, 1, 1);
         }
         // Scarf for guide
         if (npc.accessory === 'ponytail_scarf') {

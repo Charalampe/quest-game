@@ -81,47 +81,78 @@ export const CITIES = {
     }
 };
 
-// Room transition table: doorId -> { targetCity, targetRoom, requiresFlag?, lockedMessage? }
+// Room transition table: doorId -> { targetCity, targetRoom, spawnAt, requiresFlag?, lockedMessage? }
+// spawnAt = where the player appears in the target room (near the return door)
 export const ROOM_TRANSITIONS = {
     // === PARIS ===
-    'paris_door_24_9': { targetCity: 'paris', targetRoom: 'eiffel_ground' },
-    'paris_eiffel_ground_door_10_14': { targetCity: 'paris', targetRoom: 'main' },
-    'paris_eiffel_ground_door_10_0': { targetCity: 'paris', targetRoom: 'eiffel_first', requiresFlag: 'paris_has_fastpass' },
-    'paris_eiffel_first_door_9_13': { targetCity: 'paris', targetRoom: 'eiffel_ground' },
-    'paris_eiffel_first_door_9_0': { targetCity: 'paris', targetRoom: 'eiffel_top' },
-    'paris_eiffel_top_door_6_9': { targetCity: 'paris', targetRoom: 'eiffel_first' },
+    // main -> eiffel_ground: enter near bottom door (10,14), spawn 1 above
+    'paris_door_24_9': { targetCity: 'paris', targetRoom: 'eiffel_ground', spawnAt: { x: 10, y: 13 } },
+    // eiffel_ground -> main: exit back to Eiffel plaza, spawn near (24,9)
+    'paris_eiffel_ground_door_10_14': { targetCity: 'paris', targetRoom: 'main', spawnAt: { x: 24, y: 10 } },
+    // eiffel_ground -> eiffel_first: enter near bottom door (9,13), spawn 1 above
+    'paris_eiffel_ground_door_10_0': { targetCity: 'paris', targetRoom: 'eiffel_first', spawnAt: { x: 9, y: 12 }, requiresFlag: 'paris_has_fastpass' },
+    // eiffel_first -> eiffel_ground: return near top door (10,0), spawn 1 below
+    'paris_eiffel_first_door_9_13': { targetCity: 'paris', targetRoom: 'eiffel_ground', spawnAt: { x: 10, y: 1 } },
+    // eiffel_first -> eiffel_top: enter near bottom door (6,9), spawn 1 above
+    'paris_eiffel_first_door_9_0': { targetCity: 'paris', targetRoom: 'eiffel_top', spawnAt: { x: 6, y: 8 } },
+    // eiffel_top -> eiffel_first: return near top door (9,0), spawn 1 below
+    'paris_eiffel_top_door_6_9': { targetCity: 'paris', targetRoom: 'eiffel_first', spawnAt: { x: 9, y: 1 } },
 
     // === LONDON ===
-    'london_door_22_15': { targetCity: 'london', targetRoom: 'museum_hall' },
-    'london_museum_hall_door_11_15': { targetCity: 'london', targetRoom: 'main' },
-    'london_museum_hall_door_21_0': { targetCity: 'london', targetRoom: 'museum_gallery' },
-    'london_museum_hall_door_0_8': { targetCity: 'london', targetRoom: 'museum_basement', requiresFlag: 'london_has_research_pass' },
-    'london_museum_gallery_door_10_17': { targetCity: 'london', targetRoom: 'museum_hall' },
-    'london_museum_basement_door_8_0': { targetCity: 'london', targetRoom: 'museum_hall' },
+    // main -> museum_hall: enter near bottom door (11,15), spawn 1 above
+    'london_door_22_15': { targetCity: 'london', targetRoom: 'museum_hall', spawnAt: { x: 11, y: 14 } },
+    // museum_hall -> main: return near museum entrance (22,15)
+    'london_museum_hall_door_11_15': { targetCity: 'london', targetRoom: 'main', spawnAt: { x: 22, y: 16 } },
+    // museum_hall -> museum_gallery: enter near bottom door (10,17), spawn 1 above
+    'london_museum_hall_door_21_0': { targetCity: 'london', targetRoom: 'museum_gallery', spawnAt: { x: 10, y: 16 } },
+    // museum_hall -> museum_basement: enter near top door (8,0), spawn 1 below
+    'london_museum_hall_door_0_8': { targetCity: 'london', targetRoom: 'museum_basement', spawnAt: { x: 8, y: 1 }, requiresFlag: 'london_has_research_pass' },
+    // museum_gallery -> museum_hall: return near top-right door (21,0), spawn 1 below
+    'london_museum_gallery_door_10_17': { targetCity: 'london', targetRoom: 'museum_hall', spawnAt: { x: 20, y: 1 } },
+    // museum_basement -> museum_hall: return near left door (0,8), spawn 1 right
+    'london_museum_basement_door_8_0': { targetCity: 'london', targetRoom: 'museum_hall', spawnAt: { x: 1, y: 8 } },
 
     // === ROME ===
-    'rome_door_24_12': { targetCity: 'rome', targetRoom: 'colosseum' },
-    'rome_colosseum_door_11_17': { targetCity: 'rome', targetRoom: 'main' },
-    'rome_colosseum_door_21_8': { targetCity: 'rome', targetRoom: 'catacombs_upper', requiresFlag: 'rome_have_key' },
-    'rome_catacombs_upper_door_9_0': { targetCity: 'rome', targetRoom: 'colosseum' },
-    'rome_catacombs_upper_door_9_15': { targetCity: 'rome', targetRoom: 'catacombs_lower' },
-    'rome_catacombs_lower_door_7_0': { targetCity: 'rome', targetRoom: 'catacombs_upper' },
+    // main -> colosseum: enter near bottom door (11,17), spawn 1 above
+    'rome_door_24_12': { targetCity: 'rome', targetRoom: 'colosseum', spawnAt: { x: 11, y: 16 } },
+    // colosseum -> main: return near colosseum entrance (24,12)
+    'rome_colosseum_door_11_17': { targetCity: 'rome', targetRoom: 'main', spawnAt: { x: 24, y: 13 } },
+    // colosseum -> catacombs_upper: enter near top door (9,0), spawn 1 below
+    'rome_colosseum_door_21_8': { targetCity: 'rome', targetRoom: 'catacombs_upper', spawnAt: { x: 9, y: 1 }, requiresFlag: 'rome_have_key' },
+    // catacombs_upper -> colosseum: return near right door (21,8), spawn 1 left
+    'rome_catacombs_upper_door_9_0': { targetCity: 'rome', targetRoom: 'colosseum', spawnAt: { x: 20, y: 8 } },
+    // catacombs_upper -> catacombs_lower: enter near top door (7,0), spawn 1 below
+    'rome_catacombs_upper_door_9_15': { targetCity: 'rome', targetRoom: 'catacombs_lower', spawnAt: { x: 7, y: 1 } },
+    // catacombs_lower -> catacombs_upper: return near bottom door (9,15), spawn 1 above
+    'rome_catacombs_lower_door_7_0': { targetCity: 'rome', targetRoom: 'catacombs_upper', spawnAt: { x: 9, y: 14 } },
 
     // === MARRAKECH ===
-    'marrakech_door_24_19': { targetCity: 'marrakech', targetRoom: 'souk' },
-    'marrakech_door_48_20': { targetCity: 'marrakech', targetRoom: 'oasis', requiresFlag: 'marrakech_met_nadia' },
-    'marrakech_souk_door_12_19': { targetCity: 'marrakech', targetRoom: 'main' },
-    'marrakech_souk_door_23_0': { targetCity: 'marrakech', targetRoom: 'riad' },
-    'marrakech_riad_door_8_13': { targetCity: 'marrakech', targetRoom: 'souk' },
-    'marrakech_oasis_door_10_15': { targetCity: 'marrakech', targetRoom: 'main' },
+    // main -> souk: enter near bottom door (12,19), spawn 1 above
+    'marrakech_door_24_19': { targetCity: 'marrakech', targetRoom: 'souk', spawnAt: { x: 12, y: 18 } },
+    // main -> oasis: enter near bottom door (10,15), spawn 1 above
+    'marrakech_door_48_20': { targetCity: 'marrakech', targetRoom: 'oasis', spawnAt: { x: 10, y: 14 }, requiresFlag: 'marrakech_met_nadia' },
+    // souk -> main: return near souk entrance (24,19), 1 tile above door
+    'marrakech_souk_door_12_19': { targetCity: 'marrakech', targetRoom: 'main', spawnAt: { x: 24, y: 18 } },
+    // souk -> riad: enter near bottom door (8,13), spawn 1 above
+    'marrakech_souk_door_23_0': { targetCity: 'marrakech', targetRoom: 'riad', spawnAt: { x: 8, y: 12 } },
+    // riad -> souk: return near top-right door (23,0), spawn 1 below
+    'marrakech_riad_door_8_13': { targetCity: 'marrakech', targetRoom: 'souk', spawnAt: { x: 22, y: 1 } },
+    // oasis -> main: return near oasis entrance (48,20) on east border
+    'marrakech_oasis_door_10_15': { targetCity: 'marrakech', targetRoom: 'main', spawnAt: { x: 47, y: 20 } },
 
     // === TOKYO ===
-    'tokyo_door_24_10': { targetCity: 'tokyo', targetRoom: 'shrine' },
-    'tokyo_shrine_door_9_15': { targetCity: 'tokyo', targetRoom: 'main' },
-    'tokyo_shrine_door_9_0': { targetCity: 'tokyo', targetRoom: 'bamboo_forest', requiresFlag: 'tokyo_riddle_solved' },
-    'tokyo_bamboo_forest_door_11_19': { targetCity: 'tokyo', targetRoom: 'shrine' },
-    'tokyo_bamboo_forest_door_11_0': { targetCity: 'tokyo', targetRoom: 'sacred_garden', requiresFlag: 'tokyo_has_jade_key' },
-    'tokyo_sacred_garden_door_7_11': { targetCity: 'tokyo', targetRoom: 'bamboo_forest' }
+    // main -> shrine: enter near bottom door (9,15), spawn 1 above
+    'tokyo_door_24_10': { targetCity: 'tokyo', targetRoom: 'shrine', spawnAt: { x: 9, y: 14 } },
+    // shrine -> main: return near shrine entrance (24,10)
+    'tokyo_shrine_door_9_15': { targetCity: 'tokyo', targetRoom: 'main', spawnAt: { x: 24, y: 11 } },
+    // shrine -> bamboo_forest: enter near bottom door (11,19), spawn 1 above
+    'tokyo_shrine_door_9_0': { targetCity: 'tokyo', targetRoom: 'bamboo_forest', spawnAt: { x: 11, y: 18 }, requiresFlag: 'tokyo_riddle_solved' },
+    // bamboo_forest -> shrine: return near top door (9,0), spawn 1 below
+    'tokyo_bamboo_forest_door_11_19': { targetCity: 'tokyo', targetRoom: 'shrine', spawnAt: { x: 9, y: 1 } },
+    // bamboo_forest -> sacred_garden: enter near bottom door (7,11), spawn 1 above
+    'tokyo_bamboo_forest_door_11_0': { targetCity: 'tokyo', targetRoom: 'sacred_garden', spawnAt: { x: 7, y: 10 }, requiresFlag: 'tokyo_has_jade_key' },
+    // sacred_garden -> bamboo_forest: return near top door (11,0), spawn 1 below
+    'tokyo_sacred_garden_door_7_11': { targetCity: 'tokyo', targetRoom: 'bamboo_forest', spawnAt: { x: 11, y: 1 } }
 };
 
 // Helper to create empty map arrays

@@ -16,6 +16,7 @@ export class ExploreScene extends Phaser.Scene {
     init(data) {
         this.cityId = data.city || 'paris';
         this.roomId = data.room || 'main';
+        this.spawnAt = data.spawnAt || null; // override playerStart from door transitions
         this.dialogActive = false;
         this.menuOpen = false;
         this.exitTriggered = false;
@@ -52,9 +53,10 @@ export class ExploreScene extends Phaser.Scene {
         // Create tilemap from room data
         this.buildTilemap(roomData);
 
-        // Create player
-        const startX = roomData.playerStart.x * 16 + 8;
-        const startY = roomData.playerStart.y * 16 + 8;
+        // Create player (spawnAt overrides playerStart when entering via door)
+        const spawn = this.spawnAt || roomData.playerStart;
+        const startX = spawn.x * 16 + 8;
+        const startY = spawn.y * 16 + 8;
         this.player = new Player(this, startX, startY);
         this.player.setDepth(5);
 
@@ -108,26 +110,17 @@ export class ExploreScene extends Phaser.Scene {
             for (const npc of this.npcs) { npc.destroy(); }
             this.npcs = [];
             this.waterTiles = [];
-            // Cleanup particle emitters
-            if (this.particleEmitters) {
-                for (const emitter of this.particleEmitters) {
-                    emitter.destroy();
-                }
-                this.particleEmitters = [];
-            }
-            // Cleanup environmental tweens
+            // Null out refs — Phaser auto-destroys scene game objects on shutdown
+            this.particleEmitters = [];
+            // Remove tweens (safe during shutdown — tweens aren't auto-cleaned)
             if (this.envTweens) {
                 for (const tween of this.envTweens) {
-                    tween.remove();
+                    if (tween && !tween.isDestroyed) tween.remove();
                 }
                 this.envTweens = [];
             }
-            if (this.envObjects) {
-                for (const obj of this.envObjects) {
-                    obj.destroy();
-                }
-                this.envObjects = [];
-            }
+            // Null out env object refs — Phaser auto-destroys them
+            this.envObjects = [];
         });
 
         // Start UI overlay scene
@@ -500,14 +493,14 @@ export class ExploreScene extends Phaser.Scene {
                 return;
             }
         }
-        this.enterRoom(transition.targetCity || this.cityId, transition.targetRoom);
+        this.enterRoom(transition.targetCity || this.cityId, transition.targetRoom, transition.spawnAt);
     }
 
-    enterRoom(cityId, roomId) {
+    enterRoom(cityId, roomId, spawnAt) {
         this.cameras.main.fadeOut(400, 0, 0, 0);
         this.cameras.main.once('camerafadeoutcomplete', () => {
             this.scene.stop('UI');
-            this.scene.restart({ city: cityId, room: roomId });
+            this.scene.restart({ city: cityId, room: roomId, spawnAt: spawnAt || null });
         });
     }
 
