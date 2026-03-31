@@ -125,6 +125,7 @@ export const NPC_DIALOG_ROUTES = {
         { dialog: 'hassan_intro', condition: () => true }
     ],
     marrakech_storyteller: [
+        { dialog: 'fatima_after_amulet', condition: (flags) => flags.marrakech_has_amulet && !flags.marrakech_met_nadia },
         { dialog: 'fatima_intro', condition: () => true }
     ],
     marrakech_girl: [
@@ -134,12 +135,15 @@ export const NPC_DIALOG_ROUTES = {
         { dialog: 'karim_intro', condition: () => true }
     ],
     marrakech_youssef: [
+        { dialog: 'youssef_after_amulet', condition: (flags) => flags.marrakech_has_amulet && !flags.marrakech_met_nadia },
         { dialog: 'youssef_intro', condition: () => true }
     ],
     marrakech_tariq: [
+        { dialog: 'tariq_after_amulet', condition: (flags) => flags.marrakech_has_amulet && !flags.marrakech_met_nadia },
         { dialog: 'tariq_intro', condition: () => true }
     ],
     marrakech_zahra: [
+        { dialog: 'zahra_after_amulet', condition: (flags) => flags.marrakech_has_amulet && !flags.marrakech_met_nadia },
         { dialog: 'zahra_intro', condition: () => true }
     ],
     marrakech_nadia: [

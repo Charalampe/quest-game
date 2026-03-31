@@ -130,7 +130,7 @@ export const ROOM_TRANSITIONS = {
     // main -> souk: enter near bottom door (12,19), spawn 1 above
     'marrakech_door_24_19': { targetCity: 'marrakech', targetRoom: 'souk', spawnAt: { x: 12, y: 18 } },
     // main -> oasis: enter near bottom door (10,15), spawn 1 above
-    'marrakech_door_48_20': { targetCity: 'marrakech', targetRoom: 'oasis', spawnAt: { x: 10, y: 14 }, requiresFlag: 'marrakech_met_nadia' },
+    'marrakech_door_48_20': { targetCity: 'marrakech', targetRoom: 'oasis', spawnAt: { x: 10, y: 14 }, requiresFlag: 'marrakech_has_amulet' },
     // souk -> main: return near souk entrance (24,19), 1 tile above door
     'marrakech_souk_door_12_19': { targetCity: 'marrakech', targetRoom: 'main', spawnAt: { x: 24, y: 18 } },
     // souk -> riad: enter near bottom door (8,13), spawn 1 above

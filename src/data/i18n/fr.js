@@ -385,6 +385,11 @@ export default {
             "Marrakech est un lieu de rencontre des cultures depuis des siècles.",
             "Si tu cherches quelque chose, entre dans le Grand Souk au sud. Hassan connaît tout le monde."
         ],
+        fatima_after_amulet: [
+            "Je vois que tu portes l'amulette de Nadia ! Elle la cherchait partout.",
+            "L'oasis du d\u00E9sert est \u00E0 l'est \u2014 suis le chemin le long du mur de la ville.",
+            "Nadia est gentille. Elle t'aidera dans ton voyage."
+        ],
         amina_intro: [
             "Salut ! Je suis Amina. La médina, c'est un vrai labyrinthe, non ?",
             "T'inquiète pas, tu ne peux pas vraiment te perdre. Les chemins ramènent toujours à la place !",
@@ -405,6 +410,11 @@ export default {
             "Mais elle a perdu l'amulette de sa grand-mère dans le vieux riad.",
             "Retrouve-la, et peut-être qu'elle te fera confiance."
         ],
+        youssef_after_amulet: [
+            "Tu as trouv\u00E9 l'amulette ! Quelle histoire \u00E0 raconter !",
+            "Nadia t'attend \u00E0 l'oasis. Va vers l'est en traversant la place principale !",
+            "Le chemin vers le d\u00E9sert est tout \u00E0 l'est de la ville."
+        ],
 
         tariq_intro: [
             "Les plus beaux tapis de tout Marrakech !",
@@ -413,12 +423,22 @@ export default {
             "Mais elle est triste — elle a perdu l'amulette de sa grand-mère.",
             "Quelqu'un a dit qu'elle est tombée dans la cour du vieux riad tout près."
         ],
+        tariq_after_amulet: [
+            "C'est l'amulette ? Nadia va \u00EAtre folle de joie !",
+            "D\u00E9p\u00EAche-toi d'aller \u00E0 l'oasis \u2014 va vers l'est depuis la place principale.",
+            "Tu ne peux pas manquer le chemin le long du bord est de la ville."
+        ],
 
         zahra_intro: [
             "Bienvenue dans le riad caché. Peu de visiteurs trouvent cet endroit.",
             "J'entretiens ce vieux bâtiment. Il a une belle fontaine.",
             "J'ai vu quelque chose de brillant près de la fontaine l'autre jour...",
             "Une petite amulette, peut-être ? Regarde près de l'eau."
+        ],
+        zahra_after_amulet: [
+            "Tu as trouv\u00E9 l'amulette ! Nadia va \u00EAtre tellement contente.",
+            "Elle attend \u00E0 l'oasis du d\u00E9sert, \u00E0 l'est de la place principale.",
+            "Retourne par le souk, puis cherche le chemin tout \u00E0 l'est de la ville."
         ],
 
         nadia_intro: [

@@ -380,6 +380,11 @@ export default {
             "Marrakech has been a meeting place of cultures for centuries.",
             "If you seek something, enter the Grand Souk to the south. Hassan knows everyone."
         ],
+        fatima_after_amulet: [
+            "I see you carry Nadia's amulet! She's been searching for it.",
+            "The desert oasis is to the east \u2014 follow the path along the city wall.",
+            "Nadia is kind. She will help you on your journey."
+        ],
         amina_intro: [
             "Hi! I'm Amina. The medina is like a maze, isn't it?",
             "Don't worry, you can't really get lost. The paths always lead back to the square!",
@@ -399,6 +404,11 @@ export default {
             "But she lost her grandmother's amulet in the old riad.",
             "Find it, and perhaps she will trust you."
         ],
+        youssef_after_amulet: [
+            "You found the amulet! What a tale this will make!",
+            "Nadia awaits at the oasis. Go east through the main square!",
+            "The path to the desert is on the far east side of town."
+        ],
         tariq_intro: [
             "The finest carpets in all of Marrakech!",
             "You look like you're searching for something...",
@@ -406,11 +416,21 @@ export default {
             "But she's been sad — lost her grandmother's amulet.",
             "Someone said it fell in the old riad courtyard nearby."
         ],
+        tariq_after_amulet: [
+            "Is that the amulet? Nadia will be overjoyed!",
+            "Hurry to the oasis \u2014 head east from the main square.",
+            "You can't miss the path along the eastern edge of town."
+        ],
         zahra_intro: [
             "Welcome to the hidden riad. So few visitors find this place.",
             "I maintain this old building. It has a beautiful fountain.",
             "I saw something shiny near the fountain the other day...",
             "A little amulet, perhaps? Check near the water."
+        ],
+        zahra_after_amulet: [
+            "You found the amulet! Nadia will be so happy.",
+            "She's been waiting at the desert oasis, east of the main square.",
+            "Head back through the souk, then look for the path on the far east side of town."
         ],
 
         nadia_intro: [
