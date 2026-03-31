@@ -83,3 +83,11 @@ Both test suites must pass before merging changes.
 Paris → London → Rome → Marrakech → Tokyo
 
 Travel: Train (Europe) → Boat (to Marrakech) → Magic Portal (to Tokyo, requires `portal_unlocked` flag)
+
+## Memory & Documentation
+
+All memory files, docs, and Claude instructions must be placed in **this repo folder** (`memory/`), not in `~/.claude/projects/`. Files:
+- `memory/MEMORY.md` — Top-level project memory (concise)
+- `memory/architecture.md` — Detailed file reference
+- `memory/bugs-and-fixes.md` — Bug history
+- `memory/gotchas.md` — Full gotcha list
