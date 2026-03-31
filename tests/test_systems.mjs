@@ -1890,15 +1890,35 @@ describe('Sprite Rendering Bounds', () => {
     });
 
     it('player sprite content fits within 32x48 frame on all frames', () => {
-        // Worst case: static frame (bobOffset=2), shoes at by+42 = y+44. Max y index = 47. OK.
-        // Arms at cx-10 = x+6 (leftmost). Min x index = 0. OK (6 >= 0).
-        // Arms at cx+8 = x+24 (rightmost, 2px wide). Max = x+24. OK (24 < 32).
-        const maxY = 2 + 42; // bobOffset + shoe sole position
-        assert.ok(maxY <= 47, `Player content extends to row ${maxY}, frame height is 48`);
-        const minX = 16 - 10; // cx - 10 where cx = x + 16 (center of 32px frame), relative to x=0
-        assert.ok(minX >= 0, `Player left arm starts at x+${minX}, out of bounds`);
-        const maxX = 16 + 8; // cx + 8 (right arm, 2px wide)
-        assert.ok(maxX < 32, `Player right arm extends to x+${maxX}, frame width is 32`);
+        // Worst case: static frame (bobOffset=2), shoes at by+39+6 = y+2+45 = y+47. OK.
+        // Arms at cx-11 = x+5 (leftmost outline). Min x index = 0. OK (5 >= 0).
+        // Arms at cx+8+3 = x+27 (rightmost outline edge). OK (27 <= 32).
+        const maxY = 2 + 39 + 6; // bobOffset + shoe outline start + shoe height
+        assert.ok(maxY <= 48, `Player content extends to row ${maxY}, frame height is 48`);
+        const minX = 16 - 11; // cx - 11 (arm outline, worst case)
+        assert.ok(minX >= 0, `Player left arm outline starts at x+${minX}, out of bounds`);
+        const maxX = 16 + 8 + 3; // cx + 8 + width 3 (right arm outline)
+        assert.ok(maxX <= 32, `Player right arm outline ends at x+${maxX}, frame width is 32`);
+    });
+
+    it('player/NPC hair outline never draws above frame (by - 1 bug regression)', async () => {
+        // The manga outline must start at by+0, never by-1.
+        // bobOffset is 0 for frames 1,3. by = y + 0 = y.
+        // Hair outline at by+0 = y+0. This is the frame top edge — OK.
+        // Hair outline at by-1 would be y-1 — CORRUPT adjacent frame.
+        const fs = await import('node:fs');
+        const mangaSrc = fs.readFileSync('src/assets/MangaSpriteProvider.js', 'utf-8');
+        // Extract drawPlayer body and drawNPC body separately
+        const drawPlayerBody = mangaSrc.match(/drawPlayer\(ctx,[\s\S]*?^\s{4}\}/m);
+        if (drawPlayerBody) {
+            assert.ok(!drawPlayerBody[0].includes('by - 1'),
+                'drawPlayer must not draw at by - 1 (above frame boundary)');
+        }
+        const drawNPCBody = mangaSrc.match(/drawNPC\(ctx,[\s\S]*?^\s{4}\}/m);
+        if (drawNPCBody) {
+            assert.ok(!drawNPCBody[0].includes('by - 1'),
+                'drawNPC must not draw at by - 1 (above frame boundary)');
+        }
     });
 
     it('NPC merchant body fits within 32px frame on all sway offsets', () => {

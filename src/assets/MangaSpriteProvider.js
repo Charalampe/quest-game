@@ -204,7 +204,7 @@ export class MangaSpriteProvider extends AssetProvider {
 
         // === Hair with flowing strands and outline (rows 0-6) ===
         ctx.fillStyle = '#1a0d00'; // Dark outline
-        ctx.fillRect(cx - 9, by - 1, 18, 10);
+        ctx.fillRect(cx - 9, by, 18, 9);
         ctx.fillRect(cx - 9, by + 5, 3, 8);
         ctx.fillRect(cx + 6, by + 5, 3, 8);
 
@@ -472,7 +472,7 @@ export class MangaSpriteProvider extends AssetProvider {
 
         // === Hair with outline ===
         ctx.fillStyle = '#1a0d00'; // Dark outline
-        ctx.fillRect(cx - 9, by - 1, 18, 10);
+        ctx.fillRect(cx - 9, by, 18, 9);
 
         ctx.fillStyle = npc.hair;
         ctx.fillRect(cx - 8, by + 0, 16, 8);
@@ -488,7 +488,7 @@ export class MangaSpriteProvider extends AssetProvider {
             ctx.fillRect(cx + 6, by + 4, 4, 10);
         } else if (npc.accessory === 'hat_apron') {
             ctx.fillStyle = '#1a0d00';
-            ctx.fillRect(cx - 11, by - 1, 22, 4);
+            ctx.fillRect(cx - 11, by, 22, 3);
             ctx.fillStyle = '#D4A950';
             ctx.fillRect(cx - 10, by, 20, 2);
             ctx.fillRect(cx - 6, by, 12, 2);
