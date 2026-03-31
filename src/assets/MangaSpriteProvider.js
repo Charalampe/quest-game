@@ -1991,6 +1991,719 @@ export class MangaSpriteProvider extends AssetProvider {
                 ctx.fillRect(x+1, y+1, s-2, s-2);
                 break;
             }
+
+            // ── Ground tile details ──
+
+            case 'sand': {
+                ctx.fillStyle = '#c4a870';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#d4c5a0';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#e0d4b0';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Sand ripples
+                ctx.fillStyle = '#c8b890';
+                ctx.fillRect(x+3, y+6, 12, 2);
+                ctx.fillRect(x+16, y+10, 10, 2);
+                ctx.fillRect(x+5, y+18, 14, 2);
+                ctx.fillRect(x+18, y+24, 8, 2);
+                ctx.fillRect(x+2, y+28, 10, 2);
+                // Pebbles
+                ctx.fillStyle = '#b0a080';
+                ctx.fillRect(x+8, y+3, 3, 3);
+                ctx.fillRect(x+22, y+15, 2, 2);
+                ctx.fillRect(x+4, y+22, 3, 2);
+                ctx.fillRect(x+26, y+6, 2, 3);
+                // Highlight specks
+                ctx.fillStyle = '#f0e8d0';
+                ctx.fillRect(x+12, y+8, 2, 2);
+                ctx.fillRect(x+24, y+20, 2, 2);
+                ctx.fillRect(x+6, y+14, 2, 2);
+                break;
+            }
+            case 'dirt': {
+                ctx.fillStyle = '#6a5030';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#7a6040';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#8B7355';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Ruts / wheel tracks
+                ctx.fillStyle = '#7a6040';
+                ctx.fillRect(x+4, y+10, 24, 2);
+                ctx.fillRect(x+4, y+20, 24, 2);
+                // Stones embedded in dirt
+                ctx.fillStyle = '#a09070';
+                ctx.fillRect(x+6, y+4, 4, 3);
+                ctx.fillRect(x+20, y+7, 3, 3);
+                ctx.fillRect(x+10, y+25, 4, 3);
+                ctx.fillRect(x+24, y+23, 3, 2);
+                // Dark patches
+                ctx.fillStyle = '#6a5030';
+                ctx.fillRect(x+14, y+14, 6, 4);
+                ctx.fillRect(x+3, y+26, 4, 3);
+                // Highlight
+                ctx.fillStyle = '#9a8565';
+                ctx.fillRect(x+8, y+2, 2, 2);
+                ctx.fillRect(x+22, y+16, 2, 2);
+                break;
+            }
+            case 'darkstone': {
+                ctx.fillStyle = '#333333';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#444444';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#555555';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Stone slab cracks
+                ctx.fillStyle = '#3a3a3a';
+                ctx.fillRect(x+14, y, 2, s);
+                ctx.fillRect(x, y+14, s, 2);
+                // Highlight edges
+                ctx.fillStyle = '#666666';
+                ctx.fillRect(x+2, y+2, 10, 2);
+                ctx.fillRect(x+18, y+2, 10, 2);
+                ctx.fillRect(x+2, y+18, 10, 2);
+                ctx.fillRect(x+18, y+18, 10, 2);
+                // Worn texture spots
+                ctx.fillStyle = '#4a4a4a';
+                ctx.fillRect(x+6, y+6, 4, 4);
+                ctx.fillRect(x+22, y+22, 4, 4);
+                break;
+            }
+            case 'wood': {
+                ctx.fillStyle = '#b09060';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#c8a878';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#DEB887';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Wood grain lines
+                ctx.fillStyle = '#c8a060';
+                ctx.fillRect(x+2, y+5, s-4, 1);
+                ctx.fillRect(x+2, y+10, s-4, 1);
+                ctx.fillRect(x+2, y+15, s-4, 1);
+                ctx.fillRect(x+2, y+20, s-4, 1);
+                ctx.fillRect(x+2, y+25, s-4, 1);
+                // Knot
+                ctx.fillStyle = '#b09060';
+                ctx.fillRect(x+12, y+12, 6, 5);
+                ctx.fillStyle = '#a08050';
+                ctx.fillRect(x+13, y+13, 4, 3);
+                // Plank seam
+                ctx.fillStyle = '#a08050';
+                ctx.fillRect(x+15, y, 2, s);
+                // Highlight
+                ctx.fillStyle = '#e8d0a0';
+                ctx.fillRect(x+4, y+2, 8, 2);
+                ctx.fillRect(x+20, y+2, 6, 2);
+                break;
+            }
+            case 'darkfloor': {
+                ctx.fillStyle = '#282828';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#343434';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#404040';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Stone slab pattern
+                ctx.fillStyle = '#333333';
+                ctx.fillRect(x, y+15, s, 2);
+                ctx.fillRect(x+15, y, 2, s);
+                // Subtle highlights
+                ctx.fillStyle = '#4a4a4a';
+                ctx.fillRect(x+3, y+3, 8, 2);
+                ctx.fillRect(x+19, y+3, 8, 2);
+                ctx.fillRect(x+3, y+19, 8, 2);
+                ctx.fillRect(x+19, y+19, 8, 2);
+                // Scuff marks
+                ctx.fillStyle = '#383838';
+                ctx.fillRect(x+8, y+8, 3, 2);
+                ctx.fillRect(x+20, y+24, 4, 2);
+                break;
+            }
+
+            // ── Wall tile details ──
+
+            case 'museumwall': {
+                ctx.fillStyle = '#5a2000';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#6e2c00';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                // Large stone blocks
+                ctx.fillStyle = '#7a3800';
+                ctx.fillRect(x+2, y+2, 13, 13);
+                ctx.fillRect(x+17, y+2, 13, 13);
+                ctx.fillRect(x+2, y+17, 13, 13);
+                ctx.fillRect(x+17, y+17, 13, 13);
+                // Mortar lines
+                ctx.fillStyle = '#4a1c00';
+                ctx.fillRect(x+15, y, 2, s);
+                ctx.fillRect(x, y+15, s, 2);
+                // Highlight
+                ctx.fillStyle = '#8a4810';
+                ctx.fillRect(x+3, y+3, 10, 2);
+                ctx.fillRect(x+18, y+3, 10, 2);
+                break;
+            }
+            case 'darkbrick': {
+                ctx.fillStyle = '#0e1518';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#1c2833';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                // Brick pattern
+                ctx.fillStyle = '#243340';
+                ctx.fillRect(x+2, y+2, 12, 6);
+                ctx.fillRect(x+18, y+2, 12, 6);
+                ctx.fillRect(x+9, y+10, 12, 6);
+                ctx.fillRect(x+2, y+18, 12, 6);
+                ctx.fillRect(x+18, y+18, 12, 6);
+                ctx.fillRect(x+9, y+26, 12, 6);
+                // Mortar
+                ctx.fillStyle = '#141e28';
+                ctx.fillRect(x, y+8, s, 2);
+                ctx.fillRect(x, y+16, s, 2);
+                ctx.fillRect(x, y+24, s, 2);
+                ctx.fillRect(x+14, y, 2, 8);
+                ctx.fillRect(x+8, y+10, 2, 6);
+                ctx.fillRect(x+14, y+18, 2, 6);
+                ctx.fillRect(x+8, y+26, 2, 6);
+                break;
+            }
+            case 'terracotta': {
+                ctx.fillStyle = '#c88040';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#e0a060';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#fad7a0';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Terracotta tile pattern
+                ctx.fillStyle = '#e0a060';
+                ctx.fillRect(x+15, y, 2, s);
+                ctx.fillRect(x, y+15, s, 2);
+                // Warm highlights
+                ctx.fillStyle = '#ffe4c0';
+                ctx.fillRect(x+3, y+3, 8, 2);
+                ctx.fillRect(x+19, y+3, 8, 2);
+                // Aged spots
+                ctx.fillStyle = '#d09050';
+                ctx.fillRect(x+6, y+8, 4, 3);
+                ctx.fillRect(x+22, y+22, 3, 3);
+                break;
+            }
+            case 'pinkwall': {
+                ctx.fillStyle = '#c09090';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#d8a0a0';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#f5b7b1';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Plaster texture
+                ctx.fillStyle = '#e8a8a0';
+                ctx.fillRect(x+4, y+6, 8, 4);
+                ctx.fillRect(x+18, y+14, 10, 4);
+                ctx.fillRect(x+6, y+24, 6, 4);
+                // Highlight wash
+                ctx.fillStyle = '#ffd0c8';
+                ctx.fillRect(x+3, y+3, 12, 2);
+                ctx.fillRect(x+18, y+3, 8, 2);
+                break;
+            }
+            case 'sandstone': {
+                ctx.fillStyle = '#c89860';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#e0b080';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#f0b27a';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Block courses
+                ctx.fillStyle = '#d8a068';
+                ctx.fillRect(x, y+10, s, 2);
+                ctx.fillRect(x, y+22, s, 2);
+                ctx.fillRect(x+16, y, 2, 10);
+                ctx.fillRect(x+10, y+12, 2, 10);
+                ctx.fillRect(x+22, y+24, 2, 8);
+                // Weathering
+                ctx.fillStyle = '#c89860';
+                ctx.fillRect(x+4, y+4, 5, 3);
+                ctx.fillRect(x+20, y+14, 4, 3);
+                // Highlight
+                ctx.fillStyle = '#fcc890';
+                ctx.fillRect(x+3, y+2, 10, 2);
+                ctx.fillRect(x+18, y+13, 8, 2);
+                break;
+            }
+            case 'lightclay': {
+                ctx.fillStyle = '#d8a880';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#e8c0a0';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#f5cba7';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Subtle cracks
+                ctx.fillStyle = '#e0b090';
+                ctx.fillRect(x+6, y+4, 1, 8);
+                ctx.fillRect(x+20, y+12, 1, 10);
+                ctx.fillRect(x+12, y+22, 8, 1);
+                // Texture spots
+                ctx.fillStyle = '#ddb898';
+                ctx.fillRect(x+10, y+8, 4, 3);
+                ctx.fillRect(x+22, y+20, 3, 4);
+                // Highlight
+                ctx.fillStyle = '#fde0c4';
+                ctx.fillRect(x+3, y+2, 12, 2);
+                break;
+            }
+            case 'ancientstone': {
+                ctx.fillStyle = '#b8a0c0';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#c8b0d0';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#d7bde2';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Weathered cracks
+                ctx.fillStyle = '#c0a8c8';
+                ctx.fillRect(x+8, y+3, 1, 12);
+                ctx.fillRect(x+4, y+18, 10, 1);
+                ctx.fillRect(x+22, y+10, 1, 14);
+                // Erosion pits
+                ctx.fillStyle = '#b098b8';
+                ctx.fillRect(x+14, y+6, 4, 3);
+                ctx.fillRect(x+6, y+22, 3, 3);
+                ctx.fillRect(x+24, y+24, 3, 3);
+                // Lichen spot
+                ctx.fillStyle = '#a0c8a0';
+                ctx.fillRect(x+18, y+18, 3, 2);
+                break;
+            }
+
+            // ── Decor tile details ──
+
+            case 'awning': {
+                ctx.fillStyle = '#801a15';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#a93226';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                // Striped awning
+                ctx.fillStyle = '#c43e32';
+                ctx.fillRect(x+2, y+2, 6, s-4);
+                ctx.fillRect(x+12, y+2, 6, s-4);
+                ctx.fillRect(x+22, y+2, 6, s-4);
+                // Scalloped bottom edge
+                ctx.fillStyle = '#801a15';
+                ctx.fillRect(x+2, y+s-4, 4, 2);
+                ctx.fillRect(x+10, y+s-4, 4, 2);
+                ctx.fillRect(x+18, y+s-4, 4, 2);
+                ctx.fillRect(x+26, y+s-4, 4, 2);
+                // Shadow under edge
+                ctx.fillStyle = '#601210';
+                ctx.fillRect(x, y+s-2, s, 2);
+                break;
+            }
+            case 'window': {
+                ctx.fillStyle = '#a0a8b0';
+                ctx.fillRect(x, y, s, s);
+                // Window frame
+                ctx.fillStyle = '#b8c0c8';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Glass panes
+                ctx.fillStyle = '#88b8e0';
+                ctx.fillRect(x+4, y+4, 10, 10);
+                ctx.fillRect(x+18, y+4, 10, 10);
+                ctx.fillRect(x+4, y+18, 10, 10);
+                ctx.fillRect(x+18, y+18, 10, 10);
+                // Dividers
+                ctx.fillStyle = '#d5d8dc';
+                ctx.fillRect(x+15, y+2, 2, s-4);
+                ctx.fillRect(x+2, y+15, s-4, 2);
+                // Glass reflection
+                ctx.fillStyle = '#a8d8f0';
+                ctx.fillRect(x+5, y+5, 4, 3);
+                ctx.fillRect(x+19, y+5, 4, 3);
+                break;
+            }
+            case 'fence': {
+                ctx.fillStyle = '#3a2818';
+                ctx.fillRect(x, y, s, s);
+                // Background (transparent-ish ground)
+                ctx.fillStyle = '#4a8c3f';
+                ctx.fillRect(x, y, s, s);
+                // Fence posts
+                ctx.fillStyle = '#3a2818';
+                ctx.fillRect(x+3, y+4, 4, 24);
+                ctx.fillRect(x+25, y+4, 4, 24);
+                // Post detail
+                ctx.fillStyle = '#5d4e37';
+                ctx.fillRect(x+4, y+5, 2, 22);
+                ctx.fillRect(x+26, y+5, 2, 22);
+                // Horizontal rails
+                ctx.fillStyle = '#4a3828';
+                ctx.fillRect(x+2, y+10, 28, 3);
+                ctx.fillRect(x+2, y+20, 28, 3);
+                ctx.fillStyle = '#5d4e37';
+                ctx.fillRect(x+2, y+11, 28, 1);
+                ctx.fillRect(x+2, y+21, 28, 1);
+                // Post caps
+                ctx.fillStyle = '#5d4e37';
+                ctx.fillRect(x+2, y+3, 6, 2);
+                ctx.fillRect(x+24, y+3, 6, 2);
+                break;
+            }
+            case 'purpledoor': {
+                ctx.fillStyle = '#301840';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#4a235a';
+                ctx.fillRect(x+2, y+1, s-4, s-1);
+                // Door panels
+                ctx.fillStyle = '#5a2d6a';
+                ctx.fillRect(x+4, y+4, 10, 12);
+                ctx.fillRect(x+18, y+4, 10, 12);
+                ctx.fillRect(x+4, y+20, 24, 10);
+                // Panel highlights
+                ctx.fillStyle = '#6a3d7a';
+                ctx.fillRect(x+5, y+5, 8, 2);
+                ctx.fillRect(x+19, y+5, 8, 2);
+                // Door handle
+                ctx.fillStyle = '#d4ac0d';
+                ctx.fillRect(x+22, y+16, 3, 3);
+                // Arch top
+                ctx.fillStyle = '#3a1848';
+                ctx.fillRect(x+4, y+1, 24, 2);
+                break;
+            }
+            case 'vine': {
+                ctx.fillStyle = '#2a7a2a';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#b8d8b0';
+                ctx.fillRect(x, y, s, s);
+                // Vine stems
+                ctx.fillStyle = '#3a8a30';
+                ctx.fillRect(x+6, y, 2, s);
+                ctx.fillRect(x+18, y+4, 2, s-4);
+                ctx.fillRect(x+12, y+8, 6, 2);
+                // Leaves
+                ctx.fillStyle = '#4aaa40';
+                ctx.fillRect(x+3, y+4, 4, 3);
+                ctx.fillRect(x+8, y+10, 4, 3);
+                ctx.fillRect(x+3, y+18, 4, 3);
+                ctx.fillRect(x+8, y+24, 4, 3);
+                ctx.fillRect(x+16, y+6, 4, 3);
+                ctx.fillRect(x+20, y+14, 4, 3);
+                ctx.fillRect(x+16, y+22, 4, 3);
+                ctx.fillRect(x+22, y+28, 4, 3);
+                // Leaf highlights
+                ctx.fillStyle = '#6aca60';
+                ctx.fillRect(x+4, y+5, 2, 1);
+                ctx.fillRect(x+9, y+11, 2, 1);
+                ctx.fillRect(x+17, y+7, 2, 1);
+                ctx.fillRect(x+21, y+15, 2, 1);
+                break;
+            }
+            case 'marketstall': {
+                ctx.fillStyle = '#7a4a10';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#af601a';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                // Canopy
+                ctx.fillStyle = '#c87020';
+                ctx.fillRect(x+2, y+2, s-4, 10);
+                // Canopy stripes
+                ctx.fillStyle = '#e08830';
+                ctx.fillRect(x+4, y+3, 6, 8);
+                ctx.fillRect(x+14, y+3, 6, 8);
+                ctx.fillRect(x+24, y+3, 4, 8);
+                // Counter
+                ctx.fillStyle = '#8B7355';
+                ctx.fillRect(x+2, y+14, s-4, 4);
+                ctx.fillStyle = '#a08860';
+                ctx.fillRect(x+3, y+15, s-6, 2);
+                // Wares on display
+                ctx.fillStyle = '#e74c3c';
+                ctx.fillRect(x+4, y+20, 4, 4);
+                ctx.fillStyle = '#f39c12';
+                ctx.fillRect(x+10, y+20, 4, 4);
+                ctx.fillStyle = '#2ecc71';
+                ctx.fillRect(x+16, y+20, 4, 4);
+                ctx.fillStyle = '#3498db';
+                ctx.fillRect(x+22, y+20, 4, 4);
+                break;
+            }
+            case 'fabric': {
+                ctx.fillStyle = '#5a2080';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#7d3c98';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                // Woven pattern
+                ctx.fillStyle = '#9050b0';
+                ctx.fillRect(x+3, y+3, 4, 4);
+                ctx.fillRect(x+11, y+3, 4, 4);
+                ctx.fillRect(x+19, y+3, 4, 4);
+                ctx.fillRect(x+7, y+11, 4, 4);
+                ctx.fillRect(x+15, y+11, 4, 4);
+                ctx.fillRect(x+23, y+11, 4, 4);
+                ctx.fillRect(x+3, y+19, 4, 4);
+                ctx.fillRect(x+11, y+19, 4, 4);
+                ctx.fillRect(x+19, y+19, 4, 4);
+                ctx.fillRect(x+7, y+27, 4, 4);
+                ctx.fillRect(x+15, y+27, 4, 4);
+                // Gold thread accents
+                ctx.fillStyle = '#d4ac0d';
+                ctx.fillRect(x+5, y+5, 2, 2);
+                ctx.fillRect(x+13, y+5, 2, 2);
+                ctx.fillRect(x+21, y+5, 2, 2);
+                ctx.fillRect(x+9, y+13, 2, 2);
+                ctx.fillRect(x+17, y+13, 2, 2);
+                ctx.fillRect(x+5, y+21, 2, 2);
+                ctx.fillRect(x+13, y+21, 2, 2);
+                ctx.fillRect(x+21, y+21, 2, 2);
+                break;
+            }
+            case 'darkarch': {
+                ctx.fillStyle = '#1a2830';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#2e4053';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                // Arch shape
+                ctx.fillStyle = '#1a2830';
+                ctx.fillRect(x+4, y+2, 24, 4);
+                ctx.fillRect(x+2, y+6, 4, 24);
+                ctx.fillRect(x+26, y+6, 4, 24);
+                // Keystone
+                ctx.fillStyle = '#4a6070';
+                ctx.fillRect(x+14, y+2, 4, 4);
+                // Inner opening
+                ctx.fillStyle = '#0e1820';
+                ctx.fillRect(x+8, y+8, 16, 22);
+                // Depth shading
+                ctx.fillStyle = '#182830';
+                ctx.fillRect(x+8, y+8, 16, 4);
+                break;
+            }
+
+            // ── City-specific ground details ──
+
+            case 'greenpark': {
+                ctx.fillStyle = '#084838';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#0a5840';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#0e6655';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Lush grass tufts
+                ctx.fillStyle = '#0a5840';
+                ctx.fillRect(x+4, y+6, 6, 6);
+                ctx.fillRect(x+18, y+4, 8, 5);
+                ctx.fillRect(x+8, y+20, 6, 6);
+                ctx.fillRect(x+22, y+22, 6, 5);
+                // Darker clumps
+                ctx.fillStyle = '#084838';
+                ctx.fillRect(x+5, y+7, 4, 4);
+                ctx.fillRect(x+19, y+5, 6, 3);
+                // Daisies
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(x+14, y+10, 2, 2);
+                ctx.fillRect(x+26, y+16, 2, 2);
+                ctx.fillStyle = '#ffdd44';
+                ctx.fillRect(x+14, y+10, 1, 1);
+                ctx.fillRect(x+26, y+16, 1, 1);
+                break;
+            }
+            case 'pavement': {
+                ctx.fillStyle = '#585860';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#686870';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#717d7e';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Paving slabs
+                ctx.fillStyle = '#626870';
+                ctx.fillRect(x+15, y, 2, s);
+                ctx.fillRect(x, y+15, s, 2);
+                // Worn edges
+                ctx.fillStyle = '#808888';
+                ctx.fillRect(x+3, y+3, 8, 2);
+                ctx.fillRect(x+19, y+3, 8, 2);
+                // Gum spots
+                ctx.fillStyle = '#606068';
+                ctx.fillRect(x+8, y+8, 2, 2);
+                ctx.fillRect(x+22, y+22, 2, 2);
+                break;
+            }
+            case 'warmstone': {
+                ctx.fillStyle = '#d8c080';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#e8d098';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#f9e79f';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Sun-baked texture
+                ctx.fillStyle = '#e8d098';
+                ctx.fillRect(x+4, y+6, 10, 2);
+                ctx.fillRect(x+18, y+14, 8, 2);
+                ctx.fillRect(x+6, y+24, 12, 2);
+                // Warm glow spots
+                ctx.fillStyle = '#fff0b0';
+                ctx.fillRect(x+10, y+4, 4, 2);
+                ctx.fillRect(x+22, y+10, 4, 2);
+                ctx.fillRect(x+8, y+20, 4, 2);
+                // Subtle crack
+                ctx.fillStyle = '#d0c080';
+                ctx.fillRect(x+20, y+3, 1, 10);
+                break;
+            }
+            case 'templefloor': {
+                ctx.fillStyle = '#c8b8d0';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#d8c8e0';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#e8daef';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Marble veins
+                ctx.fillStyle = '#d0c0d8';
+                ctx.fillRect(x+4, y+8, 12, 1);
+                ctx.fillRect(x+10, y+4, 1, 10);
+                ctx.fillRect(x+18, y+16, 10, 1);
+                ctx.fillRect(x+22, y+12, 1, 12);
+                // Tile border
+                ctx.fillStyle = '#c8b8d0';
+                ctx.fillRect(x+14, y, 2, s);
+                ctx.fillRect(x, y+14, s, 2);
+                // Polish highlights
+                ctx.fillStyle = '#f0e8f4';
+                ctx.fillRect(x+6, y+4, 6, 2);
+                ctx.fillRect(x+20, y+18, 6, 2);
+                break;
+            }
+            case 'redclay': {
+                ctx.fillStyle = '#c07848';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#d48858';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#e59866';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Sun-dried cracks
+                ctx.fillStyle = '#d08050';
+                ctx.fillRect(x+8, y+2, 1, 14);
+                ctx.fillRect(x+22, y+10, 1, 16);
+                ctx.fillRect(x+4, y+20, 14, 1);
+                // Texture spots
+                ctx.fillStyle = '#c87848';
+                ctx.fillRect(x+14, y+6, 5, 4);
+                ctx.fillRect(x+4, y+24, 4, 3);
+                // Highlight
+                ctx.fillStyle = '#f0a878';
+                ctx.fillRect(x+4, y+4, 8, 2);
+                ctx.fillRect(x+18, y+18, 6, 2);
+                break;
+            }
+            case 'jade': {
+                ctx.fillStyle = '#78c0a8';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#90d0b8';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#a3e4d7';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Zen raked gravel lines
+                ctx.fillStyle = '#90d0b8';
+                ctx.fillRect(x+3, y+6, s-6, 1);
+                ctx.fillRect(x+3, y+12, s-6, 1);
+                ctx.fillRect(x+3, y+18, s-6, 1);
+                ctx.fillRect(x+3, y+24, s-6, 1);
+                // Stone accent
+                ctx.fillStyle = '#80b8a0';
+                ctx.fillRect(x+12, y+10, 6, 5);
+                ctx.fillStyle = '#70a890';
+                ctx.fillRect(x+13, y+11, 4, 3);
+                // Highlight
+                ctx.fillStyle = '#b8f0e0';
+                ctx.fillRect(x+4, y+3, 6, 2);
+                break;
+            }
+            case 'slate': {
+                ctx.fillStyle = '#485058';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#586068';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#5d6d7e';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Slate layers
+                ctx.fillStyle = '#506070';
+                ctx.fillRect(x+2, y+7, s-4, 2);
+                ctx.fillRect(x+2, y+15, s-4, 2);
+                ctx.fillRect(x+2, y+23, s-4, 2);
+                // Fracture lines
+                ctx.fillStyle = '#485868';
+                ctx.fillRect(x+10, y+2, 1, 6);
+                ctx.fillRect(x+20, y+10, 1, 6);
+                ctx.fillRect(x+8, y+18, 1, 6);
+                // Highlight
+                ctx.fillStyle = '#708898';
+                ctx.fillRect(x+4, y+3, 8, 2);
+                ctx.fillRect(x+16, y+11, 8, 2);
+                ctx.fillRect(x+6, y+19, 8, 2);
+                break;
+            }
+            case 'lightpurple': {
+                ctx.fillStyle = '#c0b0d0';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#d0c0e0';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#e8daef';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Shoji screen pattern
+                ctx.fillStyle = '#d0c0d8';
+                ctx.fillRect(x+10, y, 2, s);
+                ctx.fillRect(x+20, y, 2, s);
+                ctx.fillRect(x, y+10, s, 2);
+                ctx.fillRect(x, y+20, s, 2);
+                // Panel highlights
+                ctx.fillStyle = '#f0e4f8';
+                ctx.fillRect(x+3, y+3, 5, 5);
+                ctx.fillRect(x+23, y+23, 5, 5);
+                break;
+            }
+            case 'lightblue': {
+                ctx.fillStyle = '#88b8d0';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#98c8e0';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#aed6f1';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Tile grid pattern
+                ctx.fillStyle = '#98c0d8';
+                ctx.fillRect(x+15, y, 2, s);
+                ctx.fillRect(x, y+15, s, 2);
+                // Highlight
+                ctx.fillStyle = '#c0e8ff';
+                ctx.fillRect(x+4, y+4, 6, 2);
+                ctx.fillRect(x+20, y+20, 6, 2);
+                // Subtle pattern
+                ctx.fillStyle = '#a0c8e0';
+                ctx.fillRect(x+8, y+8, 4, 4);
+                ctx.fillRect(x+22, y+8, 4, 4);
+                break;
+            }
+            case 'fountainwater': {
+                ctx.fillStyle = '#5898c0';
+                ctx.fillRect(x, y, s, s);
+                ctx.fillStyle = '#70b0d8';
+                ctx.fillRect(x+1, y+1, s-2, s-2);
+                ctx.fillStyle = '#85c1e9';
+                ctx.fillRect(x+2, y+2, s-4, s-4);
+                // Ripple rings
+                ctx.fillStyle = '#70b0d8';
+                ctx.fillRect(x+8, y+8, 16, 16);
+                ctx.fillStyle = '#85c1e9';
+                ctx.fillRect(x+10, y+10, 12, 12);
+                ctx.fillStyle = '#98d0f0';
+                ctx.fillRect(x+12, y+12, 8, 8);
+                // Sparkle
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(x+14, y+14, 3, 3);
+                ctx.fillRect(x+6, y+6, 2, 2);
+                ctx.fillRect(x+24, y+10, 2, 2);
+                break;
+            }
         }
     }
 
@@ -2059,6 +2772,46 @@ export class MangaSpriteProvider extends AssetProvider {
         ctx.fillStyle = '#ddddaa';
         ctx.fillRect(0, 0, 4, 4);
         ctx.fillStyle = '#ffffcc';
+        ctx.fillRect(1, 1, 2, 2);
+        canvas.refresh();
+
+        // Leaf particle (Paris) - 6x8
+        canvas = textures.createCanvas('particle_leaf', 6, 8);
+        ctx = canvas.getContext();
+        ctx.fillStyle = '#2a6020';
+        ctx.fillRect(1, 0, 4, 7);
+        ctx.fillRect(0, 2, 6, 4);
+        ctx.fillStyle = '#4a9040';
+        ctx.fillRect(2, 1, 2, 5);
+        ctx.fillRect(1, 3, 4, 2);
+        ctx.fillStyle = '#6ab060';
+        ctx.fillRect(2, 2, 2, 3);
+        canvas.refresh();
+
+        // Rain drop (London) - 2x6
+        canvas = textures.createCanvas('particle_rain', 2, 6);
+        ctx = canvas.getContext();
+        ctx.fillStyle = '#8899bb';
+        ctx.fillRect(0, 0, 2, 6);
+        ctx.fillStyle = '#aabbdd';
+        ctx.fillRect(0, 0, 1, 4);
+        canvas.refresh();
+
+        // Sand wisp (Marrakech) - 6x4
+        canvas = textures.createCanvas('particle_sand', 6, 4);
+        ctx = canvas.getContext();
+        ctx.fillStyle = '#d4b880';
+        ctx.fillRect(0, 1, 6, 2);
+        ctx.fillStyle = '#e8d4a0';
+        ctx.fillRect(1, 1, 4, 2);
+        canvas.refresh();
+
+        // Golden mote (Rome) - 4x4
+        canvas = textures.createCanvas('particle_golden', 4, 4);
+        ctx = canvas.getContext();
+        ctx.fillStyle = '#d4a020';
+        ctx.fillRect(0, 0, 4, 4);
+        ctx.fillStyle = '#f0cc44';
         ctx.fillRect(1, 1, 2, 2);
         canvas.refresh();
     }

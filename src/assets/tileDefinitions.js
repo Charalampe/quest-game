@@ -4,10 +4,10 @@ export const TILE_DEFS = [
     { color: '#4a8c3f', detail: 'grass' },     // 1: grass
     { color: '#3b7dd8', detail: 'water' },     // 2: water
     { color: '#d4c5a0', detail: 'sand' },      // 3: sand
-    { color: '#8B7355', detail: null },         // 4: dirt path
-    { color: '#555555', detail: null },         // 5: dark stone
-    { color: '#DEB887', detail: null },         // 6: wood floor
-    { color: '#404040', detail: null },         // 7: dark floor
+    { color: '#8B7355', detail: 'dirt' },       // 4: dirt path
+    { color: '#555555', detail: 'darkstone' },  // 5: dark stone
+    { color: '#DEB887', detail: 'wood' },       // 6: wood floor
+    { color: '#404040', detail: 'darkfloor' },  // 7: dark floor
 
     // Row 1: building/wall tiles
     { color: '#d4c4a8', detail: 'brick' },     // 8: beige wall
@@ -35,48 +35,48 @@ export const TILE_DEFS = [
     { color: '#1a5276', detail: 'bookshop' },   // 26: bookshop
     { color: '#196f3d', detail: 'park' },       // 27: park bench
     { color: '#7d6608', detail: 'lamp' },       // 28: street lamp
-    { color: '#a93226', detail: null },          // 29: awning
-    { color: '#d5d8dc', detail: null },          // 30: window
-    { color: '#5d4e37', detail: null },          // 31: fence
+    { color: '#a93226', detail: 'awning' },     // 29: awning
+    { color: '#d5d8dc', detail: 'window' },     // 30: window
+    { color: '#5d4e37', detail: 'fence' },      // 31: fence
 
     // Row 4: London-specific
     { color: '#c0392b', detail: 'phonebox' },   // 32: red phone box
     { color: '#873600', detail: 'bigben' },     // 33: big ben piece
-    { color: '#6e2c00', detail: null },          // 34: museum wall
-    { color: '#1c2833', detail: null },          // 35: dark brick
-    { color: '#4a235a', detail: null },          // 36: purple door
-    { color: '#0e6655', detail: null },          // 37: green park
+    { color: '#6e2c00', detail: 'museumwall' },  // 34: museum wall
+    { color: '#1c2833', detail: 'darkbrick' },   // 35: dark brick
+    { color: '#4a235a', detail: 'purpledoor' },   // 36: purple door
+    { color: '#0e6655', detail: 'greenpark' },     // 37: green park
     { color: '#d4e6f1', detail: null },          // 38: fog overlay
-    { color: '#717d7e', detail: null },          // 39: pavement
+    { color: '#717d7e', detail: 'pavement' },    // 39: pavement
 
     // Row 5: Rome-specific
     { color: '#f5eef8', detail: 'column' },     // 40: marble column
-    { color: '#d7bde2', detail: null },          // 41: ancient stone
-    { color: '#85c1e9', detail: null },          // 42: fountain water
-    { color: '#f9e79f', detail: null },          // 43: warm stone
-    { color: '#e8daef', detail: null },          // 44: temple floor
-    { color: '#d5f5e3', detail: null },          // 45: vine
-    { color: '#fad7a0', detail: null },          // 46: terracotta
-    { color: '#f5b7b1', detail: null },          // 47: pink wall
+    { color: '#d7bde2', detail: 'ancientstone' },  // 41: ancient stone
+    { color: '#85c1e9', detail: 'fountainwater' }, // 42: fountain water
+    { color: '#f9e79f', detail: 'warmstone' },     // 43: warm stone
+    { color: '#e8daef', detail: 'templefloor' },   // 44: temple floor
+    { color: '#d5f5e3', detail: 'vine' },          // 45: vine
+    { color: '#fad7a0', detail: 'terracotta' },    // 46: terracotta
+    { color: '#f5b7b1', detail: 'pinkwall' },      // 47: pink wall
 
     // Row 6: Marrakech-specific
-    { color: '#e59866', detail: null },          // 48: red clay
+    { color: '#e59866', detail: 'redclay' },     // 48: red clay
     { color: '#d4ac0d', detail: 'mosaic' },     // 49: mosaic tile
-    { color: '#af601a', detail: null },          // 50: market stall
-    { color: '#7d3c98', detail: null },          // 51: purple fabric
+    { color: '#af601a', detail: 'marketstall' }, // 50: market stall
+    { color: '#7d3c98', detail: 'fabric' },      // 51: purple fabric
     { color: '#28b463', detail: 'palm' },        // 52: palm tree
-    { color: '#f0b27a', detail: null },          // 53: sandstone
-    { color: '#2e4053', detail: null },          // 54: dark archway
-    { color: '#f5cba7', detail: null },          // 55: light clay
+    { color: '#f0b27a', detail: 'sandstone' },   // 53: sandstone
+    { color: '#2e4053', detail: 'darkarch' },    // 54: dark archway
+    { color: '#f5cba7', detail: 'lightclay' },   // 55: light clay
 
     // Row 7: Tokyo-specific
     { color: '#f5b7b1', detail: 'cherry' },     // 56: cherry blossom tree
-    { color: '#e8daef', detail: null },          // 57: light purple
-    { color: '#aed6f1', detail: null },          // 58: light blue
-    { color: '#a3e4d7', detail: null },          // 59: jade
+    { color: '#e8daef', detail: 'lightpurple' },  // 57: light purple
+    { color: '#aed6f1', detail: 'lightblue' },   // 58: light blue
+    { color: '#a3e4d7', detail: 'jade' },         // 59: jade
     { color: '#f9e79f', detail: 'lantern' },    // 60: paper lantern
     { color: '#dc7633', detail: 'torii' },      // 61: torii gate
-    { color: '#5d6d7e', detail: null },          // 62: slate
+    { color: '#5d6d7e', detail: 'slate' },       // 62: slate
     { color: '#2ecc71', detail: 'bamboo' },      // 63: bamboo
 
     // Row 8: Water animation variants (64-65) generated in MangaSpriteProvider

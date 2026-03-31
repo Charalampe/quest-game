@@ -584,6 +584,85 @@ export class ExploreScene extends Phaser.Scene {
             this.particleEmitters.push(emitter);
         }
 
+        // Falling leaves in Paris
+        if (this.cityId === 'paris') {
+            const emitter = this.add.particles(cityData.width * TILE_W / 2, 0, 'particle_leaf', {
+                emitZone: {
+                    type: 'random',
+                    source: new Phaser.Geom.Rectangle(0, 0, cityData.width * TILE_W, TILE_H)
+                },
+                speedX: { min: -15, max: 20 },
+                speedY: { min: 12, max: 30 },
+                lifespan: 6000,
+                frequency: 500,
+                quantity: 1,
+                scale: { start: 0.9, end: 0.5 },
+                alpha: { start: 0.6, end: 0 },
+                rotate: { min: 0, max: 360 }
+            });
+            emitter.setDepth(8);
+            this.particleEmitters.push(emitter);
+        }
+
+        // Light rain in London
+        if (this.cityId === 'london') {
+            const emitter = this.add.particles(cityData.width * TILE_W / 2, 0, 'particle_rain', {
+                emitZone: {
+                    type: 'random',
+                    source: new Phaser.Geom.Rectangle(0, 0, cityData.width * TILE_W, TILE_H)
+                },
+                speedX: { min: 3, max: 8 },
+                speedY: { min: 80, max: 140 },
+                lifespan: 1500,
+                frequency: 40,
+                quantity: 1,
+                scale: { start: 1.0, end: 0.8 },
+                alpha: { start: 0.4, end: 0 }
+            });
+            emitter.setDepth(8);
+            this.particleEmitters.push(emitter);
+        }
+
+        // Golden dust motes in Rome
+        if (this.cityId === 'rome') {
+            const emitter = this.add.particles(cityData.width * TILE_W / 2, cityData.height * TILE_H / 2, 'particle_golden', {
+                emitZone: {
+                    type: 'random',
+                    source: new Phaser.Geom.Rectangle(0, 0, cityData.width * TILE_W, cityData.height * TILE_H)
+                },
+                speedY: { min: -8, max: -18 },
+                speedX: { min: -4, max: 4 },
+                lifespan: 4000,
+                frequency: 300,
+                quantity: 1,
+                scale: { start: 0.8, end: 0.3 },
+                alpha: { start: 0.5, end: 0 },
+                blendMode: 'ADD'
+            });
+            emitter.setDepth(8);
+            this.particleEmitters.push(emitter);
+        }
+
+        // Sand wisps in Marrakech
+        if (this.cityId === 'marrakech') {
+            const emitter = this.add.particles(0, cityData.height * TILE_H / 2, 'particle_sand', {
+                emitZone: {
+                    type: 'random',
+                    source: new Phaser.Geom.Rectangle(0, 0, TILE_W, cityData.height * TILE_H)
+                },
+                speedX: { min: 20, max: 50 },
+                speedY: { min: -5, max: 5 },
+                lifespan: 4000,
+                frequency: 350,
+                quantity: 1,
+                scale: { start: 1.0, end: 0.4 },
+                alpha: { start: 0.35, end: 0 },
+                rotate: { min: -10, max: 10 }
+            });
+            emitter.setDepth(8);
+            this.particleEmitters.push(emitter);
+        }
+
         // Ambient dust motes (all cities)
         const dustEmitter = this.add.particles(cityData.width * TILE_W / 2, cityData.height * TILE_H / 2, 'particle_dust', {
             emitZone: {
@@ -661,6 +740,77 @@ export class ExploreScene extends Phaser.Scene {
                         yoyo: true,
                         repeat: -1,
                         ease: 'Sine.easeInOut'
+                    });
+                    this.envTweens.push(tween);
+                }
+
+                // Flower sway (tile 17)
+                if (decorTile === 17) {
+                    const glow = this.add.rectangle(worldX, worldY + 4, TILE_W - 4, TILE_H - 4, 0xF39C12, 0.0);
+                    glow.setDepth(2);
+                    this.envObjects.push(glow);
+                    const tween = this.tweens.add({
+                        targets: glow,
+                        alpha: 0.12,
+                        scaleX: 1.15,
+                        duration: 1800 + Math.random() * 600,
+                        yoyo: true,
+                        repeat: -1,
+                        ease: 'Sine.easeInOut',
+                        delay: Math.random() * 1000
+                    });
+                    this.envTweens.push(tween);
+                }
+
+                // Lantern warm glow (tile 60)
+                if (decorTile === 60) {
+                    const glow = this.add.rectangle(worldX, worldY, TILE_W + 8, TILE_H + 8, 0xFFAA44, 0.08);
+                    glow.setDepth(2);
+                    this.envObjects.push(glow);
+                    const tween = this.tweens.add({
+                        targets: glow,
+                        alpha: 0.22,
+                        scaleX: 1.2,
+                        scaleY: 1.2,
+                        duration: 1000 + Math.random() * 400,
+                        yoyo: true,
+                        repeat: -1,
+                        ease: 'Sine.easeInOut',
+                        delay: Math.random() * 800
+                    });
+                    this.envTweens.push(tween);
+                }
+
+                // Market stall warm ambience (tile 50)
+                if (decorTile === 50 || (cityData.walls && cityData.walls[y] && cityData.walls[y][x] === 50)) {
+                    const glow = this.add.rectangle(worldX, worldY + TILE_H / 2, TILE_W + 12, TILE_H, 0xE08830, 0.04);
+                    glow.setDepth(2);
+                    this.envObjects.push(glow);
+                    const tween = this.tweens.add({
+                        targets: glow,
+                        alpha: 0.1,
+                        duration: 2000,
+                        yoyo: true,
+                        repeat: -1,
+                        ease: 'Sine.easeInOut'
+                    });
+                    this.envTweens.push(tween);
+                }
+
+                // Vine sway (tile 45)
+                if (decorTile === 45) {
+                    const glow = this.add.rectangle(worldX, worldY, TILE_W, TILE_H, 0x4AAA40, 0.0);
+                    glow.setDepth(2);
+                    this.envObjects.push(glow);
+                    const tween = this.tweens.add({
+                        targets: glow,
+                        alpha: 0.08,
+                        scaleX: 1.08,
+                        duration: 2200 + Math.random() * 800,
+                        yoyo: true,
+                        repeat: -1,
+                        ease: 'Sine.easeInOut',
+                        delay: Math.random() * 1500
                     });
                     this.envTweens.push(tween);
                 }
