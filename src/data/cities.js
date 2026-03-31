@@ -291,13 +291,25 @@ function generateParis() {
 
     // ── Dense enrichment ──
 
-    // Ground variety: grass patches in open south areas
-    for (let y = 26; y < 32; y++) for (let x = 2; x < 10; x++) { if (walls[y][x] === -1 && ground[y][x] === 0) ground[y][x] = 1; }
-    for (let y = 26; y < 32; y++) for (let x = 32; x < 39; x++) { if (walls[y][x] === -1 && ground[y][x] === 0) ground[y][x] = 1; }
-    // Dirt paths connecting market to residential
+    // Tidy park: south-west (neat rectangular lawn with fence border)
+    for (let y = 26; y < 32; y++) for (let x = 2; x < 10; x++) {
+        if (walls[y][x] === -1 && ground[y][x] === 0) ground[y][x] = 1;
+    }
+    decor[26][2] = 31; decor[26][5] = 31; decor[26][9] = 31;
+    decor[31][2] = 31; decor[31][5] = 31; decor[31][9] = 31;
+
+    // Tidy park: south-east (matching rectangular lawn)
+    for (let y = 26; y < 32; y++) for (let x = 32; x < 39; x++) {
+        if (walls[y][x] === -1 && ground[y][x] === 0) ground[y][x] = 1;
+    }
+    decor[26][32] = 31; decor[26][35] = 31; decor[26][38] = 31;
+    decor[31][32] = 31; decor[31][35] = 31; decor[31][38] = 31;
+
+    // Cobble paths connecting market to residential (no random dirt)
     for (let x = 10; x < 20; x++) { ground[27][x] = 4; ground[28][x] = 4; }
     for (let x = 31; x < 40; x++) { ground[27][x] = 4; ground[28][x] = 4; }
-    // Sand accents near Seine
+
+    // Sand promenade along Seine banks (refined, uniform)
     for (let x = 1; x < 22; x++) ground[15][x] = 3;
     for (let x = 27; x < 38; x++) ground[15][x] = 3;
     for (let x = 43; x < W-1; x++) ground[15][x] = 3;
@@ -338,8 +350,11 @@ function generateParis() {
     walls[27][41] = 30; walls[27][43] = 30; walls[27][46] = 30;
     walls[21][35] = 30; walls[21][44] = 30;
 
-    // Statues at market square and museum row
+    // Statues: market square, museum row, boulevards, parks
     walls[30][25] = 19; walls[6][36] = 19;
+    walls[20][10] = 19; walls[20][40] = 19;
+    walls[28][6] = 19; walls[28][36] = 19;
+    walls[12][20] = 19; walls[12][28] = 19;
 
     // Tree-lined boulevard (row 12 open sidewalk)
     walls[12][4] = 16; walls[12][10] = 16; walls[12][14] = 16;
@@ -348,11 +363,22 @@ function generateParis() {
     // Extra trees in south grass patches
     walls[28][4] = 16; walls[28][8] = 16; walls[29][34] = 16; walls[29][38] = 16;
 
-    // More lamps in under-lit areas
-    decor[26][16] = 28; decor[26][30] = 28; decor[26][40] = 28;
-    decor[30][12] = 27; decor[30][26] = 28; decor[30][42] = 28;
-    decor[37][6] = 28; decor[37][16] = 28; decor[37][24] = 28; decor[37][34] = 28; decor[37][44] = 28;
+    // Curated Parisian decor — lamps at regular intervals along streets
     decor[11][6] = 28; decor[11][10] = 28; decor[11][24] = 28; decor[11][38] = 28; decor[11][44] = 28;
+    decor[26][16] = 28; decor[26][30] = 28; decor[26][40] = 28;
+    decor[30][26] = 28; decor[30][42] = 28;
+    decor[37][6] = 28; decor[37][16] = 28; decor[37][24] = 28; decor[37][34] = 28; decor[37][44] = 28;
+
+    // Flowers in parks (tidy rows inside fenced areas, not random)
+    for (let x = 3; x <= 8; x += 2) { decor[27][x] = 17; decor[30][x] = 17; }
+    for (let x = 33; x <= 38; x += 2) { decor[27][x] = 17; decor[30][x] = 17; }
+
+    // Benches in parks (aligned, not scattered)
+    decor[28][4] = 27; decor[28][8] = 27; decor[29][34] = 27; decor[29][38] = 27;
+    decor[37][10] = 27; decor[37][18] = 27; decor[37][30] = 27; decor[37][40] = 27;
+
+    // Fences along Eiffel plaza and boulevard
+    decor[12][6] = 31; decor[12][16] = 31; decor[12][32] = 31; decor[12][38] = 31; decor[12][44] = 31;
 
     // Borders
     for (let y = 0; y < H; y++) { walls[y][0] = 16; walls[y][W-1] = 16; }
@@ -602,6 +628,30 @@ function generateLondon() {
     decor[5][12] = 28; decor[8][13] = 28; decor[37][6] = 28; decor[37][12] = 28;
     decor[28][8] = 28; decor[28][18] = 28; decor[28][28] = 28; decor[28][38] = 28; decor[28][46] = 28;
 
+
+    // === Additional enrichment pass ===
+    // Ground variety on remaining pavement
+    for (let y = 1; y < H-1; y++) for (let x = 1; x < W-1; x++) {
+        if (ground[y][x] !== 39 || walls[y][x] !== -1 || decor[y][x] !== -1) continue;
+        if (y >= 18 && y <= 21) continue; // protect Thames bridge tiles
+        const h = (x * 5 + y * 11) % 13;
+        if (h < 2) ground[y][x] = 0;
+        else if (h === 2) ground[y][x] = 4;
+    }
+    // Scatter decor across remaining empty cells
+    { const nz = [[12,35],[42,10],[8,29]];
+    for (let y = 1; y < H-1; y++) for (let x = 1; x < W-1; x++) {
+        if (walls[y][x] !== -1 || decor[y][x] !== -1 || ground[y][x] === 2) continue;
+        let sk = false;
+        for (const [nx,ny] of nz) { if (Math.abs(x-nx)<=2 && Math.abs(y-ny)<=2) { sk=true; break; } }
+        if (sk || (x>=24 && x<=26 && y>=32 && y<=34)) continue;
+        const h = (x*7 + y*13 + x*y) % 97;
+        if (h < 8) decor[y][x] = 17;
+        else if (h < 13) decor[y][x] = 28;
+        else if (h < 17) decor[y][x] = 27;
+        else if (h < 20) decor[y][x] = 31;
+    } }
+
     for (let y = 0; y < H; y++) { walls[y][0] = 16; walls[y][W-1] = 16; }
     for (let x = 0; x < W; x++) { walls[0][x] = 16; walls[H-1][x] = 16; }
     walls[H-1][24] = -1; walls[H-1][25] = -1; walls[H-1][26] = -1;
@@ -831,6 +881,31 @@ function generateRome() {
     decor[24][6] = 28; decor[24][18] = 28; decor[24][30] = 28; decor[24][42] = 28;
     decor[32][6] = 28; decor[32][18] = 28; decor[32][30] = 28; decor[32][40] = 28;
 
+
+    // === Additional enrichment pass ===
+    // Ground variety on remaining warm stone
+    for (let y = 1; y < H-1; y++) for (let x = 1; x < W-1; x++) {
+        if (ground[y][x] !== 43 || walls[y][x] !== -1 || decor[y][x] !== -1) continue;
+        const h = (x * 3 + y * 7) % 9;
+        if (h < 2) ground[y][x] = 0;
+        else if (h === 2) ground[y][x] = 1;
+        else if (h === 3) ground[y][x] = 46;
+    }
+    // Scatter decor across remaining empty cells
+    { const nz = [[35,35],[20,20],[8,12]];
+    for (let y = 1; y < H-1; y++) for (let x = 1; x < W-1; x++) {
+        if (walls[y][x] !== -1 || decor[y][x] !== -1 || ground[y][x] === 2) continue;
+        let sk = false;
+        for (const [nx,ny] of nz) { if (Math.abs(x-nx)<=2 && Math.abs(y-ny)<=2) { sk=true; break; } }
+        if (sk || (x>=24 && x<=26 && y>=32 && y<=34)) continue;
+        const h = (x*7 + y*13 + x*y) % 97;
+        if (h < 14) decor[y][x] = 17;
+        else if (h < 22) decor[y][x] = 28;
+        else if (h < 28) decor[y][x] = 45;
+        else if (h < 34) decor[y][x] = 27;
+        else if (h < 40) decor[y][x] = 31;
+    } }
+
     for (let y = 0; y < H; y++) { walls[y][0] = 16; walls[y][W-1] = 16; }
     for (let x = 0; x < W; x++) { walls[0][x] = 16; walls[H-1][x] = 16; }
     walls[H-1][24] = -1; walls[H-1][25] = -1; walls[H-1][26] = -1;
@@ -1057,6 +1132,32 @@ function generateMarrakech() {
     decor[8][4] = 27; decor[8][10] = 27; decor[8][40] = 27; decor[8][46] = 27;
     decor[11][10] = 27; decor[18][10] = 27; decor[27][10] = 27;
     decor[36][10] = 27; decor[36][40] = 27;
+
+
+    // === Additional enrichment pass ===
+    // Ground variety on remaining red clay
+    for (let y = 1; y < H-1; y++) for (let x = 1; x < W-1; x++) {
+        if (ground[y][x] !== 48 || walls[y][x] !== -1 || decor[y][x] !== -1) continue;
+        const h = (x * 3 + y * 7) % 9;
+        if (h < 2) ground[y][x] = 55;
+        else if (h === 2) ground[y][x] = 3;
+        else if (h === 3) ground[y][x] = 49;
+    }
+    // Scatter decor across remaining empty cells
+    { const nz = [[25,22],[13,22],[19,16]];
+    for (let y = 1; y < H-1; y++) for (let x = 1; x < W-1; x++) {
+        if (walls[y][x] !== -1 || decor[y][x] !== -1 || ground[y][x] === 2) continue;
+        let sk = false;
+        for (const [nx,ny] of nz) { if (Math.abs(x-nx)<=2 && Math.abs(y-ny)<=2) { sk=true; break; } }
+        if (sk || (x>=24 && x<=26 && y>=32 && y<=34)) continue;
+        const h = (x*7 + y*13 + x*y) % 97;
+        if (h < 12) decor[y][x] = 17;
+        else if (h < 20) decor[y][x] = 28;
+        else if (h < 27) decor[y][x] = 91 + (x+y)%2;
+        else if (h < 33) decor[y][x] = 51;
+        else if (h < 38) decor[y][x] = 27;
+        else if (h < 42) decor[y][x] = 31;
+    } }
 
     for (let y = 0; y < H; y++) { walls[y][0] = 53; walls[y][W-1] = 53; }
     for (let x = 0; x < W; x++) { walls[0][x] = 53; walls[H-1][x] = 53; }
@@ -1312,6 +1413,31 @@ function generateTokyo() {
     // Benches along paths
     decor[8][14] = 27; decor[8][36] = 27; decor[17][12] = 27; decor[17][38] = 27;
     decor[28][12] = 27; decor[28][38] = 27; decor[37][12] = 27; decor[37][38] = 27;
+
+
+    // === Additional enrichment pass ===
+    // Ground variety on remaining slate
+    for (let y = 1; y < H-1; y++) for (let x = 1; x < W-1; x++) {
+        if (ground[y][x] !== 62 || walls[y][x] !== -1 || decor[y][x] !== -1) continue;
+        const h = (x * 3 + y * 7) % 9;
+        if (h < 2) ground[y][x] = 59;
+        else if (h === 2) ground[y][x] = 3;
+        else if (h === 3) ground[y][x] = 1;
+    }
+    // Scatter decor across remaining empty cells
+    { const nz = [[6,15],[35,31],[42,15],[18,21]];
+    for (let y = 1; y < H-1; y++) for (let x = 1; x < W-1; x++) {
+        if (walls[y][x] !== -1 || decor[y][x] !== -1 || ground[y][x] === 2) continue;
+        let sk = false;
+        for (const [nx,ny] of nz) { if (Math.abs(x-nx)<=2 && Math.abs(y-ny)<=2) { sk=true; break; } }
+        if (sk || (x>=24 && x<=26 && y>=32 && y<=34)) continue;
+        const h = (x*7 + y*13 + x*y) % 97;
+        if (h < 12) decor[y][x] = 17;
+        else if (h < 20) decor[y][x] = 60;
+        else if (h < 26) decor[y][x] = 28;
+        else if (h < 31) decor[y][x] = 27;
+        else if (h < 35) decor[y][x] = 31;
+    } }
 
     for (let y = 0; y < H; y++) { walls[y][0] = 63; walls[y][W-1] = 63; }
     for (let x = 0; x < W; x++) { walls[0][x] = 63; walls[H-1][x] = 63; }
