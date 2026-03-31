@@ -24,7 +24,7 @@ npm start       # Opens at http://localhost:8080
 ## Testing
 
 ```bash
-node tests/test_systems.mjs   # 295 unit tests — pure data/logic, no Phaser runtime
+node tests/test_systems.mjs   # 336 unit tests — pure data/logic, no Phaser runtime
 node test_game.mjs             # 24 Playwright integration tests — requires server on port 8080
 ```
 

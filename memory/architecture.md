@@ -3,160 +3,131 @@
 ## Entry Points
 - `index.html` — Loads Phaser 3 CDN + `src/main.js`, CSS has `canvas { image-rendering: pixelated; }`
 - `src/main.js` — Phaser config: 960x720 native, pixelArt:true, roundPixels:true, arcade physics
+- `src/constants.js` — TILE_W=32, TILE_H=32, SPRITE_W=32, SPRITE_H=48, EXPLORE_ZOOM=2
 
 ## Scenes (`src/scenes/`)
 
-### BootScene.js (~25 lines, thin orchestrator)
-- `preload()`: Shows "Loading..." text at 36px
-- `create()`: Instantiates `ProceduralAssetProvider(this)`, calls `generateTextures()` + `createAnimations()`, transitions to Title
-- All asset generation logic lives in `src/assets/ProceduralAssetProvider.js` (strategy pattern)
-- To swap rendering backends (e.g. file-based sprites), change the single import in BootScene
+### BootScene.js (~30 lines, thin orchestrator)
+- `init()`: Creates `MangaSpriteProvider(this)` — must be in init, not constructor
+- `preload()`: Shows "Loading..." text, calls `provider.loadSpriteSheets()` for external PNGs
+- `create()`: Calls `provider.generateTextures()` + `provider.createAnimations()`, transitions to Title
+- All asset generation logic lives in `src/assets/MangaSpriteProvider.js` (strategy pattern)
+- To swap rendering backends, change the single import in BootScene
 
 ## Asset System (`src/assets/`)
 
 ### AssetProvider.js (base class)
-- Strategy interface: `generateTextures()`, `createAnimations()`, `getNPCTypeNames()`
+- Strategy interface: `loadSpriteSheets()`, `generateTextures()`, `createAnimations()`, `getNPCTypeNames()`
 - Receives Phaser scene via constructor
 
-### ProceduralAssetProvider.js (~1370 lines)
-- Extends AssetProvider, generates all textures via canvas drawing
+### MangaSpriteProvider.js (~2270 lines, active provider)
+- Extends AssetProvider, generates 32x32 manga-style tiles with cel-shading and bold outlines
 - Uses `this.scene.textures` / `this.scene.anims` (not a Scene itself)
-- Player spritesheet: 4 dirs × 4 frames = 16 frames, 16x24 each
+- Player spritesheet: 4 dirs × 4 frames = 16 frames, 32x48 each
 - 29 NPC spritesheets: `npc_librarian`, `npc_curator`, etc.
-- Tileset: 8-col × 10-row = 66 tiles (64 + 2 water variants)
-- UI assets, world map assets, item icons, particle textures
+- Tileset: 8-col × 10-row = 66 tiles (64 + 2 water variants), all at 32x32
+- External PIPOYA sprite support via `loadSpriteSheets()` and `_remapExternalSprite()`
+- PIPOYA 3-frame → 4-frame remapping: [0,1,0,2] (stand/step1/stand/step2)
+- Graceful fallback: if PNGs fail to load, procedural manga drawing is used
+- `spirit_fox` and `ghost` always use procedural rendering (no `file` field in NPC_DEFS)
+- Loader event listeners cleaned up via `loader.once('complete', ...)` handler
+- Item icons: 32x32. World map: 320x240 (unchanged, scaled by MAP_SCALE at render time)
+
+### ProceduralAssetProvider.js (~1370 lines, reference/fallback)
+- Original 16x16 provider, kept for reference — not imported by BootScene
 
 ### npcDefinitions.js / itemDefinitions.js / tileDefinitions.js
-- Pure data arrays extracted from ProceduralAssetProvider for reuse
+- Pure data arrays used by both providers
+- NPC_DEFS entries have optional `file` field for external PIPOYA sprite filename
 
 ### TitleScene.js
 - Stars background, title text "The Locket of Worlds", locket icon with glow
+- Locket scale = 3 (32px × 3 = 96px on screen)
 - New Game / Continue buttons (rectangles, not textures — for crisp rendering at 960x720)
 - `startNewGame()`: Resets all registry state, starts ExploreScene with paris
 - `continueGame()`: Loads from SaveManager, falls back to new game
 
 ### ExploreScene.js (Core Gameplay)
-- `init(data)`: Sets `cityId`, `dialogActive`, `menuOpen`, `exitTriggered` flags
+- Imports TILE_W, TILE_H, EXPLORE_ZOOM from constants.js — no hardcoded tile sizes
+- `init(data)`: Sets `cityId`, `roomId`, `spawnAt`, `dialogActive`, `menuOpen`, `exitTriggered`
 - `create()`:
-  - Sets camera zoom 3 for pixel art world
-  - Builds tilemap from city data (ground, walls with collision, decor layers)
-  - Creates Player, NPCs, interactables (chests/signs/portals)
+  - Camera zoom = EXPLORE_ZOOM (2), bounds = roomData.width * TILE_W
+  - Builds tilemap at TILE_W × TILE_H resolution
+  - Player spawn: `spawn.x * TILE_W + TILE_W/2` (centers in tile)
+  - NPCs positioned: `npcData.x * TILE_W + TILE_W/2`
+  - Interactables (chests/signs/portals/doors) at tile centers
   - Registers keyboard handlers (SPACE/I/Q/M/ESC) with cleanup on shutdown
-  - Launches UIScene with city name/description for crisp text display
-  - Auto-saves on city entry
+  - Exit zone: 3 tiles wide at south map edge, in pixel coordinates
 - `update()`:
-  - Player movement, exit zone debounce check
-  - NPC interaction detection + sends screen-space label positions to UIScene via `updateNPCLabels()`
-  - Uses `cam.worldView.x/y` for world→screen coordinate conversion
-- Key methods: `handleInteract()`, `startNPCDialog()`, `openChest()`, `readSign()`, `usePortal()`, `openWorldMap()`, `travelToCity()`
-- Exit zone at south edge (tiles 13-15) triggers world map
+  - Player movement, water tile animation, exit zone debounce
+  - NPC interaction detection: `getFacingPoint(24)`, threshold `dist < 32`
+  - Sends screen-space NPC label positions to UIScene via `updateNPCLabels()`
+- Key methods: `handleInteract()`, `startNPCDialog()`, `openChest()`, `readSign()`, `usePortal()`, `enterDoor()`, `openWorldMap()`
 
 ### WorldMapScene.js
-- `MAP_SCALE = 3` constant for converting 320x240 coords to 960x720
-- Background: `world_map_bg` texture at setScale(3)
-- City dots at `CITY_MAP_POSITIONS[city] * MAP_SCALE`, scaled 3x
-- Route lines drawn as dotted lines between unlocked cities (color-coded by type)
-- Travel animation: dot moves along route, trailing line follows
-- `selectCity()`: Validates `requiresFlag` for locked routes (e.g., portal)
+- `MAP_SCALE = 3` for converting 320x240 coords to 960x720
+- Background: `world_map_bg` at setScale(3)
+- City dots at `CITY_MAP_POSITIONS[city] * MAP_SCALE`
 - ESC listener with cleanup on shutdown
 
 ### UIScene.js (HUD Overlay)
-- All positions/sizes at 960x720 scale (font sizes: 18-42px)
-- `init()`: Stores managers, initializes `npcLabelPool = []` (must be in init, not create, for timing)
-- `create()`: HUD bar, dialog box, choice menu, inventory panel, quest log, notifications, city name display
-- `showCityName(name, description)`: Called from own `create()`, not from ExploreScene (timing safety)
-- `updateNPCLabels(labels)`: Object pool of text labels, positioned at screen coordinates from ExploreScene
-- `showDialog/updateDialogText/hideDialog`: Called by DialogManager via `scene.get('UI')`
-- `showChoices()`: Dynamic choice buttons for portal destinations etc.
-- `showNotification()`: Fade-in/out notification text (e.g., "New destination: London!")
+- All at 960x720 scale (zoom 1), font sizes 18-42px
+- `init()`: Stores managers, initializes `npcLabelPool = []`
+- Dialog box, choice menu, inventory panel, quest log, notifications, city name display
 
 ## Entities (`src/entities/`)
 
 ### Player.js
-- Extends `Phaser.Physics.Arcade.Sprite`, 16x16, speed 60
+- Extends `Phaser.Physics.Arcade.Sprite`, body 20x20, offset(6,28), speed 90
 - WASD + arrow key movement, 4-direction walking animations
 - Diagonal movement normalized (× 0.707)
 - Stops on `dialogActive` or `menuOpen`
-- `getFacingPoint(distance)`: Returns point 16px in front of player for interaction checks
+- `getFacingPoint(distance=32)`: Point ahead of player for interaction checks
 
 ### NPC.js
-- Extends `Phaser.Physics.Arcade.Sprite`, static body, 16x16
-- Uses `npcData` property (NOT `data`) to store NPC definition
-- `quest_marker` indicator (!) shown when interactable — pixel art, rendered in ExploreScene
-- Name labels rendered in UIScene for crisp text (removed from NPC.js)
-- Idle animation: alternates between frames 0 and 1 every 800ms
+- Extends `Phaser.Physics.Arcade.Sprite`, static body 24x24, offset(4,24)
+- Uses `npcData` property (NOT `data`)
+- `quest_marker` indicator 40px above sprite, with bob tween
+- Idle animation: cycles through 4 frames every 600ms
+- Name labels rendered in UIScene for crisp text
 
 ## Systems (`src/systems/`)
 
 ### DialogManager.js
-- Typewriter effect at 25ms/char, advance() skips or moves to next line
-- 100ms cooldown between advances to prevent rapid-fire skipping
-- `endDialog()`: Processes rewards — `givesItem`, `setsFlag`, `unlocksCity`, `unlocksPortal`, `completesObjective`
-- `showChoice()`: Delegates to UIScene.showChoices() for portal destinations
+- Typewriter effect, advance() skips or moves to next line
+- `endDialog()`: Processes rewards — givesItem, setsFlag, unlocksCity, etc.
 
 ### QuestManager.js
-- `getNPCDialogId(npcId)`: Iterates `NPC_DIALOG_ROUTES[npcId]` in order, returns first matching dialog
-- `getChestReward(chestId)`: Returns item if `requiresFlag` is met
-- `getActiveQuests()`: Returns quests with visible objectives (based on completed prerequisites)
-- `completeObjective(id)`: Marks objective as done, checks for quest completion
-- `onEnterCity()`: Triggers city-entry quest events
-- `checkQuestCompletion()`: Sets `game_complete` flag when all objectives done
+- `getNPCDialogId(npcId)`: First matching dialog from NPC_DIALOG_ROUTES
+- `getChestReward(chestId)`: Returns item if flag is met
+- `completeObjective()`: Marks done, checks quest completion
 
 ### TravelManager.js
-- `TRAVEL_ROUTES`: Defines city→city routes with type (train/boat/portal), duration, optional `requiresFlag`
-- `CITY_MAP_POSITIONS`: City coordinates at 320x240 scale (multiplied by MAP_SCALE at render time)
-- Routes are bidirectional (A→B and B→A both defined)
-- `getAvailableDestinations()`: Filters by unlocked cities AND flag requirements
-- `getRoute()`: Returns raw route (caller validates flags)
+- `TRAVEL_ROUTES`, `CITY_MAP_POSITIONS` at 320x240 scale
+- Bidirectional routes with type/duration/requiresFlag
 
-### InventoryManager.js
-- Add/remove/has/get items, prevents duplicates by ID
-- Persists to registry on every change
-
-### SaveManager.js
-- Static class, saves/loads to `localStorage` key `questgame_save`
-- Saves: currentCity, currentRoom, inventory, questState, unlockedCities, visitedCities, flags, openedChests
-- `load()` validates: must be valid JSON, must be object, must have `currentCity`
+### InventoryManager.js / SaveManager.js
+- Add/remove items, save/load to localStorage
 
 ## Data (`src/data/`)
 
 ### cities.js
-- 5 cities, all 50x40 main rooms, plus 15 sub-rooms (20 rooms total)
-- Each city: `{ name, description, width, height, ground[][], walls[][], decor[][], playerStart: {x,y}, rooms: {} }`
-- `ROOM_TRANSITIONS` table maps doorId → targetCity/targetRoom/spawnAt
-- Ground tiles: 0=cobblestone, 1=grass, 2=water, 3=sand, etc.
-- Wall tiles: -1=walkable, 0-63=collision
-- Decor tiles: -1=none, 20=chest, 21=portal, 22=sign, 23=door
-- Water rows (Seine/Thames) have BOTH ground tile 2 AND wall tile 2 for collision, with bridge gaps
+- 5 cities (50x40 main rooms) + 15 sub-rooms = 20 rooms total
+- `ROOM_TRANSITIONS`: doorId → targetCity/targetRoom/spawnAt
+- Tile indices: 0=cobble, 1=grass, 2=water, 20=chest, 21=portal, 22=sign, 23=door
 
-### npcs.js
-- `NPC_DATA[cityId]`: Array of NPC definitions per city
-- Each NPC: `{ id, name, x, y, sprite, defaultDialog, room, requiresFlag? }`
-- 40 NPCs total (7-8 per city), distributed across main rooms and sub-rooms
-
-### quests.js
-- `QUEST_DATA`: Single main quest "The Locket of Worlds" with 8 chained objectives
-- `NPC_DIALOG_ROUTES`: Maps npcId → ordered array of `{ condition, dialogId }`
-  - Conditions checked in order, first match wins
-  - Empty condition `{}` = catch-all fallback (usually first or last entry)
-- `CHEST_REWARDS`: Maps chestId → `{ item, requiresFlag, unlocksCity?, completesObjective? }`
-
-### dialogues.js
-- `DIALOGUES[dialogId]`: `{ lines: string[], givesItem?, setsFlag?, unlocksCity?, unlocksPortal?, completesObjective? }`
-- ~30 dialog entries across all NPCs and quest stages
-
-### i18n/ (localization)
-- `en.js`, `fr.js` — translation dictionaries
-- `index.js` — exports `t()` helper for localized string lookup
+### npcs.js / quests.js / dialogues.js / i18n/
+- 40 NPCs, 1 main quest with 8 objectives, ~30 dialogs, EN/FR translations
 
 ## Tests
 
-### tests/test_systems.mjs (295 unit tests)
-- All `await import()` at top level (NOT inside describe/it callbacks)
-- localStorage mock (`_localStorage`) defined before imports
-- Covers: dialog data integrity, NPC routing, quest chain, chest rewards, city maps, NPC placement, travel routes, InventoryManager, SaveManager, DialogManager, QuestManager, TravelManager, full playthrough, water collision, travel flags, menu guards, NPC sprites, dialog rewards, city connections, portal tiles
+### tests/test_systems.mjs (336 unit tests)
+- Covers: data integrity, quest chain, collision, room transitions, sprite bounds,
+  controls, dialog guards, water animation, exit zones, spawn positions,
+  32x32 constants, tile math, collision body consistency, interaction distances,
+  source correctness (ExploreScene, BootScene, Player, NPC, TitleScene, MangaSpriteProvider),
+  NPC definitions with external sprite fields, integration test coordinates
 
 ### test_game.mjs (24 Playwright integration tests)
-- Requires http-server running on port 8080
-- Tests full game flow: boot→title→explore→interact→dialog→quest→worldmap→travel→london
-- Checks: canvas 960x720, textures, animations, movement, NPC interaction, inventory, quest log, save/load, no JS errors
+- Requires http-server on port 8080
+- Tests full game flow with 32px tile coordinates

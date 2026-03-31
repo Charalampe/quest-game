@@ -4,7 +4,7 @@
 - Phaser 3.60.0 game with 5 scenes: Boot, Title, Explore, WorldMap, UI
 - **960x720 native resolution**, ExploreScene uses camera zoom 2 for manga-style 32x32 tiles
 - UIScene runs at zoom 1 as parallel overlay — all text is crisp
-- Assets via **MangaSpriteProvider** (manga-graphics branch) or **ProceduralAssetProvider** (main)
+- Assets via **MangaSpriteProvider** (active) — ProceduralAssetProvider kept as fallback reference
 - Strategy pattern: BootScene imports the provider, calls loadSpriteSheets→generateTextures→createAnimations
 - Constants in `src/constants.js`: TILE_W=32, TILE_H=32, SPRITE_W=32, SPRITE_H=48, EXPLORE_ZOOM=2
 - Data-driven: cities, NPCs, quests, dialogues all in `src/data/`
@@ -39,7 +39,7 @@
 ## Bug History — see [bugs-and-fixes.md](bugs-and-fixes.md) for all bugs found and fixed
 
 ## Testing
-- Unit tests: `node tests/test_systems.mjs` — 295 tests, pure data/logic, no Phaser runtime
+- Unit tests: `node tests/test_systems.mjs` — 336 tests, pure data/logic, no Phaser runtime
 - Integration tests: `node test_game.mjs` — 24 Playwright tests, requires server on port 8080
 - `package.json` has `"type": "module"` for ESM support
 - Both suites must pass before any change is considered complete

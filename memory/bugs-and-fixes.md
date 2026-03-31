@@ -63,3 +63,17 @@
 - **Fix**: Moved `npcLabelPool = []` to UIScene `init()`, added null guard in `updateNPCLabels()`
 - **Also fixed**: Used `cam.worldView.x/y` instead of `cam.scrollX/Y` for more reliable world→screen conversion
 - **Files**: `src/scenes/UIScene.js`, `src/scenes/ExploreScene.js`
+
+## Bug 10 (MEDIUM): BootScene creates provider before scene init
+- **Issue**: `MangaSpriteProvider(this)` was created in BootScene constructor, before Phaser attaches scene managers (load, textures, etc.)
+- **Root cause**: Provider stored scene reference at construction time — fragile, could break if provider constructor ever accesses scene properties
+- **Fix**: Moved provider creation from `constructor()` to `init()` where scene is fully initialized
+- **Files**: `src/scenes/BootScene.js`
+- **Tests**: "BootScene Correctness (32x32)" — 4 tests
+
+## Bug 11 (LOW): Loader event listeners leaked in MangaSpriteProvider
+- **Issue**: `loadSpriteSheets()` registered permanent `filecomplete` and `loaderror` handlers on the Phaser loader, never removed
+- **Root cause**: Anonymous event handlers with no cleanup
+- **Fix**: Store named handler refs, add `loader.once('complete', ...)` cleanup that removes both handlers after loading finishes
+- **Files**: `src/assets/MangaSpriteProvider.js`
+- **Tests**: "MangaSpriteProvider Source Correctness" — verifies listener cleanup code
