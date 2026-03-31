@@ -458,8 +458,12 @@ export class ExploreScene extends Phaser.Scene {
     openWorldMap() {
         if (this.dialogActive || this.menuOpen) return;
 
+        // Block world map in sub-rooms — only accessible from main room
+        if (this.roomId !== 'main') return;
+
         const unlocked = this.registry.get('unlockedCities') || ['paris'];
         if (unlocked.length > 1) {
+            this.dialogActive = true; // freeze player during transition
             this.scene.stop('UI');
             this.scene.start('WorldMap', { from: this.cityId });
         } else {
@@ -498,6 +502,7 @@ export class ExploreScene extends Phaser.Scene {
     }
 
     enterRoom(cityId, roomId, spawnAt) {
+        this.dialogActive = true; // freeze player during fade
         this.cameras.main.fadeOut(400, 0, 0, 0);
         this.cameras.main.once('camerafadeoutcomplete', () => {
             this.scene.stop('UI');
@@ -506,6 +511,7 @@ export class ExploreScene extends Phaser.Scene {
     }
 
     travelToCity(cityId) {
+        this.dialogActive = true; // freeze player during fade
         this.cameras.main.fadeOut(500, 0, 0, 0);
         this.cameras.main.once('camerafadeoutcomplete', () => {
             this.scene.stop('UI');

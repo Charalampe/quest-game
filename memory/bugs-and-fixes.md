@@ -77,3 +77,17 @@
 - **Fix**: Store named handler refs, add `loader.once('complete', ...)` cleanup that removes both handlers after loading finishes
 - **Files**: `src/assets/MangaSpriteProvider.js`
 - **Tests**: "MangaSpriteProvider Source Correctness" — verifies listener cleanup code
+
+## Bug 12 (MEDIUM): Player can move during fade-out transitions
+- **Issue**: `enterRoom()` and `travelToCity()` start camera fade but don't freeze player — player walks during the 400-500ms fade, can re-trigger doors or move to unexpected positions
+- **Root cause**: Missing `this.dialogActive = true` before fade-out
+- **Fix**: Set `dialogActive = true` at the start of both `enterRoom()` and `travelToCity()`
+- **Files**: `src/scenes/ExploreScene.js`
+- **Tests**: "enterRoom freezes player...", "travelToCity freezes player..."
+
+## Bug 13 (MEDIUM): World map accessible from sub-rooms, losing room position
+- **Issue**: Pressing M in a sub-room opens WorldMap; returning via ESC always goes to `room: 'main'`, losing the player's sub-room
+- **Root cause**: `openWorldMap()` didn't check `this.roomId`, and `WorldMapScene.returnToExplore()` hardcodes `room: 'main'`
+- **Fix**: Block world map when `this.roomId !== 'main'`. Also set `dialogActive = true` before transition to prevent movement.
+- **Files**: `src/scenes/ExploreScene.js`
+- **Tests**: "openWorldMap blocks in sub-rooms...", "openWorldMap freezes player..."

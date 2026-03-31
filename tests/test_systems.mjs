@@ -2457,6 +2457,38 @@ describe('ExploreScene Source Correctness (32x32)', () => {
         assert.ok(exploreSrc.includes('npcData.x * TILE_W + TILE_W / 2'));
         assert.ok(exploreSrc.includes('npcData.y * TILE_H + TILE_H / 2'));
     });
+
+    it('enterRoom freezes player with dialogActive during fade (Bug 1/2 regression)', () => {
+        const enterRoomBody = exploreSrc.match(/enterRoom\(cityId, roomId, spawnAt\)\s*\{([\s\S]*?)\n\s{4}\}/);
+        assert.ok(enterRoomBody, 'Could not find enterRoom method');
+        assert.ok(enterRoomBody[1].includes('this.dialogActive = true'),
+            'enterRoom must set dialogActive = true to freeze player during fade');
+    });
+
+    it('travelToCity freezes player with dialogActive during fade (Bug 1 regression)', () => {
+        const travelBody = exploreSrc.match(/travelToCity\(cityId\)\s*\{([\s\S]*?)\n\s{4}\}/);
+        assert.ok(travelBody, 'Could not find travelToCity method');
+        assert.ok(travelBody[1].includes('this.dialogActive = true'),
+            'travelToCity must set dialogActive = true to freeze player during fade');
+    });
+
+    it('openWorldMap blocks in sub-rooms (Bug 3 regression)', () => {
+        const openMapBody = exploreSrc.match(/openWorldMap\(\)\s*\{([\s\S]*?)\n\s{4}\}/);
+        assert.ok(openMapBody, 'Could not find openWorldMap method');
+        assert.ok(openMapBody[1].includes("this.roomId !== 'main'"),
+            'openWorldMap must check roomId to prevent world map from sub-rooms');
+    });
+
+    it('openWorldMap freezes player before starting WorldMapScene', () => {
+        const openMapBody = exploreSrc.match(/openWorldMap\(\)\s*\{([\s\S]*?)\n\s{4}\}/);
+        assert.ok(openMapBody, 'Could not find openWorldMap method');
+        // dialogActive should be set before scene.start('WorldMap')
+        const bodyText = openMapBody[1];
+        const freezeIdx = bodyText.indexOf('this.dialogActive = true');
+        const startIdx = bodyText.indexOf("scene.start('WorldMap'");
+        assert.ok(freezeIdx >= 0 && startIdx >= 0 && freezeIdx < startIdx,
+            'dialogActive must be set before starting WorldMapScene');
+    });
 });
 
 // ======================================================================
