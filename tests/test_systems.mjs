@@ -7,7 +7,7 @@
  */
 
 import assert from 'node:assert/strict';
-import { describe, it, beforeEach } from 'node:test';
+import { describe, it, beforeEach, before } from 'node:test';
 
 // === MOCK HELPERS ===
 
@@ -1714,17 +1714,17 @@ describe('Graphics Overhaul Regression', () => {
     });
 
     // --- NPC collision body fits within tile ---
-    it('NPC collision body (12x12 with offset 2,12) fits within 16x24 sprite', () => {
-        // offset.x=2, size.w=12: 2+12=14 <= 16 OK
-        // offset.y=12, size.h=12: 12+12=24 <= 24 OK
-        assert.ok(2 + 12 <= 16, 'NPC collision body width exceeds sprite width');
-        assert.ok(12 + 12 <= 24, 'NPC collision body height exceeds sprite height');
+    it('NPC collision body (24x24 with offset 4,24) fits within 32x48 sprite', () => {
+        // offset.x=4, size.w=24: 4+24=28 <= 32 OK
+        // offset.y=24, size.h=24: 24+24=48 <= 48 OK
+        assert.ok(4 + 24 <= 32, 'NPC collision body width exceeds sprite width');
+        assert.ok(24 + 24 <= 48, 'NPC collision body height exceeds sprite height');
     });
 
     // --- Player collision body fits within tile ---
-    it('Player collision body (10x10 with offset 3,14) fits within 16x24 sprite', () => {
-        assert.ok(3 + 10 <= 16, 'Player collision body width exceeds sprite width');
-        assert.ok(14 + 10 <= 24, 'Player collision body height exceeds sprite height');
+    it('Player collision body (20x20 with offset 6,28) fits within 32x48 sprite', () => {
+        assert.ok(6 + 20 <= 32, 'Player collision body width exceeds sprite width');
+        assert.ok(28 + 20 <= 48, 'Player collision body height exceeds sprite height');
     });
 });
 
@@ -1870,11 +1870,11 @@ describe('Sprite Rendering Bounds', () => {
 // ======================================================================
 
     it('player drawPlayer bob offset never produces negative y for row 0', () => {
-        // bobOffset formula: frames 1,3 → 0, frames 0,2 → 1
+        // bobOffset formula: frames 1,3 → 0, frames 0,2 → 2
         // by = y + bobOffset, so by >= y always
         const frames = [0, 1, 2, 3];
         for (const frame of frames) {
-            const bobOffset = (frame === 1 || frame === 3) ? 0 : 1;
+            const bobOffset = (frame === 1 || frame === 3) ? 0 : 2;
             assert.ok(bobOffset >= 0,
                 `Player frame ${frame}: bobOffset ${bobOffset} would cause negative y`);
         }
@@ -1883,32 +1883,32 @@ describe('Sprite Rendering Bounds', () => {
     it('NPC drawNPC bob offset never produces negative y for row 0', () => {
         const frames = [0, 1, 2, 3];
         for (const frame of frames) {
-            const bobOffset = (frame === 1 || frame === 3) ? 0 : 1;
+            const bobOffset = (frame === 1 || frame === 3) ? 0 : 2;
             assert.ok(bobOffset >= 0,
                 `NPC frame ${frame}: bobOffset ${bobOffset} would cause negative y`);
         }
     });
 
-    it('player sprite content fits within 16x24 frame on all frames', () => {
-        // Worst case: static frame (bobOffset=1), shoes at by+21 = y+22. Max y index = 23. OK.
-        // Arms at cx-5 = x+3 (leftmost). Min x index = 0. OK (3 >= 0).
-        // Arms at cx+4 = x+12 (rightmost, 1px wide). Max = x+12. OK (12 < 16).
-        const maxY = 1 + 21; // bobOffset + shoe sole position
-        assert.ok(maxY <= 23, `Player content extends to row ${maxY}, frame height is 24`);
-        const minX = 8 - 5; // cx - 5 where cx = x + 8 (center of 16px frame), relative to x=0
+    it('player sprite content fits within 32x48 frame on all frames', () => {
+        // Worst case: static frame (bobOffset=2), shoes at by+42 = y+44. Max y index = 47. OK.
+        // Arms at cx-10 = x+6 (leftmost). Min x index = 0. OK (6 >= 0).
+        // Arms at cx+8 = x+24 (rightmost, 2px wide). Max = x+24. OK (24 < 32).
+        const maxY = 2 + 42; // bobOffset + shoe sole position
+        assert.ok(maxY <= 47, `Player content extends to row ${maxY}, frame height is 48`);
+        const minX = 16 - 10; // cx - 10 where cx = x + 16 (center of 32px frame), relative to x=0
         assert.ok(minX >= 0, `Player left arm starts at x+${minX}, out of bounds`);
-        const maxX = 8 + 4; // cx + 4 (right arm, 1px wide)
-        assert.ok(maxX < 16, `Player right arm extends to x+${maxX}, frame width is 16`);
+        const maxX = 16 + 8; // cx + 8 (right arm, 2px wide)
+        assert.ok(maxX < 32, `Player right arm extends to x+${maxX}, frame width is 32`);
     });
 
-    it('NPC merchant body fits within 16px frame on all sway offsets', () => {
-        // Merchant: bodyW=9, bodyX = cx-5 = x+3. With swayOffset=-1: x+2. With +1: x+4.
-        // Rightmost: x+4+9 = x+13 < 16. OK.
-        // Leftmost: x+2 >= 0. OK.
-        const leftMost = 8 - 5 - 1; // cx-5 + swayOffset(-1)
+    it('NPC merchant body fits within 32px frame on all sway offsets', () => {
+        // Merchant: bodyW=18, bodyX = cx-10 = x+6. With swayOffset=-2: x+4. With +2: x+8.
+        // Rightmost: x+8+18 = x+26 < 32. OK.
+        // Leftmost: x+4 >= 0. OK.
+        const leftMost = 16 - 10 - 2; // cx-10 + swayOffset(-2)
         assert.ok(leftMost >= 0, `Merchant body left edge at x+${leftMost}`);
-        const rightMost = 8 - 5 + 1 + 9; // cx-5 + swayOffset(+1) + bodyW
-        assert.ok(rightMost <= 16, `Merchant body right edge at x+${rightMost}`);
+        const rightMost = 16 - 10 + 2 + 18; // cx-10 + swayOffset(+2) + bodyW
+        assert.ok(rightMost <= 32, `Merchant body right edge at x+${rightMost}`);
     });
 });
 
@@ -2184,5 +2184,383 @@ describe('Room Transition Spawn Positions', () => {
             assert.ok(dist <= 4,
                 `${doorId}: spawnAt (${x},${y}) is ${dist} tiles from expected door area (${expectedNear.x},${expectedNear.y})`);
         }
+    });
+});
+
+// ======================================================================
+// 32x32 TILE UPGRADE REGRESSION TESTS
+// ======================================================================
+
+const { TILE_W, TILE_H, SPRITE_W, SPRITE_H, EXPLORE_ZOOM } = await import('../src/constants.js');
+
+// ======================================================================
+describe('Constants (32x32 upgrade)', () => {
+// ======================================================================
+
+    it('TILE_W and TILE_H are 32', () => {
+        assert.equal(TILE_W, 32);
+        assert.equal(TILE_H, 32);
+    });
+
+    it('SPRITE_W is 32 and SPRITE_H is 48', () => {
+        assert.equal(SPRITE_W, 32);
+        assert.equal(SPRITE_H, 48);
+    });
+
+    it('EXPLORE_ZOOM is 2', () => {
+        assert.equal(EXPLORE_ZOOM, 2);
+    });
+
+    it('display resolution is preserved: TILE_W * EXPLORE_ZOOM makes tiles 64px on screen', () => {
+        assert.equal(TILE_W * EXPLORE_ZOOM, 64);
+    });
+
+    it('viewport shows correct number of tiles at 960x720 with zoom 2', () => {
+        const viewportW = 960 / EXPLORE_ZOOM;
+        const viewportH = 720 / EXPLORE_ZOOM;
+        const tilesX = Math.floor(viewportW / TILE_W);
+        const tilesY = Math.floor(viewportH / TILE_H);
+        assert.equal(tilesX, 15, 'viewport should show 15 tiles wide');
+        assert.equal(tilesY, 11, 'viewport should show 11 tiles tall');
+    });
+});
+
+// ======================================================================
+describe('Tile Math Correctness (32x32)', () => {
+// ======================================================================
+
+    it('player spawn position uses correct tile-to-pixel conversion', () => {
+        const tileX = 25, tileY = 33;
+        const pixelX = tileX * TILE_W + TILE_W / 2;
+        const pixelY = tileY * TILE_H + TILE_H / 2;
+        assert.equal(pixelX, 816, 'player pixel X for tile 25');
+        assert.equal(pixelY, 1072, 'player pixel Y for tile 33');
+    });
+
+    it('NPC positions center correctly in tiles', () => {
+        for (const [cityId, npcs] of Object.entries(NPC_DATA)) {
+            for (const npc of npcs) {
+                const px = npc.x * TILE_W + TILE_W / 2;
+                const py = npc.y * TILE_H + TILE_H / 2;
+                assert.equal(px % TILE_W, TILE_W / 2,
+                    `NPC ${npc.id} in ${cityId}: X not centered in tile`);
+                assert.equal(py % TILE_H, TILE_H / 2,
+                    `NPC ${npc.id} in ${cityId}: Y not centered in tile`);
+            }
+        }
+    });
+
+    it('interactable positions center correctly for chests/signs/doors/portals', () => {
+        const interactableIndices = { 20: 'chest', 21: 'portal', 22: 'sign', 23: 'door' };
+        for (const [cityId, city] of Object.entries(CITIES)) {
+            const maps = [{ name: 'main', data: city }];
+            if (city.rooms) {
+                for (const [roomName, room] of Object.entries(city.rooms)) {
+                    maps.push({ name: roomName, data: room });
+                }
+            }
+            for (const { name, data } of maps) {
+                for (let y = 0; y < data.height; y++) {
+                    for (let x = 0; x < data.width; x++) {
+                        const tileIdx = data.decor[y][x];
+                        if (interactableIndices[tileIdx]) {
+                            const px = x * TILE_W + TILE_W / 2;
+                            const py = y * TILE_H + TILE_H / 2;
+                            assert.equal(px % TILE_W, TILE_W / 2,
+                                `${interactableIndices[tileIdx]} at (${x},${y}) in ${cityId}/${name}: X not centered`);
+                            assert.equal(py % TILE_H, TILE_H / 2,
+                                `${interactableIndices[tileIdx]} at (${x},${y}) in ${cityId}/${name}: Y not centered`);
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    it('exit zone spans correct pixel area at bottom of main maps', () => {
+        for (const [cityId, city] of Object.entries(CITIES)) {
+            const exitX = Math.floor(city.width / 2 - 1) * TILE_W;
+            const exitY = (city.height - 1) * TILE_H;
+            const exitW = 3 * TILE_W;
+            const exitH = TILE_H;
+            assert.ok(exitX >= 0, `${cityId}: exit zone X start negative`);
+            assert.ok(exitX + exitW <= city.width * TILE_W,
+                `${cityId}: exit zone extends past map right edge`);
+            assert.ok(exitY + exitH <= city.height * TILE_H,
+                `${cityId}: exit zone extends past map bottom edge`);
+            const playerX = city.playerStart.x * TILE_W + TILE_W / 2;
+            const playerY = city.playerStart.y * TILE_H + TILE_H / 2;
+            const inZone = playerX >= exitX && playerX <= exitX + exitW &&
+                           playerY >= exitY && playerY <= exitY + exitH;
+            assert.ok(!inZone,
+                `${cityId}: default playerStart is inside exit zone`);
+        }
+    });
+});
+
+// ======================================================================
+describe('Collision Body Consistency (32x32)', () => {
+// ======================================================================
+
+    it('player collision body is centered horizontally in 32px sprite', () => {
+        const bodyW = 20, offsetX = 6;
+        const leftMargin = offsetX;
+        const rightMargin = SPRITE_W - (offsetX + bodyW);
+        assert.equal(leftMargin, rightMargin,
+            `Player collision not centered: left ${leftMargin}, right ${rightMargin}`);
+    });
+
+    it('player collision body bottom touches sprite bottom', () => {
+        assert.equal(28 + 20, SPRITE_H,
+            'Player collision body bottom should align with sprite bottom');
+    });
+
+    it('NPC collision body bottom touches sprite bottom', () => {
+        assert.equal(24 + 24, SPRITE_H,
+            'NPC collision body bottom should align with sprite bottom');
+    });
+
+    it('NPC collision body is centered horizontally in 32px sprite', () => {
+        const bodyW = 24, offsetX = 4;
+        const leftMargin = offsetX;
+        const rightMargin = SPRITE_W - (offsetX + bodyW);
+        assert.equal(leftMargin, rightMargin,
+            `NPC collision not centered: left ${leftMargin}, right ${rightMargin}`);
+    });
+
+    it('player collision body fits within one tile width', () => {
+        assert.ok(20 <= TILE_W, 'Player body width should fit in one tile');
+    });
+
+    it('NPC collision body fits within one tile width', () => {
+        assert.ok(24 <= TILE_W, 'NPC body width should fit in one tile');
+    });
+});
+
+// ======================================================================
+describe('Interaction Distance (32x32)', () => {
+// ======================================================================
+
+    it('facing distance + threshold reaches adjacent tile center', () => {
+        const facingDist = 24;
+        const threshold = 32;
+        const adjacentNpcDist = TILE_W - facingDist;
+        assert.ok(adjacentNpcDist < threshold,
+            `Cannot interact with adjacent NPC: distance ${adjacentNpcDist} >= threshold ${threshold}`);
+    });
+
+    it('facing distance + threshold does NOT reach two tiles away', () => {
+        const facingDist = 24;
+        const threshold = 32;
+        const twoTilesAwayDist = 2 * TILE_W - facingDist;
+        assert.ok(twoTilesAwayDist >= threshold,
+            `Can interact 2 tiles away: distance ${twoTilesAwayDist} < threshold ${threshold}`);
+    });
+
+    it('player speed is proportional to tile size (2-5 tiles/sec)', () => {
+        const speed = 90;
+        const tilesPerSecond = speed / TILE_W;
+        assert.ok(tilesPerSecond >= 2, `Too slow: ${tilesPerSecond.toFixed(1)} tiles/sec`);
+        assert.ok(tilesPerSecond <= 5, `Too fast: ${tilesPerSecond.toFixed(1)} tiles/sec`);
+    });
+});
+
+// ======================================================================
+describe('Room Transition Spawn Math (32x32)', () => {
+// ======================================================================
+
+    it('all spawnAt positions convert to valid pixel coordinates within target room', () => {
+        for (const [doorId, transition] of Object.entries(ROOM_TRANSITIONS)) {
+            const { targetCity, targetRoom, spawnAt } = transition;
+            const city = CITIES[targetCity];
+            const roomData = targetRoom === 'main' ? city : city.rooms?.[targetRoom];
+            if (!roomData) continue;
+            const px = spawnAt.x * TILE_W + TILE_W / 2;
+            const py = spawnAt.y * TILE_H + TILE_H / 2;
+            assert.ok(px >= 0 && px < roomData.width * TILE_W,
+                `${doorId}: spawnAt pixel X=${px} out of bounds (max=${roomData.width * TILE_W})`);
+            assert.ok(py >= 0 && py < roomData.height * TILE_H,
+                `${doorId}: spawnAt pixel Y=${py} out of bounds (max=${roomData.height * TILE_H})`);
+        }
+    });
+
+    it('sub-room→main return transitions never spawn at default playerStart', () => {
+        for (const [doorId, transition] of Object.entries(ROOM_TRANSITIONS)) {
+            if (transition.targetRoom !== 'main') continue;
+            const { spawnAt } = transition;
+            assert.ok(!(spawnAt.x === 25 && spawnAt.y === 33),
+                `${doorId}: return to main spawns at default playerStart (25,33)`);
+        }
+    });
+});
+
+// ======================================================================
+describe('ExploreScene Source Correctness (32x32)', () => {
+// ======================================================================
+
+    let exploreSrc;
+    before(async () => {
+        const fs = await import('node:fs');
+        exploreSrc = fs.readFileSync('src/scenes/ExploreScene.js', 'utf-8');
+    });
+
+    it('imports TILE_W, TILE_H, EXPLORE_ZOOM from constants', () => {
+        assert.ok(exploreSrc.includes("import { TILE_W, TILE_H, EXPLORE_ZOOM } from '../constants.js'"),
+            'ExploreScene must import tile constants');
+    });
+
+    it('uses EXPLORE_ZOOM for camera zoom (not hardcoded 3)', () => {
+        assert.ok(exploreSrc.includes('setZoom(EXPLORE_ZOOM)'),
+            'Camera zoom should use EXPLORE_ZOOM constant');
+        assert.ok(!exploreSrc.includes('setZoom(3)'),
+            'Camera zoom should NOT be hardcoded to 3');
+    });
+
+    it('uses TILE_W for tilemap configuration', () => {
+        assert.ok(exploreSrc.includes('tileWidth: TILE_W'),
+            'Tilemap tileWidth should use TILE_W');
+        assert.ok(exploreSrc.includes('tileHeight: TILE_H'),
+            'Tilemap tileHeight should use TILE_H');
+    });
+
+    it('has no hardcoded "* 16" tile math', () => {
+        const matches = exploreSrc.match(/\*\s*16\b/g);
+        assert.equal(matches, null, `Found hardcoded * 16: ${matches}`);
+    });
+
+    it('uses TILE_W for camera and physics bounds', () => {
+        assert.ok(exploreSrc.includes('roomData.width * TILE_W'));
+        assert.ok(exploreSrc.includes('roomData.height * TILE_H'));
+    });
+
+    it('uses TILE_W for NPC positioning', () => {
+        assert.ok(exploreSrc.includes('npcData.x * TILE_W + TILE_W / 2'));
+        assert.ok(exploreSrc.includes('npcData.y * TILE_H + TILE_H / 2'));
+    });
+});
+
+// ======================================================================
+describe('BootScene Correctness (32x32)', () => {
+// ======================================================================
+
+    let bootSrc;
+    before(async () => {
+        const fs = await import('node:fs');
+        bootSrc = fs.readFileSync('src/scenes/BootScene.js', 'utf-8');
+    });
+
+    it('imports MangaSpriteProvider (not ProceduralAssetProvider)', () => {
+        assert.ok(bootSrc.includes("import { MangaSpriteProvider }"));
+        assert.ok(!bootSrc.includes("import { ProceduralAssetProvider }"));
+    });
+
+    it('creates provider in init() (not constructor)', () => {
+        assert.ok(bootSrc.includes('init()'), 'Should have init() method');
+        const constructorMatch = bootSrc.match(/constructor\(\)\s*\{([^}]*)\}/s);
+        if (constructorMatch) {
+            assert.ok(!constructorMatch[1].includes('MangaSpriteProvider'),
+                'Provider should NOT be created in constructor');
+        }
+    });
+
+    it('calls loadSpriteSheets in preload', () => {
+        assert.ok(bootSrc.includes('this.provider.loadSpriteSheets()'));
+    });
+
+    it('calls generateTextures and createAnimations in create', () => {
+        assert.ok(bootSrc.includes('this.provider.generateTextures()'));
+        assert.ok(bootSrc.includes('this.provider.createAnimations()'));
+    });
+});
+
+// ======================================================================
+describe('TitleScene locket scale (32x32)', () => {
+// ======================================================================
+
+    it('locket icon scale is 3 (not 6) for 32px items', async () => {
+        const fs = await import('node:fs');
+        const titleSrc = fs.readFileSync('src/scenes/TitleScene.js', 'utf-8');
+        assert.ok(titleSrc.includes('.setScale(3)'));
+        assert.ok(!titleSrc.includes('.setScale(6)'));
+    });
+});
+
+// ======================================================================
+describe('NPC Definitions (external sprites)', () => {
+// ======================================================================
+
+    it('spirit_fox and ghost have no file field (always procedural)', async () => {
+        const { NPC_DEFS } = await import('../src/assets/npcDefinitions.js');
+        const spiritFox = NPC_DEFS.find(d => d.name === 'spirit_fox');
+        const ghost = NPC_DEFS.find(d => d.name === 'ghost');
+        assert.ok(spiritFox, 'spirit_fox should exist');
+        assert.ok(ghost, 'ghost should exist');
+        assert.equal(spiritFox.file, undefined, 'spirit_fox should have no file');
+        assert.equal(ghost.file, undefined, 'ghost should have no file');
+    });
+
+    it('all other NPCs have a .png file field', async () => {
+        const { NPC_DEFS } = await import('../src/assets/npcDefinitions.js');
+        const exceptions = ['spirit_fox', 'ghost'];
+        for (const npc of NPC_DEFS) {
+            if (exceptions.includes(npc.name)) continue;
+            assert.ok(npc.file, `NPC ${npc.name} should have a file field`);
+            assert.ok(npc.file.endsWith('.png'), `NPC ${npc.name} file should be .png`);
+        }
+    });
+
+    it('NPC_DEFS still has 29 entries', async () => {
+        const { NPC_DEFS } = await import('../src/assets/npcDefinitions.js');
+        assert.equal(NPC_DEFS.length, 29);
+    });
+});
+
+// ======================================================================
+describe('MangaSpriteProvider Source Correctness', () => {
+// ======================================================================
+
+    let mangaSrc;
+    before(async () => {
+        const fs = await import('node:fs');
+        mangaSrc = fs.readFileSync('src/assets/MangaSpriteProvider.js', 'utf-8');
+    });
+
+    it('player spritesheet uses 32x48 frames', () => {
+        assert.ok(mangaSrc.includes('const frameW = 32, frameH = 48'));
+    });
+
+    it('tileset uses 32px tile size', () => {
+        assert.ok(mangaSrc.includes('const tileSize = 32'));
+    });
+
+    it('has loadSpriteSheets method that cleans up listeners', () => {
+        assert.ok(mangaSrc.includes('loadSpriteSheets()'));
+        assert.ok(mangaSrc.includes("loader.once('complete'"));
+        assert.ok(mangaSrc.includes("loader.off('filecomplete'"));
+    });
+
+    it('has _remapExternalSprite with PIPOYA [0,1,0,2] mapping', () => {
+        assert.ok(mangaSrc.includes('_remapExternalSprite('));
+        assert.ok(mangaSrc.includes('const frameMap = [0, 1, 0, 2]'));
+    });
+
+    it('item icons are 32x32', () => {
+        assert.ok(mangaSrc.includes("textures.createCanvas(`item_${item.name}`, 32, 32)"));
+    });
+
+    it('world map background is still 320x240', () => {
+        assert.ok(mangaSrc.includes("textures.createCanvas('world_map_bg', 320, 240)"));
+    });
+});
+
+// ======================================================================
+describe('Integration Test Coordinates (32x32)', () => {
+// ======================================================================
+
+    it('integration tests use * 32 (not * 16) for player positioning', async () => {
+        const fs = await import('node:fs');
+        const testSrc = fs.readFileSync('test_game.mjs', 'utf-8');
+        assert.ok(!testSrc.includes('* 16'), 'Should not use * 16');
+        assert.ok(testSrc.includes('* 32'), 'Should use * 32');
     });
 });

@@ -5,11 +5,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
-        this.setSize(10, 10);
-        this.setOffset(3, 14);
+        this.setSize(20, 20);
+        this.setOffset(6, 28);
         this.setCollideWorldBounds(true);
 
-        this.speed = 60;
+        this.speed = 90;
         this.direction = 'down';
         this.isMoving = false;
 
@@ -61,7 +61,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    getFacingPoint(distance = 16) {
+    getFacingPoint(distance = 32) {
         const dx = { left: -1, right: 1, up: 0, down: 0 }[this.direction];
         const dy = { left: 0, right: 0, up: -1, down: 1 }[this.direction];
         return {

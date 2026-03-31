@@ -37,7 +37,7 @@ export class TitleScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         // Locket icon
-        const locket = this.add.image(width / 2, 300, 'item_locket').setScale(6);
+        const locket = this.add.image(width / 2, 300, 'item_locket').setScale(3);
         this.tweens.add({
             targets: locket,
             y: 312,

@@ -9,6 +9,15 @@ export class AssetProvider {
     }
 
     /**
+     * Load external sprite sheets (PNGs) during preload phase.
+     * Override in subclasses that use external assets.
+     * Called from BootScene.preload() before create().
+     */
+    loadSpriteSheets() {
+        // No-op in base class — procedural providers don't need this
+    }
+
+    /**
      * Generate all texture keys consumed by the game.
      * Must create: player, npc_*, tileset, particle_*, dialog_bg, button_bg,
      * button_hover, inventory_bg, interact_icon, quest_marker, arrow,

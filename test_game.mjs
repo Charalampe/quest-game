@@ -234,7 +234,7 @@ async function test(name, fn) {
         await page.evaluate(() => {
             const explore = window.game.scene.getScene('Explore');
             const player = explore.player;
-            player.setPosition(44 * 16 + 8, 33 * 16 + 8);
+            player.setPosition(44 * 32 + 16, 33 * 32 + 16);
             player.direction = 'up';
         });
         await page.waitForTimeout(200);
@@ -336,7 +336,7 @@ async function test(name, fn) {
         // Teleport player near librarian
         await page.evaluate(() => {
             const explore = window.game.scene.getScene('Explore');
-            explore.player.setPosition(5 * 16 + 8, 28 * 16 + 8);
+            explore.player.setPosition(5 * 32 + 16, 28 * 32 + 16);
             explore.player.direction = 'up';
         });
         await page.waitForTimeout(200);

@@ -8,8 +8,8 @@ export class NPC extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this, true); // static body
 
-        this.setSize(12, 12);
-        this.setOffset(2, 12);
+        this.setSize(24, 24);
+        this.setOffset(4, 24);
         this.setDepth(4);
         this.setImmovable(true);
 
@@ -18,14 +18,14 @@ export class NPC extends Phaser.Physics.Arcade.Sprite {
         this.currentFrame = 0;
 
         // Interaction indicator
-        this.indicator = scene.add.image(x, y - 20, 'quest_marker');
+        this.indicator = scene.add.image(x, y - 40, 'quest_marker');
         this.indicator.setDepth(10);
         this.indicator.setVisible(false);
 
         // Idle bobbing
         scene.tweens.add({
             targets: this.indicator,
-            y: y - 22,
+            y: y - 44,
             duration: 600,
             yoyo: true,
             repeat: -1,

@@ -1,8 +1,13 @@
-import { ProceduralAssetProvider } from '../assets/ProceduralAssetProvider.js';
+import { MangaSpriteProvider } from '../assets/MangaSpriteProvider.js';
 
 export class BootScene extends Phaser.Scene {
     constructor() {
         super('Boot');
+    }
+
+    init() {
+        // Create provider here (not in constructor) so scene managers are available
+        this.provider = new MangaSpriteProvider(this);
     }
 
     preload() {
@@ -13,12 +18,14 @@ export class BootScene extends Phaser.Scene {
             fontFamily: 'monospace',
             color: '#ccaaff'
         }).setOrigin(0.5);
+
+        // Load external sprite sheets (PNGs) if the provider uses them
+        this.provider.loadSpriteSheets();
     }
 
     async create() {
-        const provider = new ProceduralAssetProvider(this);
-        await provider.generateTextures();
-        await provider.createAnimations();
+        await this.provider.generateTextures();
+        await this.provider.createAnimations();
         this.scene.start('Title');
     }
 }

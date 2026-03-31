@@ -7,6 +7,7 @@ import { QuestManager } from '../systems/QuestManager.js';
 import { InventoryManager } from '../systems/InventoryManager.js';
 import { SaveManager } from '../systems/SaveManager.js';
 import { t, getItemText } from '../data/i18n/index.js';
+import { TILE_W, TILE_H, EXPLORE_ZOOM } from '../constants.js';
 
 export class ExploreScene extends Phaser.Scene {
     constructor() {
@@ -55,16 +56,16 @@ export class ExploreScene extends Phaser.Scene {
 
         // Create player (spawnAt overrides playerStart when entering via door)
         const spawn = this.spawnAt || roomData.playerStart;
-        const startX = spawn.x * 16 + 8;
-        const startY = spawn.y * 16 + 8;
+        const startX = spawn.x * TILE_W + TILE_W / 2;
+        const startY = spawn.y * TILE_H + TILE_H / 2;
         this.player = new Player(this, startX, startY);
         this.player.setDepth(5);
 
-        // Camera follows player (zoom 3 for pixel art)
-        this.cameras.main.setZoom(3);
+        // Camera follows player (zoom 2 for manga-style 32x32 tiles)
+        this.cameras.main.setZoom(EXPLORE_ZOOM);
         this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
-        this.cameras.main.setBounds(0, 0, roomData.width * 16, roomData.height * 16);
-        this.physics.world.setBounds(0, 0, roomData.width * 16, roomData.height * 16);
+        this.cameras.main.setBounds(0, 0, roomData.width * TILE_W, roomData.height * TILE_H);
+        this.physics.world.setBounds(0, 0, roomData.width * TILE_W, roomData.height * TILE_H);
 
         // Collisions
         this.physics.add.collider(this.player, this.wallLayer);
@@ -148,13 +149,13 @@ export class ExploreScene extends Phaser.Scene {
 
     buildTilemap(cityData) {
         const map = this.make.tilemap({
-            tileWidth: 16,
-            tileHeight: 16,
+            tileWidth: TILE_W,
+            tileHeight: TILE_H,
             width: cityData.width,
             height: cityData.height
         });
 
-        const tileset = map.addTilesetImage('tileset', 'tileset', 16, 16, 0, 0);
+        const tileset = map.addTilesetImage('tileset', 'tileset', TILE_W, TILE_H, 0, 0);
 
         // Ground layer
         const groundLayer = map.createBlankLayer('ground', tileset);
@@ -219,7 +220,7 @@ export class ExploreScene extends Phaser.Scene {
                 if (!flags[npcData.requiresFlag]) return;
             }
 
-            const npc = new NPC(this, npcData.x * 16 + 8, npcData.y * 16 + 8, npcData);
+            const npc = new NPC(this, npcData.x * TILE_W + TILE_W / 2, npcData.y * TILE_H + TILE_H / 2, npcData);
             this.npcs.push(npc);
             this.npcGroup.add(npc);
         });
@@ -234,8 +235,8 @@ export class ExploreScene extends Phaser.Scene {
                 if (tileIdx === 20) { // chest
                     this.interactables.push({
                         type: 'chest',
-                        x: x * 16 + 8,
-                        y: y * 16 + 8,
+                        x: x * TILE_W + TILE_W / 2,
+                        y: y * TILE_H + TILE_H / 2,
                         tileX: x,
                         tileY: y,
                         opened: false,
@@ -244,8 +245,8 @@ export class ExploreScene extends Phaser.Scene {
                 } else if (tileIdx === 22) { // sign
                     this.interactables.push({
                         type: 'sign',
-                        x: x * 16 + 8,
-                        y: y * 16 + 8,
+                        x: x * TILE_W + TILE_W / 2,
+                        y: y * TILE_H + TILE_H / 2,
                         tileX: x,
                         tileY: y,
                         id: `${roomPrefix}_sign_${x}_${y}`
@@ -253,8 +254,8 @@ export class ExploreScene extends Phaser.Scene {
                 } else if (tileIdx === 21) { // portal
                     this.interactables.push({
                         type: 'portal',
-                        x: x * 16 + 8,
-                        y: y * 16 + 8,
+                        x: x * TILE_W + TILE_W / 2,
+                        y: y * TILE_H + TILE_H / 2,
                         tileX: x,
                         tileY: y,
                         id: `${roomPrefix}_portal_${x}_${y}`
@@ -265,8 +266,8 @@ export class ExploreScene extends Phaser.Scene {
                     if (transition) {
                         this.interactables.push({
                             type: 'door',
-                            x: x * 16 + 8,
-                            y: y * 16 + 8,
+                            x: x * TILE_W + TILE_W / 2,
+                            y: y * TILE_H + TILE_H / 2,
                             tileX: x,
                             tileY: y,
                             id: doorId,
@@ -280,9 +281,9 @@ export class ExploreScene extends Phaser.Scene {
         // Check for exit zones at map edges (only on main rooms)
         this.exitZones = [];
         if (this.roomId === 'main') {
-            const exitX = Math.floor(roomData.width / 2 - 1) * 16;
+            const exitX = Math.floor(roomData.width / 2 - 1) * TILE_W;
             this.exitZones.push({
-                rect: new Phaser.Geom.Rectangle(exitX, (roomData.height - 1) * 16, 3 * 16, 16),
+                rect: new Phaser.Geom.Rectangle(exitX, (roomData.height - 1) * TILE_H, 3 * TILE_W, TILE_H),
                 action: 'worldmap'
             });
         }
@@ -296,12 +297,12 @@ export class ExploreScene extends Phaser.Scene {
 
         if (this.menuOpen) return;
 
-        const facingPoint = this.player.getFacingPoint(12);
+        const facingPoint = this.player.getFacingPoint(24);
 
         // Check NPCs
         for (const npc of this.npcs) {
             const dist = Phaser.Math.Distance.Between(facingPoint.x, facingPoint.y, npc.x, npc.y);
-            if (dist < 16) {
+            if (dist < 32) {
                 this.startNPCDialog(npc);
                 return;
             }
@@ -310,7 +311,7 @@ export class ExploreScene extends Phaser.Scene {
         // Check interactables
         for (const obj of this.interactables) {
             const dist = Phaser.Math.Distance.Between(facingPoint.x, facingPoint.y, obj.x, obj.y);
-            if (dist < 16) {
+            if (dist < 32) {
                 this.interactWith(obj);
                 return;
             }
@@ -520,20 +521,20 @@ export class ExploreScene extends Phaser.Scene {
             for (let x = 0; x < cityData.width; x++) {
                 const wallTile = cityData.walls[y][x];
                 const decorTile = cityData.decor[y][x];
-                const worldX = x * 16 + 8;
-                const worldY = y * 16 + 8;
+                const worldX = x * TILE_W + TILE_W / 2;
+                const worldY = y * TILE_H + TILE_H / 2;
 
                 // Fountain particles (tile 18)
                 if (wallTile === 18) {
-                    const emitter = this.add.particles(worldX, worldY - 8, 'particle_white', {
-                        speed: { min: 10, max: 25 },
+                    const emitter = this.add.particles(worldX, worldY - TILE_H / 2, 'particle_white', {
+                        speed: { min: 15, max: 40 },
                         angle: { min: 250, max: 290 },
-                        lifespan: 600,
-                        frequency: 80,
+                        lifespan: 800,
+                        frequency: 60,
                         quantity: 1,
-                        scale: { start: 0.8, end: 0.2 },
+                        scale: { start: 1.2, end: 0.3 },
                         alpha: { start: 0.8, end: 0 },
-                        gravityY: 40
+                        gravityY: 60
                     });
                     emitter.setDepth(6);
                     this.particleEmitters.push(emitter);
@@ -542,12 +543,12 @@ export class ExploreScene extends Phaser.Scene {
                 // Portal sparkle (decor tile 21)
                 if (decorTile === 21) {
                     const emitter = this.add.particles(worldX, worldY, 'particle_sparkle', {
-                        speed: { min: 5, max: 15 },
+                        speed: { min: 8, max: 25 },
                         angle: { min: 0, max: 360 },
-                        lifespan: 800,
-                        frequency: 200,
+                        lifespan: 1000,
+                        frequency: 150,
                         quantity: 1,
-                        scale: { start: 0.6, end: 0.1 },
+                        scale: { start: 1.0, end: 0.2 },
                         alpha: { start: 0.9, end: 0 },
                         tint: [0xc39bd3, 0xf4ecf7, 0x8e44ad]
                     });
@@ -559,17 +560,17 @@ export class ExploreScene extends Phaser.Scene {
 
         // Cherry blossom petals in Tokyo
         if (this.cityId === 'tokyo') {
-            const emitter = this.add.particles(cityData.width * 8, 0, 'particle_petal', {
+            const emitter = this.add.particles(cityData.width * TILE_W / 2, 0, 'particle_petal', {
                 emitZone: {
                     type: 'random',
-                    source: new Phaser.Geom.Rectangle(0, 0, cityData.width * 16, 16)
+                    source: new Phaser.Geom.Rectangle(0, 0, cityData.width * TILE_W, TILE_H)
                 },
-                speedX: { min: 5, max: 15 },
-                speedY: { min: 10, max: 25 },
-                lifespan: 4000,
-                frequency: 300,
+                speedX: { min: 8, max: 25 },
+                speedY: { min: 15, max: 40 },
+                lifespan: 5000,
+                frequency: 250,
                 quantity: 1,
-                scale: { start: 0.5, end: 0.3 },
+                scale: { start: 0.8, end: 0.4 },
                 alpha: { start: 0.7, end: 0 },
                 rotate: { min: 0, max: 360 }
             });
@@ -578,17 +579,17 @@ export class ExploreScene extends Phaser.Scene {
         }
 
         // Ambient dust motes (all cities)
-        const dustEmitter = this.add.particles(cityData.width * 8, cityData.height * 8, 'particle_dust', {
+        const dustEmitter = this.add.particles(cityData.width * TILE_W / 2, cityData.height * TILE_H / 2, 'particle_dust', {
             emitZone: {
                 type: 'random',
-                source: new Phaser.Geom.Rectangle(0, 0, cityData.width * 16, cityData.height * 16)
+                source: new Phaser.Geom.Rectangle(0, 0, cityData.width * TILE_W, cityData.height * TILE_H)
             },
-            speedY: { min: -3, max: -8 },
-            speedX: { min: -2, max: 2 },
-            lifespan: 3000,
-            frequency: 500,
+            speedY: { min: -5, max: -12 },
+            speedX: { min: -3, max: 3 },
+            lifespan: 3500,
+            frequency: 400,
             quantity: 1,
-            scale: { start: 0.4, end: 0.1 },
+            scale: { start: 0.6, end: 0.2 },
             alpha: { start: 0.3, end: 0 },
             blendMode: 'ADD'
         });
@@ -603,12 +604,12 @@ export class ExploreScene extends Phaser.Scene {
         for (let y = 0; y < cityData.height; y++) {
             for (let x = 0; x < cityData.width; x++) {
                 const decorTile = cityData.decor[y][x];
-                const worldX = x * 16 + 8;
-                const worldY = y * 16 + 8;
+                const worldX = x * TILE_W + TILE_W / 2;
+                const worldY = y * TILE_H + TILE_H / 2;
 
                 // Chest pulsing glow
                 if (decorTile === 20) {
-                    const glow = this.add.rectangle(worldX, worldY, 16, 16, 0xFFD700, 0.05);
+                    const glow = this.add.rectangle(worldX, worldY, TILE_W, TILE_H, 0xFFD700, 0.05);
                     glow.setDepth(2);
                     this.envObjects.push(glow);
                     const tween = this.tweens.add({
@@ -626,7 +627,7 @@ export class ExploreScene extends Phaser.Scene {
 
                 // Portal pulsing glow
                 if (decorTile === 21) {
-                    const glow = this.add.rectangle(worldX, worldY, 16, 16, 0x8E44AD, 0.05);
+                    const glow = this.add.rectangle(worldX, worldY, TILE_W, TILE_H, 0x8E44AD, 0.05);
                     glow.setDepth(2);
                     this.envObjects.push(glow);
                     const tween = this.tweens.add({
@@ -644,7 +645,7 @@ export class ExploreScene extends Phaser.Scene {
 
                 // Street lamp flicker (tile 28)
                 if (decorTile === 28) {
-                    const light = this.add.rectangle(worldX, worldY - 4, 12, 10, 0xFFEE88, 0.2);
+                    const light = this.add.rectangle(worldX, worldY - 8, 24, 20, 0xFFEE88, 0.2);
                     light.setDepth(2);
                     this.envObjects.push(light);
                     const tween = this.tweens.add({
@@ -695,17 +696,17 @@ export class ExploreScene extends Phaser.Scene {
         }
 
         // Update NPC interaction indicators and UI labels
-        const facingPoint = this.player.getFacingPoint(12);
+        const facingPoint = this.player.getFacingPoint(24);
         const cam = this.cameras.main;
         const npcLabels = [];
         for (const npc of this.npcs) {
             const dist = Phaser.Math.Distance.Between(facingPoint.x, facingPoint.y, npc.x, npc.y);
-            const canInteract = dist < 16;
+            const canInteract = dist < 32;
             npc.setInteractable(canInteract);
             if (canInteract) {
                 // Convert world position to screen position for UIScene (zoom 1)
                 const screenX = (npc.x - cam.worldView.x) * cam.zoom;
-                const screenY = (npc.y - cam.worldView.y) * cam.zoom + 30;
+                const screenY = (npc.y - cam.worldView.y) * cam.zoom + 40;
                 npcLabels.push({ name: npc.npcData.name, screenX, screenY });
             }
         }
