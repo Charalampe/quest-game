@@ -61,5 +61,40 @@
 - **Issue**: NPC name labels disappeared after moving them from NPC.js to UIScene
 - **Root cause**: `npcLabelPool` initialized in UIScene `create()`, but ExploreScene `update()` calls `updateNPCLabels()` before UIScene's `create()` runs (scene.launch is async)
 - **Fix**: Moved `npcLabelPool = []` to UIScene `init()`, added null guard in `updateNPCLabels()`
-- **Also fixed**: Used `cam.worldView.x/y` instead of `cam.scrollX/Y` for more reliable world-to-screen conversion
+- **Also fixed**: Used `cam.worldView.x/y` instead of `cam.scrollX/Y` for more reliable world→screen conversion
 - **Files**: `src/scenes/UIScene.js`, `src/scenes/ExploreScene.js`
+
+## Bug 10 (MEDIUM): BootScene creates provider before scene init
+- **Issue**: `MangaSpriteProvider(this)` was created in BootScene constructor, before Phaser attaches scene managers (load, textures, etc.)
+- **Root cause**: Provider stored scene reference at construction time — fragile, could break if provider constructor ever accesses scene properties
+- **Fix**: Moved provider creation from `constructor()` to `init()` where scene is fully initialized
+- **Files**: `src/scenes/BootScene.js`
+- **Tests**: "BootScene Correctness (32x32)" — 4 tests
+
+## Bug 11 (LOW): Loader event listeners leaked in MangaSpriteProvider
+- **Issue**: `loadSpriteSheets()` registered permanent `filecomplete` and `loaderror` handlers on the Phaser loader, never removed
+- **Root cause**: Anonymous event handlers with no cleanup
+- **Fix**: Store named handler refs, add `loader.once('complete', ...)` cleanup that removes both handlers after loading finishes
+- **Files**: `src/assets/MangaSpriteProvider.js`
+- **Tests**: "MangaSpriteProvider Source Correctness" — verifies listener cleanup code
+
+## Bug 12 (MEDIUM): Player can move during fade-out transitions
+- **Issue**: `enterRoom()` and `travelToCity()` start camera fade but don't freeze player — player walks during the 400-500ms fade, can re-trigger doors or move to unexpected positions
+- **Root cause**: Missing `this.dialogActive = true` before fade-out
+- **Fix**: Set `dialogActive = true` at the start of both `enterRoom()` and `travelToCity()`
+- **Files**: `src/scenes/ExploreScene.js`
+- **Tests**: "enterRoom freezes player...", "travelToCity freezes player..."
+
+## Bug 13 (MEDIUM): World map accessible from sub-rooms, losing room position
+- **Issue**: Pressing M in a sub-room opens WorldMap; returning via ESC always goes to `room: 'main'`, losing the player's sub-room
+- **Root cause**: `openWorldMap()` didn't check `this.roomId`, and `WorldMapScene.returnToExplore()` hardcodes `room: 'main'`
+- **Fix**: Block world map when `this.roomId !== 'main'`. Also set `dialogActive = true` before transition to prevent movement.
+- **Files**: `src/scenes/ExploreScene.js`
+- **Tests**: "openWorldMap blocks in sub-rooms...", "openWorldMap freezes player..."
+
+## Bug 14 (HIGH): Oasis door deadlock — NPC behind locked door
+- **Issue**: Oasis room door required `marrakech_met_nadia` flag, but Nadia is INSIDE the oasis — creating an impossible deadlock
+- **Root cause**: ROOM_TRANSITIONS entry for `marrakech_oasis_door` had `requiresFlag: 'marrakech_met_nadia'`, but that flag is only set by talking to Nadia who is behind that door
+- **Fix**: Changed requiresFlag to `marrakech_has_amulet` (obtainable from the Riad before entering oasis)
+- **Also added**: 4 breadcrumb dialogs (Zahra, Youssef, Tariq, Fatima) that guide player to the oasis after getting the amulet
+- **Files**: `src/data/cities.js`, `src/data/dialogues.js`, `src/data/quests.js`, `src/data/i18n/en.js`, `src/data/i18n/fr.js`

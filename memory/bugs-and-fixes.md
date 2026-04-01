@@ -91,3 +91,10 @@
 - **Fix**: Block world map when `this.roomId !== 'main'`. Also set `dialogActive = true` before transition to prevent movement.
 - **Files**: `src/scenes/ExploreScene.js`
 - **Tests**: "openWorldMap blocks in sub-rooms...", "openWorldMap freezes player..."
+
+## Bug 14 (HIGH): Oasis door deadlock — NPC behind locked door
+- **Issue**: Oasis room door required `marrakech_met_nadia` flag, but Nadia is INSIDE the oasis — creating an impossible deadlock
+- **Root cause**: ROOM_TRANSITIONS entry for `marrakech_oasis_door` had `requiresFlag: 'marrakech_met_nadia'`, but that flag is only set by talking to Nadia who is behind that door
+- **Fix**: Changed requiresFlag to `marrakech_has_amulet` (obtainable from the Riad before entering oasis)
+- **Also added**: 4 breadcrumb dialogs (Zahra, Youssef, Tariq, Fatima) that guide player to the oasis after getting the amulet
+- **Files**: `src/data/cities.js`, `src/data/dialogues.js`, `src/data/quests.js`, `src/data/i18n/en.js`, `src/data/i18n/fr.js`

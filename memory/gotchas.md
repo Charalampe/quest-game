@@ -57,6 +57,12 @@
 - Without debouncing, `openWorldMap()` shows repeated "no routes" dialogs
 - Solution: `exitTriggered` flag, set true on first trigger, reset when player leaves zone
 
+### Room door flag dependencies
+- ROOM_TRANSITIONS entries can have `requiresFlag` to lock doors
+- The flag MUST be obtainable from OUTSIDE the locked room — otherwise deadlock
+- Example: oasis door originally required `marrakech_met_nadia`, but Nadia is inside the oasis
+- Always verify that `requiresFlag` references a flag set in a reachable location
+
 ### Portal tile requirement
 - Decor tile 21 = portal, detected by `createInteractables()`
 - Cities with portal travel routes MUST have a portal tile in their decor layer

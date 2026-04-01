@@ -24,7 +24,7 @@ npm start       # Opens at http://localhost:8080
 ## Testing
 
 ```bash
-node tests/test_systems.mjs   # 336 unit tests — pure data/logic, no Phaser runtime
+node tests/test_systems.mjs   # 209 unit tests — pure data/logic, no Phaser runtime
 node test_game.mjs             # 24 Playwright integration tests — requires server on port 8080
 ```
 
@@ -47,6 +47,8 @@ Both test suites must pass before merging changes.
 - `src/scenes/` — BootScene (thin orchestrator), TitleScene, ExploreScene (core gameplay), WorldMapScene, UIScene (HUD overlay)
 - `src/assets/` — AssetProvider (base), MangaSpriteProvider (manga canvas drawing), ProceduralAssetProvider (original 16px), npcDefinitions, itemDefinitions, tileDefinitions
 - `src/assets/sprites/` — external PIPOYA character sprite sheets (PNGs, optional)
+- `src/assets/tiles/` — external PNG monument tiles (Eiffel Tower, Big Ben, columns, etc.)
+- `scripts/` — generate_tiles.mjs (monument tile PNGs), setup_sprites.mjs (PIPOYA file mapping)
 - `src/systems/` — DialogManager, QuestManager, InventoryManager, TravelManager, SaveManager
 - `src/entities/` — Player, NPC
 - `src/data/` — cities.js (map data + rooms), npcs.js, quests.js (dialog routes + chest rewards), dialogues.js, i18n/
@@ -73,7 +75,7 @@ Both test suites must pass before merging changes.
 ## Key Gotchas
 
 - NPC property named `npcData` (not `data`) to avoid Phaser's built-in DataManager conflict
-- Asset generation uses strategy pattern: BootScene delegates to ProceduralAssetProvider
+- Asset generation uses strategy pattern: BootScene delegates to MangaSpriteProvider
 - Canvas textures via `this.scene.textures.createCanvas()` in provider (not `preload()`)
 - Water tiles need BOTH ground tile (visual) AND wall tile (collision)
 - Exit zone checks in `update()` must be debounced (`exitTriggered` flag) to prevent dialog loops

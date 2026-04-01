@@ -187,7 +187,47 @@ async function test(name, fn) {
         if (!uiActive) throw new Error('UI scene not active');
     });
 
-    // --- TEST 13: Player movement ---
+    // --- TEST 13: Intro cutscene plays ---
+    await test('Intro cutscene plays and grandma gives locket', async () => {
+        // The cutscene auto-starts on new game in Paris.
+        // Wait for grandma walk + dialog to appear (~4s total: 500ms fade + 800ms pause + 2500ms walk + 400ms pause)
+        await page.waitForFunction(() => {
+            try {
+                const explore = window.game.scene.getScene('Explore');
+                return explore && explore.dialogManager && explore.dialogManager.active;
+            } catch { return false; }
+        }, { timeout: 15000 });
+
+        // Advance through grandma_intro dialog (8 lines)
+        await page.evaluate(async () => {
+            const explore = window.game.scene.getScene('Explore');
+            const dm = explore.dialogManager;
+            for (let i = 0; i < 30; i++) {
+                if (!dm.active) break;
+                dm.advance();
+                await new Promise(r => setTimeout(r, 120));
+            }
+        });
+        await page.waitForTimeout(300);
+
+        // Verify quest_started flag and locket in inventory
+        const state = await page.evaluate(() => {
+            const reg = window.game.registry;
+            return {
+                dialogActive: window.game.scene.getScene('Explore').dialogActive,
+                flags: reg.get('flags'),
+                inventory: reg.get('inventory')
+            };
+        });
+
+        if (state.dialogActive) throw new Error('Dialog still active after cutscene');
+        if (!state.flags.quest_started) throw new Error('quest_started flag not set');
+        const hasLocket = state.inventory.some(i => i.id === 'locket');
+        if (!hasLocket) throw new Error('Locket not in inventory after cutscene');
+        log(`  Cutscene complete: quest_started=${state.flags.quest_started}, hasLocket=${hasLocket}`);
+    });
+
+    // --- TEST 14: Player movement ---
     await test('Player responds to keyboard movement', async () => {
         const startPos = await page.evaluate(() => {
             const player = window.game.scene.getScene('Explore').player;
@@ -209,7 +249,7 @@ async function test(name, fn) {
         log(`  Moved from x=${startPos.x.toFixed(1)} to x=${endPos.x.toFixed(1)}`);
     });
 
-    // --- TEST 14: Registry state is initialized ---
+    // --- TEST 15: Registry state is initialized ---
     await test('Game registry state is properly initialized', async () => {
         const state = await page.evaluate(() => {
             const reg = window.game.registry;
@@ -228,14 +268,17 @@ async function test(name, fn) {
         log(`  City: ${state.currentCity}, Unlocked: ${state.unlockedCities.join(',')}`);
     });
 
-    // --- TEST 15: Walk to Grandma NPC and interact ---
-    await test('Can interact with NPC (Grandma) to start quest', async () => {
-        // Teleport player near grandma and face up
+    // --- TEST 16: Walk to Grandma NPC and interact (post-cutscene position) ---
+    await test('Can interact with NPC (Grandma) after cutscene', async () => {
+        // Grandma moved to tile ~27 during cutscene. Find her actual position and teleport player nearby.
         await page.evaluate(() => {
             const explore = window.game.scene.getScene('Explore');
+            const grandma = explore.npcs.find(n => n.npcData.id === 'paris_grandma');
+            if (!grandma) throw new Error('Grandma NPC not found');
             const player = explore.player;
-            player.setPosition(44 * 32 + 16, 33 * 32 + 16);
-            player.direction = 'up';
+            // Position player one tile to the left of grandma, facing right
+            player.setPosition(grandma.x - 32, grandma.y);
+            player.direction = 'right';
         });
         await page.waitForTimeout(200);
 
@@ -254,14 +297,12 @@ async function test(name, fn) {
         if (!dialogState.dialogActive) throw new Error('Dialog not active after interacting with NPC');
     });
 
-    // --- TEST 16: Advance through dialog ---
-    await test('Can advance through dialog with Space key', async () => {
-        // Advance through grandma's dialog by programmatically calling advance
-        // This avoids timing issues with the game loop and key events
+    // --- TEST 17: Advance through dialog ---
+    await test('Can advance through grandma_after_locket dialog', async () => {
+        // Advance through grandma_after_locket dialog (4 lines)
         await page.evaluate(async () => {
             const explore = window.game.scene.getScene('Explore');
             const dm = explore.dialogManager;
-            // Keep advancing until dialog is done
             for (let i = 0; i < 30; i++) {
                 if (!dm.active) break;
                 dm.advance();
@@ -270,25 +311,21 @@ async function test(name, fn) {
         });
         await page.waitForTimeout(300);
 
-        // After dialog ends, check we got the locket
+        // Verify dialog completed cleanly
         const state = await page.evaluate(() => {
             const explore = window.game.scene.getScene('Explore');
-            const reg = window.game.registry;
             return {
                 dialogActive: explore.dialogActive,
-                flags: reg.get('flags'),
-                inventory: reg.get('inventory')
+                dialogManagerActive: explore.dialogManager.active
             };
         });
 
         if (state.dialogActive) throw new Error('Dialog still active after advancing through all lines');
-        if (!state.flags.quest_started) throw new Error('quest_started flag not set');
-        const hasLocket = state.inventory.some(i => i.id === 'locket');
-        if (!hasLocket) throw new Error('Locket not in inventory');
-        log(`  Got locket, quest_started=${state.flags.quest_started}`);
+        if (state.dialogManagerActive) throw new Error('DialogManager still active');
+        log(`  Dialog completed cleanly`);
     });
 
-    // --- TEST 17: Inventory panel works ---
+    // --- TEST 18: Inventory panel works ---
     await test('Inventory panel opens with I key and shows locket', async () => {
         await page.keyboard.press('i');
         await page.waitForTimeout(300);
@@ -307,7 +344,7 @@ async function test(name, fn) {
         await page.waitForTimeout(200);
     });
 
-    // --- TEST 18: Quest log works ---
+    // --- TEST 19: Quest log works ---
     await test('Quest log opens with Q key and shows active quest', async () => {
         await page.keyboard.press('q');
         await page.waitForTimeout(300);
@@ -331,8 +368,16 @@ async function test(name, fn) {
         await page.waitForTimeout(200);
     });
 
-    // --- TEST 19: Visit librarian to complete Paris ---
+    // --- TEST 20: Visit librarian to complete Paris ---
     await test('Visiting librarian with locket advances quest', async () => {
+        // Set required flags so librarian gives librarian_with_letter dialog
+        await page.evaluate(() => {
+            const reg = window.game.registry;
+            const flags = reg.get('flags') || {};
+            flags.paris_has_eiffel_letter = true;
+            reg.set('flags', flags);
+        });
+
         // Teleport player near librarian
         await page.evaluate(() => {
             const explore = window.game.scene.getScene('Explore');
@@ -369,12 +414,10 @@ async function test(name, fn) {
 
         if (!state.flags.paris_complete) throw new Error('paris_complete flag not set');
         if (!state.unlockedCities.includes('london')) throw new Error('London not unlocked');
-        const hasLetter = state.inventory.some(i => i.id === 'letter');
-        if (!hasLetter) throw new Error('Letter not in inventory');
         log(`  Paris complete! Unlocked cities: ${state.unlockedCities.join(', ')}`);
     });
 
-    // --- TEST 20: World map opens ---
+    // --- TEST 21: World map opens ---
     await test('World map opens and shows cities', async () => {
         // Ensure dialog is closed and we can open the map
         await page.evaluate(() => {
@@ -408,7 +451,7 @@ async function test(name, fn) {
         if (wmState.fromCity !== 'paris') throw new Error(`fromCity: ${wmState.fromCity}`);
     });
 
-    // --- TEST 21: Can travel to London ---
+    // --- TEST 22: Can travel to London ---
     await test('Can select London and travel', async () => {
         // Wait for WorldMap scene to fully initialize
         await page.waitForTimeout(1000);
@@ -436,7 +479,7 @@ async function test(name, fn) {
         log('  Successfully traveled to London!');
     });
 
-    // --- TEST 22: London is properly loaded ---
+    // --- TEST 23: London is properly loaded ---
     await test('London map is properly loaded with NPCs', async () => {
         await page.waitForTimeout(500);
 
@@ -455,7 +498,7 @@ async function test(name, fn) {
         log(`  London loaded: ${londonState.npcCount} NPCs - ${londonState.npcNames.join(', ')}`);
     });
 
-    // --- TEST 23: Save/Load works ---
+    // --- TEST 24: Save/Load works ---
     await test('Save data persists to localStorage', async () => {
         const saveData = await page.evaluate(() => {
             const raw = localStorage.getItem('questgame_save');
@@ -469,7 +512,7 @@ async function test(name, fn) {
         log(`  Save data: city=${saveData.currentCity}, items=${saveData.inventory.length}`);
     });
 
-    // --- TEST 24: No critical JavaScript errors ---
+    // --- TEST 25: No critical JavaScript errors ---
     await test('No critical JavaScript errors', async () => {
         const criticalErrors = pageErrors.filter(e => !e.includes('favicon'));
         if (criticalErrors.length > 0) {

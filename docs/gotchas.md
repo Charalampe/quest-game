@@ -8,9 +8,11 @@
 - Symptom: mysterious DataManager errors when accessing NPC properties
 
 ### Asset generation timing
-- `this.textures.createCanvas()` only works in `create()`, not `preload()`
-- Assets are synchronous, so progress bar won't update during generation
-- All assets must be generated before any scene that uses them
+- `this.scene.textures.createCanvas()` only works during scene `create()`, not `preload()`
+- BootScene delegates to MangaSpriteProvider (strategy pattern) — provider uses `this.scene.textures`
+- Provider must be created in `init()` (not constructor) — scene managers aren't available in constructor
+- `loadSpriteSheets()` runs in `preload()`, `generateTextures()` + `createAnimations()` in `create()`
+- External sprite loader listeners must be cleaned up after loading completes
 
 ### Keyboard listener accumulation
 - `.on('keydown-X', handler)` listeners accumulate across scene restarts
@@ -20,10 +22,16 @@
 
 ### Camera zoom and text rendering
 - `pixelArt: true` sets NEAREST filtering globally — affects text too
-- Text in zoomed scenes (ExploreScene zoom 3) gets pixelated
+- Text in zoomed scenes (ExploreScene zoom 2) gets pixelated
 - Solution: render text in UIScene (zoom 1) at native 960x720 resolution
 - World-to-screen conversion: `screenX = (worldX - cam.worldView.x) * cam.zoom`
 - Use `cam.worldView.x/y` NOT `cam.scrollX/Y` for reliable conversion
+
+### Tile size constants
+- All tile/sprite dimensions centralized in `src/constants.js` (TILE_W, TILE_H, SPRITE_W, SPRITE_H, EXPLORE_ZOOM)
+- ExploreScene must import and use these — NEVER hardcode `16` or `32` for tile math
+- Interaction distance (24px facing, 32px threshold) is tuned for 32px tiles — reaches adjacent tile but not two away
+- Player speed (90 px/s) tuned for ~2.8 tiles/sec in 32px world
 
 ### Scene launch timing
 - `scene.launch('UI', data)` is async — UIScene's `create()` may not run until next frame
@@ -48,6 +56,12 @@
 - Checking exit zones in `update()` triggers every frame while player is in zone
 - Without debouncing, `openWorldMap()` shows repeated "no routes" dialogs
 - Solution: `exitTriggered` flag, set true on first trigger, reset when player leaves zone
+
+### Room door flag dependencies
+- ROOM_TRANSITIONS entries can have `requiresFlag` to lock doors
+- The flag MUST be obtainable from OUTSIDE the locked room — otherwise deadlock
+- Example: oasis door originally required `marrakech_met_nadia`, but Nadia is inside the oasis
+- Always verify that `requiresFlag` references a flag set in a reachable location
 
 ### Portal tile requirement
 - Decor tile 21 = portal, detected by `createInteractables()`

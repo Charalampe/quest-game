@@ -4,6 +4,7 @@ export class NPC extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, textureKey, 0);
 
         this.npcData = data;
+        this.cutsceneWalking = false;
 
         scene.add.existing(this);
         scene.physics.add.existing(this, true); // static body
@@ -51,11 +52,19 @@ export class NPC extends Phaser.Physics.Arcade.Sprite {
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
+        if (this.cutsceneWalking) return;
         this.idleTimer += delta;
         if (this.idleTimer > 600) {
             this.idleTimer = 0;
             this.currentFrame = (this.currentFrame + 1) % 4;
             this.setFrame(this.currentFrame);
+        }
+    }
+
+    updateIndicatorPosition() {
+        if (this.indicator) {
+            this.indicator.x = this.x;
+            this.indicator.y = this.y - 40;
         }
     }
 

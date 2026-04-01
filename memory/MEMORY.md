@@ -14,11 +14,13 @@
 - **Multi-room system**: each city has `rooms` object; ExploreScene accepts `{city, room}` params
 - **ROOM_TRANSITIONS** table in cities.js maps doorId → targetCity/targetRoom/spawnAt
 - Room maps range from 12x10 to 24x20; each has own playerStart, ground/walls/decor
-- **20 total rooms** (5 main + 15 sub-rooms), **40 NPCs**
+- **20 total rooms** (5 main + 15 sub-rooms), **39 NPCs**
 - **Player 32x48**, NPC 32x48, body sizes: Player 20x20 offset(6,28), NPC 24x24 offset(4,24)
 - Player speed: 90 px/s (tuned for 32px world)
 - 29 NPC sprite types with optional external PIPOYA PNG files
-- Tileset 10 rows at 32x32 (indices 64-65 = water variants), manga cel-shaded style
+- Tileset 99 tiles at 32x32: base tiles (0-63), water variants (64-65), monument sections (66-98)
+- Monument tiles: Eiffel Tower (66-77), Big Ben (78-85), columns (86-88), palms/mosaics (89-92), cherry/torii (93-98)
+- External PNG monument tiles in `src/assets/tiles/` with manifest.json
 - External sprite system: PIPOYA 3-frame layout remapped to 4-frame via `_remapExternalSprite()`
 - `spirit_fox` and `ghost` always use procedural rendering (no external file)
 
@@ -39,7 +41,7 @@
 ## Bug History — see [bugs-and-fixes.md](bugs-and-fixes.md) for all bugs found and fixed
 
 ## Testing
-- Unit tests: `node tests/test_systems.mjs` — 336 tests, pure data/logic, no Phaser runtime
+- Unit tests: `node tests/test_systems.mjs` — 209 tests, pure data/logic, no Phaser runtime
 - Integration tests: `node test_game.mjs` — 24 Playwright tests, requires server on port 8080
 - `package.json` has `"type": "module"` for ESM support
 - Both suites must pass before any change is considered complete
