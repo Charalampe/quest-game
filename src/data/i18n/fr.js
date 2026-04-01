@@ -222,6 +222,26 @@ export default {
             "J'aurais pu escalader la tour à mains nues depuis le temps !",
             "La patience est une vertu... que je n'ai pas."
         ],
+        iqueue_grumble_1: [
+            "On y est presque... plus que quelques personnes devant !",
+            "Je vois presque le guichet d'ici."
+        ],
+        iqueue_grumble_2: [
+            "Papa a dit qu'on serait rapides. C'était il y a deux heures.",
+            "J'ai compté chaque carreau de ce sol. Deux fois."
+        ],
+        iqueue_grumble_3: [
+            "Je vends des souvenirs dehors, mais même moi j'ai dû faire la queue !",
+            "La vue a intérêt à valoir le coup."
+        ],
+        iqueue_grumble_4: [
+            "Hé, on ne double pas ! Je suis là depuis midi.",
+            "Sauf si tu as un coupe-file, bien sûr..."
+        ],
+        iqueue_grumble_5: [
+            "Ma copine a eu un coupe-file et elle est déjà en haut !",
+            "J'aurais dû mieux m'organiser..."
+        ],
         attendant_intro: [
             "Bienvenue à la Tour Eiffel !",
             "La file d'attente normale est très longue aujourd'hui, malheureusement.",

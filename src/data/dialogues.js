@@ -140,6 +140,21 @@ export const DIALOGUES = {
     queue_grumble_6: {
         lines: [ "I could have climbed the tower by hand by now!", "Patience is a virtue... that I don't have." ]
     },
+    iqueue_grumble_1: {
+        lines: [ "Almost there... just a few more people ahead!", "I can practically see the ticket counter from here." ]
+    },
+    iqueue_grumble_2: {
+        lines: [ "Dad said we'd be quick. That was two hours ago.", "I've counted every tile on this floor. Twice." ]
+    },
+    iqueue_grumble_3: {
+        lines: [ "I sell souvenirs outside, but even I had to queue!", "The view better be worth this wait." ]
+    },
+    iqueue_grumble_4: {
+        lines: [ "Excuse me, no cutting! I've been here since noon.", "Unless you have a Fast Pass, of course..." ]
+    },
+    iqueue_grumble_5: {
+        lines: [ "My friend got a Fast Pass and she's already at the top!", "I should have planned better..." ]
+    },
     attendant_intro: {
         lines: [
             "Welcome to the Eiffel Tower!",
