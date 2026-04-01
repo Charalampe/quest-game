@@ -322,7 +322,7 @@ function generateParis() {
     walls[11][36] = 26; walls[11][42] = 26; walls[11][46] = 26;
 
     // More fences along park edges and Eiffel plaza
-    decor[10][19] = 31; decor[10][22] = 31; decor[10][25] = 31; decor[10][28] = 31;
+    decor[10][19] = 31; decor[10][22] = 31;
     decor[10][2] = 31; decor[10][5] = 31; decor[10][8] = 31; decor[10][11] = 31;
 
     // Dense flowers: south sidewalks, open ground
@@ -332,7 +332,7 @@ function generateParis() {
     decor[30][28] = 17; decor[30][34] = 17; decor[30][40] = 17; decor[30][46] = 17;
     decor[37][4] = 17; decor[37][8] = 17; decor[37][14] = 17; decor[37][20] = 17;
     decor[37][28] = 17; decor[37][36] = 17; decor[37][42] = 17; decor[37][46] = 17;
-    decor[11][16] = 17; decor[11][20] = 17; decor[11][28] = 17; decor[11][32] = 17;
+    decor[11][16] = 17; decor[11][20] = 17; decor[11][32] = 17;
 
     // Benches along south sidewalks
     decor[26][10] = 27; decor[26][20] = 27; decor[26][36] = 27; decor[26][42] = 27;

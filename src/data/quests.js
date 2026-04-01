@@ -55,6 +55,12 @@ export const NPC_DIALOG_ROUTES = {
     paris_tourist: [
         { dialog: 'tourist_claude_intro', condition: () => true }
     ],
+    paris_queue1: [ { dialog: 'queue_grumble_1', condition: () => true } ],
+    paris_queue2: [ { dialog: 'queue_grumble_2', condition: () => true } ],
+    paris_queue3: [ { dialog: 'queue_grumble_3', condition: () => true } ],
+    paris_queue4: [ { dialog: 'queue_grumble_4', condition: () => true } ],
+    paris_queue5: [ { dialog: 'queue_grumble_5', condition: () => true } ],
+    paris_queue6: [ { dialog: 'queue_grumble_6', condition: () => true } ],
     paris_attendant: [
         { dialog: 'attendant_with_pass', condition: (flags) => flags.paris_has_fastpass && !flags.paris_tower_access },
         { dialog: 'attendant_intro', condition: () => true }

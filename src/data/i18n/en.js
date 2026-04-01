@@ -198,6 +198,30 @@ export default {
             "They say you need a Fast Pass to skip ahead.",
             "Maybe that artist in the main square knows someone..."
         ],
+        queue_grumble_1: [
+            "Ugh, I've been standing here since this morning!",
+            "At this rate I'll see the tower at sunset..."
+        ],
+        queue_grumble_2: [
+            "My feet are killing me...",
+            "Is this line even moving?!"
+        ],
+        queue_grumble_3: [
+            "I heard someone got a Fast Pass and skipped the whole queue!",
+            "So unfair... or maybe so smart?"
+        ],
+        queue_grumble_4: [
+            "*sigh* We should have come earlier.",
+            "This is the longest queue I've ever seen."
+        ],
+        queue_grumble_5: [
+            "Are we there yet? Are we there yet?",
+            "Moooom, I'm bored!"
+        ],
+        queue_grumble_6: [
+            "I could have climbed the tower by hand by now!",
+            "Patience is a virtue... that I don't have."
+        ],
         attendant_intro: [
             "Welcome to the Eiffel Tower!",
             "I'm afraid the regular queue is very long today.",

@@ -198,6 +198,30 @@ export default {
             "Il paraît qu'il faut un coupe-file pour passer devant.",
             "Peut-être que cet artiste sur la grande place connaît quelqu'un..."
         ],
+        queue_grumble_1: [
+            "Pfff, je fais la queue depuis ce matin !",
+            "À ce rythme, je verrai la tour au coucher du soleil..."
+        ],
+        queue_grumble_2: [
+            "J'ai mal aux pieds...",
+            "Elle avance, cette file, ou pas ?!"
+        ],
+        queue_grumble_3: [
+            "Il paraît que quelqu'un a eu un coupe-file et a sauté toute la queue !",
+            "Trop injuste... ou trop malin ?"
+        ],
+        queue_grumble_4: [
+            "*soupir* On aurait dû venir plus tôt.",
+            "C'est la plus longue file d'attente que j'aie jamais vue."
+        ],
+        queue_grumble_5: [
+            "On est arrivés ? On est arrivés ?",
+            "Mamaaan, je m'ennuie !"
+        ],
+        queue_grumble_6: [
+            "J'aurais pu escalader la tour à mains nues depuis le temps !",
+            "La patience est une vertu... que je n'ai pas."
+        ],
         attendant_intro: [
             "Bienvenue à la Tour Eiffel !",
             "La file d'attente normale est très longue aujourd'hui, malheureusement.",

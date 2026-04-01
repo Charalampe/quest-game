@@ -6,6 +6,13 @@ export const NPC_DATA = {
         { id: 'paris_guide', name: 'Sophie', sprite: 'guide', x: 25, y: 35, defaultDialog: 'sophie_intro', questGiver: false, room: 'main' },
         { id: 'paris_artist', name: 'Pierre', sprite: 'artist', x: 22, y: 12, defaultDialog: 'pierre_intro', questGiver: false, room: 'main' },
         { id: 'paris_florist', name: 'Madame Colette', sprite: 'flower_seller', x: 26, y: 29, defaultDialog: 'colette_intro', questGiver: false, room: 'main' },
+        // === EIFFEL QUEUE (visible from main plaza) ===
+        { id: 'paris_queue1', name: 'Tourist', sprite: 'tourist', x: 26, y: 10, defaultDialog: 'queue_grumble_1', questGiver: false, room: 'main' },
+        { id: 'paris_queue2', name: 'Tourist', sprite: 'schoolkid', x: 27, y: 10, defaultDialog: 'queue_grumble_2', questGiver: false, room: 'main' },
+        { id: 'paris_queue3', name: 'Tourist', sprite: 'tourist', x: 29, y: 10, defaultDialog: 'queue_grumble_3', questGiver: false, room: 'main' },
+        { id: 'paris_queue4', name: 'Tourist', sprite: 'merchant', x: 26, y: 11, defaultDialog: 'queue_grumble_4', questGiver: false, room: 'main' },
+        { id: 'paris_queue5', name: 'Tourist', sprite: 'schoolkid', x: 27, y: 11, defaultDialog: 'queue_grumble_5', questGiver: false, room: 'main' },
+        { id: 'paris_queue6', name: 'Tourist', sprite: 'tourist', x: 29, y: 11, defaultDialog: 'queue_grumble_6', questGiver: false, room: 'main' },
         // === EIFFEL TOWER GROUND FLOOR ===
         { id: 'paris_tourist', name: 'Tourist Claude', sprite: 'tourist', x: 5, y: 10, defaultDialog: 'tourist_claude_intro', questGiver: false, room: 'eiffel_ground' },
         { id: 'paris_attendant', name: 'Ticket Attendant', sprite: 'attendant', x: 10, y: 5, defaultDialog: 'attendant_intro', questGiver: false, room: 'eiffel_ground' },
