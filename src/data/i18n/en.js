@@ -136,6 +136,19 @@ export default {
             "Bonjour! Welcome to Librairie du Pont.",
             "We have books from all over the world. Feel free to browse!"
         ],
+        librarian_with_locket: [
+            "Oh! You must be Elise's granddaughter \u2014 L\u00E9a, isn't it?",
+            "I knew your great-great-grandmother Madeleine well... through her books, of course!",
+            "The Beaumonts were a family of explorers. Quite remarkable, really.",
+            "There's an old legend among us booksellers... They say Madeleine hid something at the very top of the Eiffel Tower.",
+            "Nobody ever found it. But with that locket of hers... who knows?",
+            "If you ever find anything up there, bring it to me. Old letters are my specialty!"
+        ],
+        librarian_progress: [
+            "Back already? Have you been to the top of the tower yet?",
+            "I keep thinking about that old legend... Madeleine's hidden letter.",
+            "If it exists, I'd love to see it. I can read old scripts that most people can't!"
+        ],
         librarian_with_letter: [
             "Mon Dieu! Is that... Madeleine's Letter from the Eiffel Tower?!",
             "I've read about this in the old archives!",

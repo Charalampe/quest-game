@@ -14,7 +14,7 @@ export const CITIES = {
         description: 'The City of Light',
         width: 50,
         height: 40,
-        playerStart: { x: 25, y: 33 },
+        playerStart: { x: 28, y: 33 },
         tileSize: 16,
         ground: null,
         walls: null,

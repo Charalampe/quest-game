@@ -35,6 +35,8 @@ export const NPC_DIALOG_ROUTES = {
     paris_librarian: [
         { dialog: 'librarian_with_letter', condition: (flags) => flags.paris_has_eiffel_letter && !flags.paris_complete },
         { dialog: 'librarian_after_quest', condition: (flags) => flags.paris_complete },
+        { dialog: 'librarian_progress', condition: (flags) => flags.quest_started && flags.paris_has_paintbrush },
+        { dialog: 'librarian_with_locket', condition: (flags) => flags.quest_started },
         { dialog: 'librarian_intro', condition: () => true }
     ],
     paris_guide: [

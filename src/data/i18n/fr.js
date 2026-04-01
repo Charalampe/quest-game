@@ -136,6 +136,19 @@ export default {
             "Bonjour ! Bienvenue à la Librairie du Pont.",
             "Nous avons des livres du monde entier. N'hésite pas à regarder !"
         ],
+        librarian_with_locket: [
+            "Oh ! Tu dois \u00EAtre la petite-fille d'\u00C9lise \u2014 L\u00E9a, c'est bien \u00E7a ?",
+            "Je connaissais bien ton arri\u00E8re-arri\u00E8re-grand-m\u00E8re Madeleine... \u00E0 travers ses livres, bien s\u00FBr !",
+            "Les Beaumont \u00E9taient une famille d'explorateurs. Vraiment remarquable.",
+            "Il y a une vieille l\u00E9gende parmi nous libraires... On dit que Madeleine a cach\u00E9 quelque chose tout en haut de la Tour Eiffel.",
+            "Personne ne l'a jamais trouv\u00E9. Mais avec son m\u00E9daillon... qui sait ?",
+            "Si jamais tu trouves quelque chose l\u00E0-haut, apporte-le-moi. Les vieilles lettres, c'est ma sp\u00E9cialit\u00E9 !"
+        ],
+        librarian_progress: [
+            "D\u00E9j\u00E0 de retour ? Tu es mont\u00E9e au sommet de la tour ?",
+            "Je n'arr\u00EAte pas de penser \u00E0 cette vieille l\u00E9gende... la lettre cach\u00E9e de Madeleine.",
+            "Si elle existe, j'adorerais la voir. Je sais lire les \u00E9critures anciennes que la plupart des gens ne comprennent pas !"
+        ],
         librarian_with_letter: [
             "Mon Dieu ! Est-ce que c'est... la Lettre de Madeleine de la Tour Eiffel ?!",
             "J'ai lu des choses à ce sujet dans les vieilles archives !",

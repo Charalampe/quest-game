@@ -181,11 +181,14 @@ describe('NPC Dialog Routing', () => {
         assert.equal(find({ quest_started: true }), 'grandma_after_locket');
     });
 
-    it('librarian shows intro, then with_letter, then after_quest', () => {
+    it('librarian shows intro, with_locket, progress, with_letter, after_quest', () => {
         const routes = NPC_DIALOG_ROUTES.paris_librarian;
         const find = (flags) => routes.find(r => r.condition(flags)).dialog;
 
         assert.equal(find({}), 'librarian_intro');
+        assert.equal(find({ quest_started: true }), 'librarian_with_locket');
+        assert.equal(find({ quest_started: true, paris_has_paintbrush: true }), 'librarian_progress');
+        assert.equal(find({ quest_started: true, paris_has_paintbrush: true, paris_has_fastpass: true }), 'librarian_progress');
         assert.equal(find({ paris_has_eiffel_letter: true }), 'librarian_with_letter');
         assert.equal(find({ paris_has_eiffel_letter: true, paris_complete: true }), 'librarian_after_quest');
     });
@@ -1517,12 +1520,14 @@ describe('Graphics Overhaul Regression', () => {
 // ======================================================================
 
     // --- Map dimensions and player start ---
+    const expectedStarts = { paris: { x: 28, y: 33 }, london: { x: 25, y: 33 }, rome: { x: 25, y: 33 }, marrakech: { x: 25, y: 33 }, tokyo: { x: 25, y: 33 } };
     for (const [cityId, city] of Object.entries(CITIES)) {
-        it(`${cityId} is 50x40 with playerStart at (25,33)`, () => {
+        const es = expectedStarts[cityId] || { x: 25, y: 33 };
+        it(`${cityId} is 50x40 with playerStart at (${es.x},${es.y})`, () => {
             assert.equal(city.width, 50);
             assert.equal(city.height, 40);
-            assert.equal(city.playerStart.x, 25);
-            assert.equal(city.playerStart.y, 33);
+            assert.equal(city.playerStart.x, es.x);
+            assert.equal(city.playerStart.y, es.y);
         });
     }
 
