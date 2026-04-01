@@ -120,6 +120,11 @@ export class ExploreScene extends Phaser.Scene {
                 }
                 this.envTweens = [];
             }
+            // Clean up cutscene timer
+            if (this.cutsceneWalkTimer) {
+                this.cutsceneWalkTimer.remove();
+                this.cutsceneWalkTimer = null;
+            }
             // Null out env object refs — Phaser auto-destroys them
             this.envObjects = [];
         });
@@ -145,6 +150,12 @@ export class ExploreScene extends Phaser.Scene {
 
         // Fade in
         this.cameras.main.fadeIn(500, 0, 0, 0);
+
+        // Auto-play intro cutscene on first new game in Paris
+        const flags = this.registry.get('flags') || {};
+        if (this.cityId === 'paris' && this.roomId === 'main' && !flags.quest_started) {
+            this.playIntroSequence();
+        }
     }
 
     buildTilemap(cityData) {
@@ -838,6 +849,88 @@ export class ExploreScene extends Phaser.Scene {
                 }
             }
         }
+    }
+
+    playIntroSequence() {
+        this.dialogActive = true; // freeze player movement
+
+        // Find grandma NPC
+        const grandma = this.npcs.find(n => n.npcData.id === 'paris_grandma');
+        if (!grandma) {
+            this.dialogActive = false;
+            return;
+        }
+
+        // Make player face left (toward approaching grandma)
+        this.player.anims.play('player_idle_left', true);
+        this.player.direction = 'left';
+
+        // Place grandma at left edge of the open corridor (x=20..29 is wall-free at y=33)
+        const startTileX = 20;
+        const playerTileY = Math.round(this.player.y / TILE_H);
+        grandma.setPosition(startTileX * TILE_W + TILE_W / 2, playerTileY * TILE_H + TILE_H / 2);
+        grandma.body.reset(grandma.x, grandma.y);
+        grandma.updateIndicatorPosition();
+        grandma.setInteractable(false);
+        grandma.cutsceneWalking = true;
+
+        // Wait for fade-in to complete, then start the walk
+        this.cameras.main.once('camerafadeincomplete', () => {
+            this.time.delayedCall(800, () => {
+                const targetTileX = 27;
+                this.startGrandmaWalk(grandma, targetTileX * TILE_W + TILE_W / 2, grandma.y);
+            });
+        });
+    }
+
+    startGrandmaWalk(grandma, targetX, targetY) {
+        // Walk animation: cycle right-walk frames [8, 9, 8, 11]
+        const walkFrames = [8, 9, 8, 11];
+        let frameIndex = 0;
+        this.cutsceneWalkTimer = this.time.addEvent({
+            delay: 150,
+            callback: () => {
+                grandma.setFrame(walkFrames[frameIndex]);
+                frameIndex = (frameIndex + 1) % walkFrames.length;
+            },
+            loop: true
+        });
+
+        // Tween grandma to target position
+        this.tweens.add({
+            targets: grandma,
+            x: targetX,
+            y: targetY,
+            duration: 2500,
+            ease: 'Linear',
+            onUpdate: () => {
+                // Sync static body and indicator with sprite position
+                grandma.body.reset(grandma.x, grandma.y);
+                grandma.updateIndicatorPosition();
+            },
+            onComplete: () => {
+                // Stop walk animation
+                if (this.cutsceneWalkTimer) {
+                    this.cutsceneWalkTimer.remove();
+                    this.cutsceneWalkTimer = null;
+                }
+                // Set idle right-facing frame (grandma faces player)
+                grandma.setFrame(8);
+                grandma.cutsceneWalking = false;
+
+                // Short pause before dialog
+                this.time.delayedCall(400, () => {
+                    this.startGrandmaCutsceneDialog(grandma);
+                });
+            }
+        });
+    }
+
+    startGrandmaCutsceneDialog(grandma) {
+        this.dialogManager.startDialog('grandma_intro', grandma.npcData.name, () => {
+            this.dialogActive = false;
+            this.questManager.onDialogComplete('paris_grandma', 'grandma_intro');
+        });
     }
 
     update(time, delta) {
