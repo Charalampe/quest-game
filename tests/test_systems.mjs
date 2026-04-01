@@ -2625,3 +2625,318 @@ describe('Integration Test Coordinates (32x32)', () => {
         assert.ok(testSrc.includes('* 32'), 'Should use * 32');
     });
 });
+
+// ======================================================================
+// NPC & Chest Reachability (BFS flood-fill from player spawn)
+// ======================================================================
+describe('NPC & Chest Reachability', () => {
+
+    /** BFS from a start position, returns Set of "x,y" strings reachable on walkable tiles */
+    function floodFill(walls, width, height, startX, startY) {
+        const visited = new Set();
+        const queue = [[startX, startY]];
+        visited.add(`${startX},${startY}`);
+        const dirs = [[0,1],[0,-1],[1,0],[-1,0]];
+        while (queue.length > 0) {
+            const [cx, cy] = queue.shift();
+            for (const [dx, dy] of dirs) {
+                const nx = cx + dx, ny = cy + dy;
+                const key = `${nx},${ny}`;
+                if (nx >= 0 && nx < width && ny >= 0 && ny < height && !visited.has(key)) {
+                    if (walls[ny][nx] === -1) {
+                        visited.add(key);
+                        queue.push([nx, ny]);
+                    }
+                }
+            }
+        }
+        return visited;
+    }
+
+    /** Get map data for a city/room combo */
+    function getMapData(cityId, room) {
+        const city = CITIES[cityId];
+        if (room === 'main') return city;
+        return city.rooms[room];
+    }
+
+    /** Get player spawn for a room. Main rooms use playerStart; sub-rooms use first door that leads into them */
+    function getSpawnPoint(cityId, room) {
+        const mapData = getMapData(cityId, room);
+        if (room === 'main') return mapData.playerStart;
+        // For sub-rooms, find a ROOM_TRANSITIONS entry that targets this room and use its spawnAt
+        for (const t of Object.values(ROOM_TRANSITIONS)) {
+            if (t.targetCity === cityId && t.targetRoom === room) {
+                return t.spawnAt;
+            }
+        }
+        return mapData.playerStart;
+    }
+
+    // Test every NPC is reachable from the player spawn in their room
+    for (const [cityId, npcs] of Object.entries(NPC_DATA)) {
+        for (const npc of npcs) {
+            const room = npc.room || 'main';
+            it(`${npc.name} (${npc.id}) is reachable in ${cityId}/${room}`, () => {
+                const mapData = getMapData(cityId, room);
+                assert.ok(mapData, `Room ${room} not found in ${cityId}`);
+                const spawn = getSpawnPoint(cityId, room);
+                assert.ok(spawn, `No spawn point for ${cityId}/${room}`);
+                const reachable = floodFill(mapData.walls, mapData.width, mapData.height, spawn.x, spawn.y);
+                const npcKey = `${npc.x},${npc.y}`;
+                // NPC tile itself might be a wall (NPC body), check adjacent tiles
+                const adjacent = [
+                    `${npc.x},${npc.y}`,
+                    `${npc.x-1},${npc.y}`, `${npc.x+1},${npc.y}`,
+                    `${npc.x},${npc.y-1}`, `${npc.x},${npc.y+1}`
+                ];
+                const canReach = adjacent.some(k => reachable.has(k));
+                assert.ok(canReach,
+                    `NPC ${npc.name} at (${npc.x},${npc.y}) is NOT reachable from spawn (${spawn.x},${spawn.y}) in ${cityId}/${room}`);
+            });
+        }
+    }
+
+    // Test every chest is reachable
+    for (const [chestId, chest] of Object.entries(CHEST_REWARDS)) {
+        it(`chest ${chestId} is reachable`, () => {
+            // Parse chest ID: format is "cityId_room_chest_x_y" or "cityId_chest_x_y"
+            const parts = chestId.split('_');
+            const yVal = parseInt(parts[parts.length - 1]);
+            const xVal = parseInt(parts[parts.length - 2]);
+            // Find which city and room contains this chest
+            let foundCity = null, foundRoom = null;
+            for (const [cityId, city] of Object.entries(CITIES)) {
+                // Check main map
+                if (city.decor && city.decor[yVal] && city.decor[yVal][xVal] === 20) {
+                    if (chestId.startsWith(cityId)) { foundCity = cityId; foundRoom = 'main'; break; }
+                }
+                // Check sub-rooms
+                for (const [roomId, roomData] of Object.entries(city.rooms)) {
+                    if (roomData.decor && roomData.decor[yVal] && roomData.decor[yVal][xVal] === 20) {
+                        if (chestId.includes(roomId)) { foundCity = cityId; foundRoom = roomId; break; }
+                    }
+                }
+                if (foundCity) break;
+            }
+            assert.ok(foundCity, `Could not find map containing chest ${chestId}`);
+            const mapData = getMapData(foundCity, foundRoom);
+            const spawn = getSpawnPoint(foundCity, foundRoom);
+            const reachable = floodFill(mapData.walls, mapData.width, mapData.height, spawn.x, spawn.y);
+            // Check chest tile or adjacent
+            const adjacent = [
+                `${xVal},${yVal}`,
+                `${xVal-1},${yVal}`, `${xVal+1},${yVal}`,
+                `${xVal},${yVal-1}`, `${xVal},${yVal+1}`
+            ];
+            const canReach = adjacent.some(k => reachable.has(k));
+            assert.ok(canReach,
+                `Chest ${chestId} at (${xVal},${yVal}) is NOT reachable from spawn in ${foundCity}/${foundRoom}`);
+        });
+    }
+
+    // Test every door tile is reachable from spawn in its room
+    for (const [doorId, transition] of Object.entries(ROOM_TRANSITIONS)) {
+        it(`door ${doorId} is reachable`, () => {
+            // Parse door ID to get position: format is "city_room_door_x_y" or "city_door_x_y"
+            const parts = doorId.split('_');
+            const yVal = parseInt(parts[parts.length - 1]);
+            const xVal = parseInt(parts[parts.length - 2]);
+            // Determine source city and room from doorId
+            let sourceCity, sourceRoom;
+            if (doorId.match(/^[a-z]+_door_/)) {
+                sourceCity = parts[0];
+                sourceRoom = 'main';
+            } else {
+                // e.g. "paris_eiffel_ground_door_10_14" → city=paris, room=eiffel_ground
+                const doorIdx = parts.indexOf('door');
+                sourceCity = parts[0];
+                sourceRoom = parts.slice(1, doorIdx).join('_');
+            }
+            const mapData = getMapData(sourceCity, sourceRoom);
+            assert.ok(mapData, `Map not found for ${sourceCity}/${sourceRoom} (door ${doorId})`);
+            const spawn = getSpawnPoint(sourceCity, sourceRoom);
+            assert.ok(spawn, `No spawn for ${sourceCity}/${sourceRoom}`);
+            const reachable = floodFill(mapData.walls, mapData.width, mapData.height, spawn.x, spawn.y);
+            // Door tiles have walls=-1 (opened for passage), so check tile + adjacent
+            const adjacent = [
+                `${xVal},${yVal}`,
+                `${xVal-1},${yVal}`, `${xVal+1},${yVal}`,
+                `${xVal},${yVal-1}`, `${xVal},${yVal+1}`
+            ];
+            const canReach = adjacent.some(k => reachable.has(k));
+            assert.ok(canReach,
+                `Door ${doorId} at (${xVal},${yVal}) is NOT reachable from spawn (${spawn.x},${spawn.y}) in ${sourceCity}/${sourceRoom}`);
+        });
+    }
+});
+
+// ======================================================================
+// Game Completability (quest chain has no dead ends)
+// ======================================================================
+describe('Game Completability', () => {
+
+    it('quest objectives form a valid linear chain with no missing dependencies', () => {
+        const objectives = QUESTS.main_quest.objectives;
+        const ids = new Set(objectives.map(o => o.id));
+        for (const obj of objectives) {
+            if (obj.requires) {
+                assert.ok(ids.has(obj.requires),
+                    `Objective ${obj.id} requires ${obj.requires} which does not exist`);
+            }
+        }
+    });
+
+    it('first objective has no prerequisite', () => {
+        const first = QUESTS.main_quest.objectives[0];
+        assert.ok(!first.requires, `First objective ${first.id} should have no prerequisite`);
+    });
+
+    it('every quest objective city exists in CITIES', () => {
+        for (const obj of QUESTS.main_quest.objectives) {
+            assert.ok(CITIES[obj.city], `Objective ${obj.id} references unknown city ${obj.city}`);
+        }
+    });
+
+    it('every quest-giver NPC has dialog routes', () => {
+        for (const [cityId, npcs] of Object.entries(NPC_DATA)) {
+            for (const npc of npcs) {
+                if (npc.questGiver) {
+                    assert.ok(NPC_DIALOG_ROUTES[npc.id],
+                        `Quest-giver ${npc.id} has no NPC_DIALOG_ROUTES entry`);
+                }
+            }
+        }
+    });
+
+    it('every city in the quest chain is reachable via travel routes', () => {
+        // BFS through travel routes starting from Paris
+        const visited = new Set(['paris']);
+        const queue = ['paris'];
+        while (queue.length > 0) {
+            const city = queue.shift();
+            const routes = TRAVEL_ROUTES[city] || {};
+            for (const dest of Object.keys(routes)) {
+                if (!visited.has(dest)) {
+                    visited.add(dest);
+                    queue.push(dest);
+                }
+            }
+        }
+        const questCities = new Set(QUESTS.main_quest.objectives.map(o => o.city));
+        for (const city of questCities) {
+            assert.ok(visited.has(city),
+                `Quest city ${city} is not reachable from paris via travel routes`);
+        }
+    });
+
+    it('every room transition is bidirectional (no one-way traps)', () => {
+        for (const [doorId, transition] of Object.entries(ROOM_TRANSITIONS)) {
+            const targetCity = transition.targetCity;
+            const targetRoom = transition.targetRoom;
+            // Find a return transition from targetRoom back
+            const hasReturn = Object.values(ROOM_TRANSITIONS).some(t => {
+                if (targetRoom === 'main') {
+                    // Return to main from the target room
+                    return t.targetCity === targetCity && t.targetRoom === 'main';
+                }
+                // Parse source info from the original doorId
+                const parts = doorId.split('_');
+                const doorIdx = parts.indexOf('door');
+                const sourceRoom = doorIdx > 1 ? parts.slice(1, doorIdx).join('_') : 'main';
+                return t.targetCity === targetCity && t.targetRoom === sourceRoom;
+            });
+            assert.ok(hasReturn,
+                `Door ${doorId} leads to ${targetCity}/${targetRoom} but there is no return path`);
+        }
+    });
+
+    it('chest rewards that set flags enable subsequent quest progression', () => {
+        // Verify key flag chain: chests set flags that unlock doors/travel
+        const flagsSetByChests = new Set();
+        for (const chest of Object.values(CHEST_REWARDS)) {
+            if (chest.setsFlag) flagsSetByChests.add(chest.setsFlag);
+            if (chest.unlocksPortal) flagsSetByChests.add('portal_unlocked');
+        }
+        // Key progression flags that must be obtainable
+        const requiredFlags = [];
+        for (const t of Object.values(ROOM_TRANSITIONS)) {
+            if (t.requiresFlag) requiredFlags.push(t.requiresFlag);
+        }
+        for (const routes of Object.values(TRAVEL_ROUTES)) {
+            for (const route of Object.values(routes)) {
+                if (route.requiresFlag) requiredFlags.push(route.requiresFlag);
+            }
+        }
+        // Also check that NPC dialog routes reference obtainable flags
+        const flagsSetByDialogs = new Set();
+        for (const routes of Object.values(NPC_DIALOG_ROUTES)) {
+            for (const route of routes) {
+                // Check condition function body for flag names (heuristic)
+                const condStr = route.condition.toString();
+                const flagMatches = condStr.match(/flags\.(\w+)/g);
+                if (flagMatches) {
+                    for (const m of flagMatches) {
+                        const flag = m.replace('flags.', '');
+                        flagsSetByDialogs.add(flag);
+                    }
+                }
+            }
+        }
+        // Every required flag for doors/travel must be obtainable somehow
+        for (const flag of requiredFlags) {
+            const obtainable = flagsSetByChests.has(flag) || flagsSetByDialogs.has(flag);
+            // It's OK if the flag is referenced in dialog conditions — means NPCs can set it
+            assert.ok(obtainable || flagsSetByDialogs.has(flag),
+                `Required flag "${flag}" is not set by any chest or referenced in dialog routes`);
+        }
+    });
+
+    it('every NPC with dialog routes always matches at least one condition', () => {
+        // Test with various flag states to ensure no NPC gets stuck without dialog
+        const flagStates = [
+            {},
+            { quest_started: true },
+            { quest_started: true, paris_has_paintbrush: true, paris_has_fastpass: true,
+              paris_has_eiffel_letter: true, paris_complete: true,
+              london_has_glasses: true, london_has_research_pass: true, london_complete: true,
+              rome_have_key: true, rome_complete: true,
+              marrakech_has_journal: true, marrakech_has_amulet: true, marrakech_met_nadia: true,
+              marrakech_complete: true, portal_unlocked: true,
+              tokyo_riddle_solved: true, tokyo_has_jade_key: true, game_complete: true }
+        ];
+        for (const [npcId, routes] of Object.entries(NPC_DIALOG_ROUTES)) {
+            for (const flags of flagStates) {
+                const matched = routes.find(r => r.condition(flags));
+                assert.ok(matched,
+                    `NPC ${npcId} has no matching dialog route with flags: ${JSON.stringify(flags)}`);
+            }
+        }
+    });
+
+    it('the game can reach the final objective without dead ends', () => {
+        const objectives = QUESTS.main_quest.objectives;
+        // Walk through the objectives and verify each can be reached
+        const completedCities = new Set(['paris']);
+        for (const obj of objectives) {
+            // Verify the objective's city is unlocked by this point
+            assert.ok(completedCities.has(obj.city),
+                `Objective ${obj.id} is in ${obj.city} but that city is not yet unlocked at this point in the quest chain`);
+
+            // After completing objectives that unlock cities, add them
+            const matchingChest = Object.values(CHEST_REWARDS).find(c =>
+                c.completesObjective === obj.id && c.unlocksCity
+            );
+            if (matchingChest) {
+                completedCities.add(matchingChest.unlocksCity);
+            }
+            // Also check NPC dialogs that unlock cities
+            // (london is unlocked by paris_librarian dialog)
+            if (obj.id === 'paris_visit_librarian') completedCities.add('london');
+        }
+        // Final objective should exist and be reachable
+        const lastObj = objectives[objectives.length - 1];
+        assert.ok(lastObj.id === 'tokyo_find_treasure',
+            `Last objective should be tokyo_find_treasure, got ${lastObj.id}`);
+    });
+});

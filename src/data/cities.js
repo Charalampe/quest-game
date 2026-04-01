@@ -726,7 +726,7 @@ function generateLondonMuseumHall() {
     decor[1][11] = 22;
     decor[2][2] = 28; decor[2][19] = 28; decor[12][2] = 28; decor[12][19] = 28;
     decor[H-1][11] = 23; walls[H-1][11] = -1;
-    decor[0][21] = 23; walls[0][21] = -1;
+    decor[0][21] = 23; walls[0][21] = -1; walls[1][21] = -1; walls[2][21] = -1;
     decor[8][0] = 23; walls[8][0] = -1;
 
     // ── Indoor enrichment ──
@@ -1342,7 +1342,7 @@ function generateMarrakechSouk() {
     decor[2][6] = 28; decor[2][17] = 28; decor[8][6] = 28; decor[8][17] = 28; decor[15][6] = 28; decor[15][17] = 28;
     decor[3][5] = 51; decor[7][8] = 51; decor[12][5] = 51; decor[3][15] = 51; decor[7][18] = 51; decor[12][15] = 51;
     decor[H-1][12] = 23; walls[H-1][12] = -1;
-    decor[0][23] = 23; walls[0][23] = -1;
+    decor[0][23] = 23; walls[0][23] = -1; walls[1][23] = -1; walls[2][23] = -1;
 
     // ── Indoor enrichment: Souk ──
     // More market stalls filling the maze
