@@ -235,7 +235,12 @@ export class WorldMapScene extends Phaser.Scene {
             onComplete: () => {
                 this.cameras.main.fadeOut(300, 0, 0, 0);
                 this.cameras.main.once('camerafadeoutcomplete', () => {
-                    this.scene.start('Explore', { city: this.selectedCity, room: 'main' });
+                    this.scene.start('Travel', {
+                        from: this.fromCity,
+                        to: this.selectedCity,
+                        type: route.type,
+                        label: routeLabel
+                    });
                 });
             }
         });

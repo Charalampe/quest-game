@@ -468,6 +468,18 @@ async function test(name, fn) {
             wm.startTravel();
         });
 
+        // Wait for Travel scene to appear, then skip its animation
+        await page.waitForFunction(() => {
+            try {
+                const travel = window.game.scene.getScene('Travel');
+                if (travel && travel.scene.settings.active) {
+                    travel.scene.start('Explore', { city: travel.toCity, room: 'main' });
+                    return true;
+                }
+                return false;
+            } catch { return false; }
+        }, { timeout: TIMEOUT });
+
         // Wait for Explore scene to load with London
         await page.waitForFunction(() => {
             try {

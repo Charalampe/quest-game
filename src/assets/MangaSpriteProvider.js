@@ -118,6 +118,7 @@ export class MangaSpriteProvider extends AssetProvider {
         this.generateParticleTextures();
         this.generateUIAssets();
         this.generateWorldMapAssets();
+        this.generateTravelAssets();
         this.generateItemIcons();
     }
 
@@ -3031,6 +3032,339 @@ export class MangaSpriteProvider extends AssetProvider {
         ctx.fillStyle = '#5a9c4f';
         ctx.fillRect(286, 51, 10, 30);
 
+        canvas.refresh();
+    }
+
+    // ─── Travel Assets ──────────────────────────────────────────
+
+    generateTravelAssets() {
+        const textures = this.scene.textures;
+
+        // --- Country Flags (48x32) ---
+
+        // France: Blue-White-Red vertical tricolor
+        let canvas = textures.createCanvas('flag_france', 48, 32);
+        let ctx = canvas.getContext();
+        ctx.fillStyle = '#002395';
+        ctx.fillRect(0, 0, 16, 32);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(16, 0, 16, 32);
+        ctx.fillStyle = '#ed2939';
+        ctx.fillRect(32, 0, 16, 32);
+        ctx.strokeStyle = '#1a0d00';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(0, 0, 48, 32);
+        canvas.refresh();
+
+        // UK: Simplified Union Jack
+        canvas = textures.createCanvas('flag_uk', 48, 32);
+        ctx = canvas.getContext();
+        ctx.fillStyle = '#012169';
+        ctx.fillRect(0, 0, 48, 32);
+        // White diagonals
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(0, 0); ctx.lineTo(48, 32);
+        ctx.moveTo(48, 0); ctx.lineTo(0, 32);
+        ctx.stroke();
+        // Red diagonals (thinner)
+        ctx.strokeStyle = '#c8102e';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, 0); ctx.lineTo(48, 32);
+        ctx.moveTo(48, 0); ctx.lineTo(0, 32);
+        ctx.stroke();
+        // White cross
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.moveTo(24, 0); ctx.lineTo(24, 32);
+        ctx.moveTo(0, 16); ctx.lineTo(48, 16);
+        ctx.stroke();
+        // Red cross
+        ctx.strokeStyle = '#c8102e';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(24, 0); ctx.lineTo(24, 32);
+        ctx.moveTo(0, 16); ctx.lineTo(48, 16);
+        ctx.stroke();
+        ctx.strokeStyle = '#1a0d00';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(0, 0, 48, 32);
+        canvas.refresh();
+
+        // Italy: Green-White-Red vertical tricolor
+        canvas = textures.createCanvas('flag_italy', 48, 32);
+        ctx = canvas.getContext();
+        ctx.fillStyle = '#008c45';
+        ctx.fillRect(0, 0, 16, 32);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(16, 0, 16, 32);
+        ctx.fillStyle = '#cd212a';
+        ctx.fillRect(32, 0, 16, 32);
+        ctx.strokeStyle = '#1a0d00';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(0, 0, 48, 32);
+        canvas.refresh();
+
+        // Morocco: Red with green pentagram star outline
+        canvas = textures.createCanvas('flag_morocco', 48, 32);
+        ctx = canvas.getContext();
+        ctx.fillStyle = '#c1272d';
+        ctx.fillRect(0, 0, 48, 32);
+        // Green pentagram star outline
+        ctx.strokeStyle = '#006233';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        const cx = 24, cy = 16, r = 8;
+        for (let i = 0; i < 5; i++) {
+            const angle = -Math.PI / 2 + (i * 4 * Math.PI) / 5;
+            const method = i === 0 ? 'moveTo' : 'lineTo';
+            ctx[method](cx + r * Math.cos(angle), cy + r * Math.sin(angle));
+        }
+        ctx.closePath();
+        ctx.stroke();
+        ctx.strokeStyle = '#1a0d00';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(0, 0, 48, 32);
+        canvas.refresh();
+
+        // Japan: White with red circle
+        canvas = textures.createCanvas('flag_japan', 48, 32);
+        ctx = canvas.getContext();
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, 48, 32);
+        ctx.fillStyle = '#bc002d';
+        ctx.beginPath();
+        ctx.arc(24, 16, 9, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#1a0d00';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(0, 0, 48, 32);
+        canvas.refresh();
+
+        // --- Vehicles ---
+
+        // Train: red engine + 2 grey cars (128x48)
+        canvas = textures.createCanvas('travel_train', 128, 48);
+        ctx = canvas.getContext();
+        // Engine (front, right side)
+        ctx.fillStyle = '#c0392b';
+        ctx.fillRect(88, 8, 36, 24);
+        ctx.fillStyle = '#e74c3c';
+        ctx.fillRect(90, 10, 32, 20);
+        // Engine nose
+        ctx.fillStyle = '#c0392b';
+        ctx.fillRect(124, 12, 4, 18);
+        // Engine window
+        ctx.fillStyle = '#85c1e9';
+        ctx.fillRect(108, 12, 12, 8);
+        // Smokestack
+        ctx.fillStyle = '#333333';
+        ctx.fillRect(96, 2, 6, 8);
+        // Car 1
+        ctx.fillStyle = '#7f8c8d';
+        ctx.fillRect(44, 8, 40, 24);
+        ctx.fillStyle = '#95a5a6';
+        ctx.fillRect(46, 10, 36, 20);
+        // Car 1 windows
+        ctx.fillStyle = '#85c1e9';
+        ctx.fillRect(50, 12, 8, 8);
+        ctx.fillRect(62, 12, 8, 8);
+        ctx.fillRect(74, 12, 6, 8);
+        // Car 2
+        ctx.fillStyle = '#7f8c8d';
+        ctx.fillRect(0, 8, 40, 24);
+        ctx.fillStyle = '#95a5a6';
+        ctx.fillRect(2, 10, 36, 20);
+        // Car 2 windows
+        ctx.fillStyle = '#85c1e9';
+        ctx.fillRect(6, 12, 8, 8);
+        ctx.fillRect(18, 12, 8, 8);
+        ctx.fillRect(30, 12, 6, 8);
+        // Wheels
+        ctx.fillStyle = '#1a1a1a';
+        for (const wx of [8, 28, 52, 72, 96, 116]) {
+            ctx.fillRect(wx, 32, 6, 6);
+        }
+        // Coupling
+        ctx.fillStyle = '#555555';
+        ctx.fillRect(40, 18, 4, 4);
+        ctx.fillRect(84, 18, 4, 4);
+        // Rail line
+        ctx.fillStyle = '#666666';
+        ctx.fillRect(0, 38, 128, 2);
+        canvas.refresh();
+
+        // Boat: brown hull, white cabin, smokestack (96x48)
+        canvas = textures.createCanvas('travel_boat', 96, 48);
+        ctx = canvas.getContext();
+        // Hull
+        ctx.fillStyle = '#5d4037';
+        ctx.beginPath();
+        ctx.moveTo(4, 24);
+        ctx.lineTo(16, 38);
+        ctx.lineTo(80, 38);
+        ctx.lineTo(92, 24);
+        ctx.lineTo(4, 24);
+        ctx.fill();
+        ctx.fillStyle = '#795548';
+        ctx.beginPath();
+        ctx.moveTo(6, 24);
+        ctx.lineTo(18, 36);
+        ctx.lineTo(78, 36);
+        ctx.lineTo(90, 24);
+        ctx.lineTo(6, 24);
+        ctx.fill();
+        // Hull stripe
+        ctx.fillStyle = '#d32f2f';
+        ctx.fillRect(16, 28, 64, 3);
+        // Cabin
+        ctx.fillStyle = '#eceff1';
+        ctx.fillRect(28, 10, 36, 14);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(30, 12, 32, 10);
+        // Cabin windows
+        ctx.fillStyle = '#85c1e9';
+        ctx.fillRect(34, 14, 6, 6);
+        ctx.fillRect(44, 14, 6, 6);
+        ctx.fillRect(54, 14, 6, 6);
+        // Smokestack
+        ctx.fillStyle = '#333333';
+        ctx.fillRect(38, 2, 6, 10);
+        ctx.fillStyle = '#555555';
+        ctx.fillRect(36, 2, 10, 3);
+        // Water line
+        ctx.fillStyle = '#2980b9';
+        ctx.fillRect(0, 40, 96, 8);
+        // Wave dashes
+        ctx.fillStyle = '#3498db';
+        for (let wx = 0; wx < 96; wx += 12) {
+            ctx.fillRect(wx, 40, 8, 2);
+        }
+        canvas.refresh();
+
+        // --- Backgrounds (960x180) ---
+
+        // Land background: sky gradient, rolling hills, clouds
+        canvas = textures.createCanvas('travel_bg_land', 960, 180);
+        ctx = canvas.getContext();
+        // Sky gradient (top to bottom)
+        ctx.fillStyle = '#87ceeb';
+        ctx.fillRect(0, 0, 960, 180);
+        ctx.fillStyle = '#a8d8f0';
+        ctx.fillRect(0, 60, 960, 120);
+        ctx.fillStyle = '#c4e4f5';
+        ctx.fillRect(0, 100, 960, 80);
+        // Clouds
+        ctx.fillStyle = '#ffffff';
+        for (const [cx2, cy2, cw] of [[80, 30, 60], [240, 20, 80], [500, 40, 50], [700, 25, 70], [880, 35, 55]]) {
+            ctx.fillRect(cx2, cy2, cw, 12);
+            ctx.fillRect(cx2 + 10, cy2 - 6, cw - 20, 8);
+            ctx.fillRect(cx2 + 5, cy2 + 8, cw - 10, 6);
+        }
+        // Far hills
+        ctx.fillStyle = '#5a9c4f';
+        for (let hx = 0; hx < 960; hx += 120) {
+            const hh = 20 + Math.sin(hx * 0.01) * 10;
+            ctx.fillRect(hx, 130 - hh, 130, hh + 50);
+        }
+        // Near hills
+        ctx.fillStyle = '#4a8c3f';
+        for (let hx = 0; hx < 960; hx += 100) {
+            const hh = 25 + Math.sin(hx * 0.015 + 1) * 12;
+            ctx.fillRect(hx, 145 - hh, 110, hh + 35);
+        }
+        // Ground
+        ctx.fillStyle = '#3a7030';
+        ctx.fillRect(0, 155, 960, 25);
+        canvas.refresh();
+
+        // Sea background: sky gradient, layered water, wave dashes
+        canvas = textures.createCanvas('travel_bg_sea', 960, 180);
+        ctx = canvas.getContext();
+        // Sky
+        ctx.fillStyle = '#87ceeb';
+        ctx.fillRect(0, 0, 960, 80);
+        ctx.fillStyle = '#a8d8f0';
+        ctx.fillRect(0, 50, 960, 30);
+        // Horizon line
+        ctx.fillStyle = '#6ab0d4';
+        ctx.fillRect(0, 78, 960, 4);
+        // Water layers
+        ctx.fillStyle = '#2980b9';
+        ctx.fillRect(0, 82, 960, 98);
+        ctx.fillStyle = '#2471a3';
+        ctx.fillRect(0, 120, 960, 60);
+        ctx.fillStyle = '#1a5276';
+        ctx.fillRect(0, 150, 960, 30);
+        // Wave dashes
+        ctx.fillStyle = '#3498db';
+        for (let wy = 85; wy < 175; wy += 15) {
+            for (let wx = 0; wx < 960; wx += 24) {
+                const offset = (wy % 30 === 0) ? 8 : 0;
+                ctx.fillRect(wx + offset, wy, 12, 2);
+            }
+        }
+        // Clouds
+        ctx.fillStyle = '#ffffff';
+        for (const [cx3, cy3, cw2] of [[100, 20, 50], [350, 15, 70], [600, 30, 45], [850, 18, 60]]) {
+            ctx.fillRect(cx3, cy3, cw2, 10);
+            ctx.fillRect(cx3 + 8, cy3 - 4, cw2 - 16, 6);
+        }
+        canvas.refresh();
+
+        // --- Platform and Dock strips (960x60) ---
+
+        // Train platform: grey stone with tile pattern
+        canvas = textures.createCanvas('travel_platform', 960, 60);
+        ctx = canvas.getContext();
+        ctx.fillStyle = '#808080';
+        ctx.fillRect(0, 0, 960, 60);
+        ctx.fillStyle = '#909090';
+        // Tile pattern
+        for (let tx = 0; tx < 960; tx += 32) {
+            for (let ty = 0; ty < 60; ty += 32) {
+                ctx.fillRect(tx + 1, ty + 1, 30, 30);
+            }
+        }
+        // Edge line
+        ctx.fillStyle = '#f1c40f';
+        ctx.fillRect(0, 0, 960, 3);
+        // Platform dots
+        ctx.fillStyle = '#666666';
+        for (let tx = 16; tx < 960; tx += 32) {
+            ctx.fillRect(tx - 1, 52, 2, 2);
+        }
+        canvas.refresh();
+
+        // Dock: brown wood planks
+        canvas = textures.createCanvas('travel_dock', 960, 60);
+        ctx = canvas.getContext();
+        ctx.fillStyle = '#6d4c2a';
+        ctx.fillRect(0, 0, 960, 60);
+        // Plank lines
+        ctx.fillStyle = '#5d3c1a';
+        for (let ty = 0; ty < 60; ty += 10) {
+            ctx.fillRect(0, ty, 960, 1);
+        }
+        // Plank vertical gaps
+        ctx.fillStyle = '#4d2c10';
+        for (let tx = 0; tx < 960; tx += 80) {
+            const offset = (Math.floor(tx / 80) % 2) * 40;
+            ctx.fillRect(tx + offset, 0, 2, 60);
+        }
+        // Edge
+        ctx.fillStyle = '#8d6c4a';
+        ctx.fillRect(0, 0, 960, 2);
+        // Rope coils
+        ctx.fillStyle = '#a08060';
+        for (let tx = 120; tx < 960; tx += 240) {
+            ctx.beginPath();
+            ctx.arc(tx, 50, 6, 0, Math.PI * 2);
+            ctx.fill();
+        }
         canvas.refresh();
     }
 

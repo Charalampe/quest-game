@@ -2,6 +2,7 @@ import { BootScene } from './scenes/BootScene.js';
 import { TitleScene } from './scenes/TitleScene.js';
 import { ExploreScene } from './scenes/ExploreScene.js';
 import { WorldMapScene } from './scenes/WorldMapScene.js';
+import { TravelScene } from './scenes/TravelScene.js';
 import { UIScene } from './scenes/UIScene.js';
 import { initLanguage } from './data/i18n/index.js';
 
@@ -21,7 +22,7 @@ const config = {
             debug: false
         }
     },
-    scene: [BootScene, TitleScene, ExploreScene, WorldMapScene, UIScene]
+    scene: [BootScene, TitleScene, ExploreScene, WorldMapScene, TravelScene, UIScene]
 };
 
 const game = new Phaser.Game(config);
