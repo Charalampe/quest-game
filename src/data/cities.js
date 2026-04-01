@@ -408,6 +408,25 @@ function generateParisEiffelGround() {
     decor[1][10] = 22;
     decor[0][10] = 23; walls[0][10] = -1;
     decor[H-1][10] = 23; walls[H-1][10] = -1;
+
+    // ── Indoor enrichment ──
+    // Metal stair railings along sides
+    walls[1][3] = 31; walls[1][4] = 31; walls[1][15] = 31; walls[1][16] = 31;
+    // Souvenir shop counter (left)
+    walls[9][2] = 50; walls[9][3] = 50; walls[9][4] = 50;
+    decor[9][2] = 29; decor[9][4] = 29;
+    // Elevator door (right side, decorative)
+    walls[5][17] = 10; walls[6][17] = 10;
+    decor[5][16] = 28; decor[6][16] = 28;
+    // Waiting benches
+    decor[11][3] = 27; decor[11][7] = 27; decor[11][16] = 27;
+    decor[12][3] = 27; decor[12][16] = 27;
+    // Floor markers (dark floor strips for queue lanes)
+    for (let x = 1; x < W-1; x++) { ground[5][x] = 7; ground[9][x] = 7; ground[11][x] = 7; }
+    // Info signs
+    decor[6][2] = 22; decor[6][17] = 22;
+    // Flowers at entrance
+    decor[13][8] = 17; decor[13][12] = 17;
     CITIES.paris.rooms.eiffel_ground = {
         width: W, height: H, playerStart: { x: 10, y: 13 },
         ground, walls, decor,
@@ -428,6 +447,22 @@ function generateParisEiffelFirst() {
     decor[4][3] = 28; decor[4][14] = 28; decor[8][3] = 28; decor[8][14] = 28;
     decor[H-1][9] = 23; walls[H-1][9] = -1;
     decor[0][9] = 23; walls[0][9] = -1;
+
+    // ── Indoor enrichment ──
+    // Cafe tables (wall tiles as counters)
+    walls[6][3] = 50; walls[6][5] = 50; walls[6][12] = 50;
+    // Telescopes / viewfinders at railing
+    walls[2][5] = 19; walls[2][12] = 19;
+    walls[5][5] = 19; walls[5][12] = 19;
+    // More benches along viewing deck
+    walls[9][2] = 27; walls[9][6] = 27; walls[9][11] = 27; walls[9][15] = 27;
+    // Lamps along deck
+    decor[1][5] = 28; decor[1][12] = 28; decor[6][8] = 28; decor[6][9] = 28;
+    decor[11][3] = 28; decor[11][14] = 28;
+    // Flowers / planters
+    decor[4][7] = 17; decor[4][10] = 17; decor[8][7] = 17; decor[8][10] = 17;
+    // Info signs
+    decor[1][9] = 22; decor[11][9] = 22;
     CITIES.paris.rooms.eiffel_first = {
         width: W, height: H, playerStart: { x: 9, y: 12 },
         ground, walls, decor,
@@ -448,6 +483,22 @@ function generateParisEiffelTop() {
     decor[1][6] = 22; // sign
     decor[4][2] = 17; decor[4][9] = 17;
     decor[H-1][6] = 23; walls[H-1][6] = -1;
+
+    // ── Indoor enrichment ──
+    // More railings
+    walls[1][5] = 31; walls[1][7] = 31;
+    // Another telescope
+    walls[2][2] = 19;
+    // Lamps
+    decor[2][4] = 28; decor[2][7] = 28;
+    decor[5][2] = 28; decor[5][9] = 28;
+    // Dark floor viewing strip
+    for (let x = 1; x < W-1; x++) ground[2][x] = 7;
+    for (let x = 1; x < W-1; x++) ground[6][x] = 7;
+    // Bench for resting
+    decor[7][3] = 27; decor[7][8] = 27;
+    // Flowers near stairs
+    decor[8][4] = 17; decor[8][8] = 17;
     CITIES.paris.rooms.eiffel_top = {
         width: W, height: H, playerStart: { x: 6, y: 8 },
         ground, walls, decor,
@@ -677,6 +728,24 @@ function generateLondonMuseumHall() {
     decor[H-1][11] = 23; walls[H-1][11] = -1;
     decor[0][21] = 23; walls[0][21] = -1;
     decor[8][0] = 23; walls[8][0] = -1;
+
+    // ── Indoor enrichment ──
+    // Display cases (exhibit pedestals)
+    walls[5][3] = 19; walls[5][18] = 19;
+    walls[5][6] = 19; walls[5][15] = 19;
+    // Benches for visitors
+    decor[6][6] = 27; decor[6][15] = 27; decor[13][6] = 27; decor[13][15] = 27;
+    // Exhibit signs
+    decor[4][4] = 22; decor[4][17] = 22; decor[9][4] = 22; decor[9][17] = 22;
+    // Extra lamps
+    decor[6][2] = 28; decor[6][19] = 28; decor[9][2] = 28; decor[9][19] = 28;
+    // Floor pattern: marble strips
+    for (let x = 1; x < W-1; x++) { ground[4][x] = 5; ground[11][x] = 5; }
+    for (let y = 1; y < H-1; y++) { ground[y][11] = 5; }
+    // Flowers at entrance
+    decor[14][9] = 17; decor[14][13] = 17;
+    // Rope barriers (fences)
+    decor[7][6] = 31; decor[7][15] = 31;
     CITIES.london.rooms.museum_hall = {
         width: W, height: H, playerStart: { x: 11, y: 14 },
         ground, walls, decor,
@@ -699,6 +768,25 @@ function generateLondonMuseumGallery() {
     decor[2][5] = 28; decor[2][14] = 28; decor[10][5] = 28; decor[10][14] = 28;
     decor[1][10] = 22;
     decor[H-1][10] = 23; walls[H-1][10] = -1;
+
+    // ── Indoor enrichment ──
+    // More exhibit statues in alcoves
+    walls[5][6] = 19; walls[5][13] = 19;
+    walls[9][6] = 19; walls[9][13] = 19;
+    // Display cases along walls
+    walls[1][4] = 10; walls[1][15] = 10;
+    walls[14][4] = 10;
+    // Benches in gallery center
+    walls[6][6] = 27; walls[6][13] = 27; walls[13][6] = 27; walls[13][13] = 27;
+    // Lamps
+    decor[4][2] = 28; decor[4][17] = 28; decor[8][2] = 28; decor[8][17] = 28;
+    decor[12][2] = 28; decor[12][17] = 28;
+    // Floor pattern: dark stone strips
+    for (let x = 1; x < W-1; x++) { ground[5][x] = 5; ground[10][x] = 5; ground[14][x] = 5; }
+    // Exhibit labels
+    decor[4][5] = 22; decor[4][14] = 22; decor[8][5] = 22; decor[8][14] = 22;
+    // Flowers
+    decor[15][4] = 17; decor[15][15] = 17;
     CITIES.london.rooms.museum_gallery = {
         width: W, height: H, playerStart: { x: 10, y: 16 },
         ground, walls, decor,
@@ -721,6 +809,20 @@ function generateLondonMuseumBasement() {
     decor[1][8] = 22; // sign
     decor[4][7] = 28; decor[9][7] = 28;
     decor[0][8] = 23; walls[0][8] = -1;
+
+    // ── Indoor enrichment ──
+    // Archive shelves (extra wall blocks as bookshelves)
+    walls[3][6] = 9; walls[3][7] = 9; walls[3][8] = 9; walls[3][9] = 9;
+    walls[6][2] = 9; walls[6][3] = 9; walls[6][12] = 9; walls[6][13] = 9;
+    walls[10][6] = 9; walls[10][7] = 9; walls[10][8] = 9; walls[10][9] = 9;
+    // Dusty crates / old boxes
+    walls[4][2] = 10; walls[4][13] = 10;
+    walls[9][2] = 10; walls[9][13] = 10;
+    // Lamps (dim)
+    decor[3][4] = 28; decor[3][11] = 28; decor[7][4] = 28; decor[7][11] = 28;
+    decor[11][4] = 28; decor[11][11] = 28;
+    // Cobwebs/vines for atmosphere
+    decor[1][2] = 45; decor[1][13] = 45; decor[12][2] = 45; decor[12][13] = 45;
     CITIES.london.rooms.museum_basement = {
         width: W, height: H, playerStart: { x: 8, y: 2 },
         ground, walls, decor,
@@ -931,6 +1033,32 @@ function generateRomeColosseum() {
     decor[4][3] = 28; decor[4][18] = 28; decor[12][3] = 28; decor[12][18] = 28;
     decor[8][21] = 23; walls[8][21] = -1; // locked door to catacombs
     decor[H-1][11] = 23; walls[H-1][11] = -1; // door back
+
+    // ── Indoor enrichment ──
+    // Broken column fragments on arena floor
+    walls[6][8] = 88; walls[6][13] = 88;
+    walls[12][6] = 88; walls[12][15] = 88;
+    // More intact columns along walls
+    walls[3][8] = 40; walls[3][13] = 40;
+    walls[13][4] = 40; walls[13][17] = 40;
+    // Arena sand details: dark stone paths
+    for (let x = 5; x < 17; x++) ground[9][x] = 5;
+    for (let y = 3; y < 15; y++) ground[y][11] = 5;
+    // Statues of gladiators
+    walls[6][3] = 19; walls[6][18] = 19;
+    walls[14][5] = 19; walls[14][16] = 19;
+    // Torches along walls
+    decor[2][6] = 28; decor[2][15] = 28;
+    decor[6][1] = 28; decor[6][20] = 28;
+    decor[9][3] = 28; decor[9][18] = 28;
+    decor[14][3] = 28; decor[14][18] = 28;
+    // Vines on ancient walls
+    decor[1][3] = 45; decor[1][18] = 45;
+    decor[5][3] = 45; decor[10][3] = 45;
+    // Benches for spectators
+    decor[15][5] = 27; decor[15][16] = 27;
+    // Flowers growing through cracks
+    decor[11][8] = 17; decor[11][13] = 17; decor[15][9] = 17; decor[15][13] = 17;
     CITIES.rome.rooms.colosseum = {
         width: W, height: H, playerStart: { x: 11, y: 16 },
         ground, walls, decor,
@@ -956,6 +1084,23 @@ function generateRomeCatacombsUpper() {
     decor[1][9] = 22;
     decor[0][9] = 23; walls[0][9] = -1;
     decor[H-1][9] = 23; walls[H-1][9] = -1;
+
+    // ── Indoor enrichment ──
+    // More vines on catacomb walls
+    decor[3][15] = 45; decor[7][5] = 45; decor[10][15] = 45; decor[12][2] = 45; decor[12][15] = 45;
+    // Water puddles on floor
+    ground[5][3] = 2; walls[5][3] = 2;
+    ground[9][12] = 2; walls[9][12] = 2;
+    ground[13][6] = 2; walls[13][6] = 2;
+    // Broken column fragments
+    walls[3][10] = 88; walls[9][6] = 88; walls[13][11] = 88;
+    // More torches
+    decor[5][6] = 28; decor[5][11] = 28;
+    decor[9][4] = 28; decor[9][13] = 28;
+    decor[13][8] = 28;
+    // Dark floor patches
+    ground[7][9] = 7; ground[7][10] = 7;
+    ground[10][5] = 7; ground[10][6] = 7;
     CITIES.rome.rooms.catacombs_upper = {
         width: W, height: H, playerStart: { x: 9, y: 2 },
         ground, walls, decor,
@@ -977,6 +1122,19 @@ function generateRomeCatacombsLower() {
     decor[1][7] = 22;
     decor[3][2] = 28; decor[3][11] = 28; decor[8][2] = 28; decor[8][11] = 28;
     decor[0][7] = 23; walls[0][7] = -1;
+
+    // ── Indoor enrichment ──
+    // Vines everywhere in the deep catacombs
+    decor[1][2] = 45; decor[1][11] = 45; decor[4][6] = 45; decor[7][3] = 45;
+    decor[10][2] = 45; decor[10][11] = 45;
+    // Broken columns
+    walls[2][4] = 88; walls[8][9] = 88;
+    // More water puddles
+    ground[9][3] = 2; walls[9][3] = 2;
+    // Dark floor
+    ground[5][5] = 7; ground[5][6] = 7; ground[5][8] = 7; ground[5][9] = 7;
+    // Flowers through cracks
+    decor[2][6] = 17; decor[8][5] = 17; decor[10][7] = 17;
     CITIES.rome.rooms.catacombs_lower = {
         width: W, height: H, playerStart: { x: 7, y: 2 },
         ground, walls, decor,
@@ -1185,6 +1343,37 @@ function generateMarrakechSouk() {
     decor[3][5] = 51; decor[7][8] = 51; decor[12][5] = 51; decor[3][15] = 51; decor[7][18] = 51; decor[12][15] = 51;
     decor[H-1][12] = 23; walls[H-1][12] = -1;
     decor[0][23] = 23; walls[0][23] = -1;
+
+    // ── Indoor enrichment: Souk ──
+    // More market stalls filling the maze
+    walls[3][5] = 50; walls[3][13] = 50;
+    walls[7][9] = 50; walls[7][11] = 50;
+    walls[12][8] = 50; walls[12][14] = 50;
+    walls[16][3] = 50; walls[16][10] = 50; walls[16][20] = 50;
+    // Carpet/fabric rolls everywhere
+    decor[1][3] = 51; decor[1][8] = 51; decor[1][14] = 51; decor[1][20] = 51;
+    decor[4][8] = 51; decor[4][13] = 51; decor[4][20] = 51;
+    decor[6][3] = 51; decor[6][12] = 51; decor[6][20] = 51;
+    decor[9][3] = 51; decor[9][9] = 51; decor[9][14] = 51; decor[9][20] = 51;
+    decor[11][8] = 51; decor[11][13] = 51; decor[11][20] = 51;
+    decor[13][3] = 51; decor[13][9] = 51; decor[13][20] = 51;
+    decor[16][6] = 51; decor[16][14] = 51;
+    // Mosaic floor tiles in walkways
+    decor[2][3] = 91; decor[2][10] = 92; decor[2][20] = 91;
+    decor[8][3] = 92; decor[8][10] = 91; decor[8][20] = 92;
+    decor[15][3] = 91; decor[15][10] = 92; decor[15][20] = 91;
+    // More lamps for atmosphere
+    decor[4][3] = 28; decor[4][17] = 28;
+    decor[11][6] = 28; decor[11][17] = 28;
+    decor[16][8] = 28; decor[16][17] = 28;
+    decor[17][6] = 28; decor[17][17] = 28;
+    // Dark archways between sections
+    decor[5][11] = 54; decor[5][12] = 54;
+    decor[10][11] = 54; decor[10][12] = 54;
+    decor[14][11] = 54; decor[14][12] = 54;
+    // Flowers
+    decor[3][8] = 17; decor[7][15] = 17; decor[12][9] = 17;
+    decor[16][12] = 17; decor[17][3] = 17; decor[17][20] = 17;
     CITIES.marrakech.rooms.souk = {
         width: W, height: H, playerStart: { x: 12, y: 18 },
         ground, walls, decor,
@@ -1207,6 +1396,24 @@ function generateMarrakechRiad() {
     decor[2][8] = 49; decor[11][8] = 49;
     decor[3][3] = 28; decor[3][12] = 28;
     decor[H-1][8] = 23; walls[H-1][8] = -1;
+
+    // ── Indoor enrichment: Riad ──
+    // More flowers around courtyard
+    decor[4][6] = 17; decor[4][9] = 17; decor[9][6] = 17; decor[9][9] = 17;
+    decor[6][5] = 17; decor[6][10] = 17;
+    // Mosaics in outer walkways
+    decor[2][3] = 91; decor[2][12] = 92; decor[11][3] = 92; decor[11][12] = 91;
+    decor[6][2] = 91; decor[6][13] = 92;
+    // Fabric drapes
+    decor[1][4] = 51; decor[1][11] = 51;
+    decor[12][4] = 51; decor[12][11] = 51;
+    // Lamps in corners
+    decor[1][2] = 28; decor[1][13] = 28;
+    decor[12][2] = 28; decor[12][13] = 28;
+    // Benches
+    decor[3][6] = 27; decor[10][6] = 27;
+    // Dark archway entrance
+    decor[12][8] = 54;
     CITIES.marrakech.rooms.riad = {
         width: W, height: H, playerStart: { x: 8, y: 12 },
         ground, walls, decor,
@@ -1230,6 +1437,23 @@ function generateMarrakechOasis() {
     decor[10][10] = 20; // chest: Portal Stone
     decor[4][10] = 21; // portal
     decor[H-1][10] = 23; walls[H-1][10] = -1;
+
+    // ── Indoor enrichment: Oasis ──
+    // More palm trees around the oasis
+    walls[2][7] = 52; walls[2][12] = 52;
+    walls[10][7] = 52; walls[10][12] = 52;
+    walls[12][4] = 52; walls[12][16] = 52;
+    // Flowers near water
+    decor[4][7] = 17; decor[4][12] = 17; decor[8][7] = 17; decor[8][12] = 17;
+    decor[9][5] = 17; decor[9][14] = 17;
+    // Sand path markings
+    for (let y = 9; y < 14; y++) ground[y][10] = 55;
+    // Lamps along path
+    decor[9][8] = 28; decor[9][12] = 28; decor[13][8] = 28; decor[13][12] = 28;
+    // Mosaic near portal
+    decor[3][8] = 91; decor[3][11] = 92;
+    // Bench to rest
+    decor[11][5] = 27;
     CITIES.marrakech.rooms.oasis = {
         width: W, height: H, playerStart: { x: 10, y: 14 },
         ground, walls, decor,
@@ -1463,6 +1687,27 @@ function generateTokyoShrine() {
     decor[4][5] = 22; // sign with riddle
     decor[0][9] = 23; walls[0][9] = -1;
     decor[H-1][9] = 23; walls[H-1][9] = -1;
+
+    // ── Indoor enrichment: Shrine ──
+    // More torii gates along entrance path
+    walls[8][7] = 61; walls[8][10] = 61;
+    // Zen garden stones
+    walls[5][3] = 19; walls[5][14] = 19;
+    walls[10][3] = 19; walls[10][14] = 19;
+    // Bamboo clusters at corners
+    walls[1][2] = 63; walls[1][15] = 63;
+    walls[13][2] = 63; walls[13][15] = 63;
+    // More lanterns
+    decor[4][2] = 60; decor[4][15] = 60;
+    decor[9][2] = 60; decor[9][15] = 60;
+    decor[13][6] = 60; decor[13][11] = 60;
+    // Flowers along path
+    decor[6][6] = 17; decor[6][11] = 17;
+    decor[10][6] = 17; decor[10][11] = 17;
+    // Jade floor in inner sanctum
+    for (let y = 2; y < 5; y++) for (let x = 6; x < 12; x++) ground[y][x] = 59;
+    // Bench for meditation
+    decor[13][4] = 27; decor[13][13] = 27;
     CITIES.tokyo.rooms.shrine = {
         width: W, height: H, playerStart: { x: 9, y: 14 },
         ground, walls, decor,
@@ -1500,6 +1745,24 @@ function generateTokyoBambooForest() {
     ground[6][14] = 2; walls[6][14] = 2; ground[6][15] = 2; walls[6][15] = 2; ground[7][15] = 2; walls[7][15] = 2;
     decor[H-1][11] = 23; walls[H-1][11] = -1;
     decor[0][11] = 23; walls[0][11] = -1;
+
+    // ── Indoor enrichment: Bamboo Forest ──
+    // More flowers in clearings
+    decor[2][9] = 17; decor[2][12] = 17;
+    decor[5][3] = 17; decor[5][18] = 17;
+    decor[9][6] = 17; decor[9][14] = 17;
+    decor[11][3] = 17; decor[11][18] = 17;
+    decor[14][9] = 17; decor[17][7] = 17; decor[17][16] = 17;
+    // More lanterns at maze turns
+    decor[6][3] = 60; decor[6][18] = 60;
+    decor[10][9] = 60; decor[10][12] = 60;
+    decor[14][7] = 60; decor[14][18] = 60;
+    decor[17][3] = 60; decor[17][11] = 60;
+    // Zen stones in clearing
+    walls[10][10] = 19;
+    // Stream extends
+    ground[7][14] = 2; walls[7][14] = 2;
+    ground[8][15] = 2; walls[8][15] = 2;
     CITIES.tokyo.rooms.bamboo_forest = {
         width: W, height: H, playerStart: { x: 11, y: 18 },
         ground, walls, decor,
@@ -1521,6 +1784,23 @@ function generateTokyoSacredGarden() {
     decor[3][7] = 22; // sign
     decor[9][7] = 21; // portal
     decor[H-1][7] = 23; walls[H-1][7] = -1;
+
+    // ── Indoor enrichment: Sacred Garden ──
+    // More cherry trees framing the garden
+    walls[2][6] = 56; walls[2][7] = 56;
+    walls[8][6] = 56; walls[8][7] = 56;
+    // Lanterns
+    decor[1][3] = 60; decor[1][10] = 60;
+    decor[4][3] = 60; decor[4][10] = 60;
+    decor[7][3] = 60; decor[7][10] = 60;
+    decor[10][3] = 60; decor[10][10] = 60;
+    // More flowers
+    decor[1][5] = 17; decor[1][8] = 17;
+    decor[4][5] = 17; decor[4][8] = 17;
+    decor[7][5] = 17; decor[7][8] = 17;
+    decor[10][5] = 17; decor[10][8] = 17;
+    // Zen stone path
+    for (let y = 1; y < H-1; y++) ground[y][7] = 3;
     CITIES.tokyo.rooms.sacred_garden = {
         width: W, height: H, playerStart: { x: 7, y: 10 },
         ground, walls, decor,
