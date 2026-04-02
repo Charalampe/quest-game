@@ -138,6 +138,7 @@ export class TitleScene extends Phaser.Scene {
         this.registry.set('visitedCities', ['paris']);
         this.registry.set('flags', {});
         this.registry.set('openedChests', []);
+        this.registry.set('foundJournalPages', []);
         this.scene.start('Explore', { city: 'paris', room: 'main' });
     }
 
@@ -152,6 +153,7 @@ export class TitleScene extends Phaser.Scene {
             this.registry.set('visitedCities', data.visitedCities || ['paris']);
             this.registry.set('flags', data.flags || {});
             this.registry.set('openedChests', data.openedChests || []);
+            this.registry.set('foundJournalPages', data.foundJournalPages || []);
             this.scene.start('Explore', { city: data.currentCity, room: data.currentRoom || 'main' });
         } else {
             this.startNewGame();

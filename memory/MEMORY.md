@@ -40,9 +40,23 @@
 
 ## Bug History — see [bugs-and-fixes.md](bugs-and-fixes.md) for all bugs found and fixed
 
+## Engagement Features (Phase 1)
+- **Journal Pages**: 15 hidden collectibles (3 per city) in `src/data/journalPages.js`
+  - Shimmer visual on ground, interact to collect, persist in `foundJournalPages` registry
+  - Finding all 3 in a city sets `{city}_pages_complete` flag → unlocks bonus NPC dialog
+  - Counter shown in Quest Log panel
+- **Dialog Choices**: Branching dialog system in `src/data/dialogChoices.js`
+  - 4 choice dialogs: Pierre, Thomas, Hassan, Tanaka (replace old linear versions)
+  - DialogManager checks `DIALOG_CHOICES` before `DIALOGUES` — choice dialogs have preamble→choices→response flow
+  - Each choice can set a unique flag; shared rewards (items, flags, objectives) apply regardless
+  - NPC_DIALOG_ROUTES references `_choice` suffixed IDs (e.g. `pierre_has_brush_choice`)
+- **Lea's Journal**: Auto-populated diary entries in `src/data/leaJournal.js`
+  - 16 entries triggered by flags, shown newest-first via J key
+  - UIScene has `journalContainer` panel with `toggleJournal()` / `refreshJournal()`
+
 ## Testing
-- Unit tests: `node tests/test_systems.mjs` — 209 tests, pure data/logic, no Phaser runtime
-- Integration tests: `node test_game.mjs` — 24 Playwright tests, requires server on port 8080
+- Unit tests: `node tests/test_systems.mjs` — 478 tests, pure data/logic, no Phaser runtime
+- Integration tests: `node test_game.mjs` — 25 Playwright tests, requires server on port 8080
 - `package.json` has `"type": "module"` for ESM support
 - Both suites must pass before any change is considered complete
 - Tests are room-aware: NPC placement checks resolve room maps

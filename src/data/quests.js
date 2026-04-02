@@ -30,6 +30,7 @@ export const QUESTS = {
 export const NPC_DIALOG_ROUTES = {
     paris_grandma: [
         { dialog: 'grandma_intro', condition: (flags) => !flags.quest_started },
+        { dialog: 'grandma_journal_bonus', condition: (flags) => flags.paris_pages_complete && !flags.paris_bonus_seen },
         { dialog: 'grandma_after_locket', condition: (flags) => flags.quest_started }
     ],
     paris_librarian: [
@@ -44,7 +45,7 @@ export const NPC_DIALOG_ROUTES = {
         { dialog: 'sophie_intro', condition: () => true }
     ],
     paris_artist: [
-        { dialog: 'pierre_has_brush', condition: (flags) => flags.paris_has_paintbrush && !flags.paris_has_fastpass },
+        { dialog: 'pierre_has_brush_choice', condition: (flags) => flags.paris_has_paintbrush && !flags.paris_has_fastpass },
         { dialog: 'pierre_after_fastpass', condition: (flags) => flags.paris_has_fastpass },
         { dialog: 'pierre_intro', condition: (flags) => flags.quest_started },
         { dialog: 'pierre_intro', condition: () => true }
@@ -78,6 +79,7 @@ export const NPC_DIALOG_ROUTES = {
 
     london_curator: [
         { dialog: 'curator_with_letter', condition: (flags) => flags.paris_complete && !flags.london_met_curator },
+        { dialog: 'curator_journal_bonus', condition: (flags) => flags.london_pages_complete && !flags.london_bonus_seen },
         { dialog: 'curator_after_quest', condition: (flags) => flags.london_complete },
         { dialog: 'curator_intro', condition: () => true }
     ],
@@ -103,13 +105,14 @@ export const NPC_DIALOG_ROUTES = {
         { dialog: 'higgins_intro', condition: () => true }
     ],
     london_schoolkid: [
-        { dialog: 'thomas_intro', condition: (flags) => !flags.london_has_glasses },
+        { dialog: 'thomas_intro_choice', condition: (flags) => !flags.london_has_glasses },
         { dialog: 'thomas_after', condition: () => true }
     ],
 
     rome_historian: [
         { dialog: 'rossi_with_map', condition: (flags) => flags.london_complete && !flags.rome_have_key },
         { dialog: 'rossi_after_key', condition: (flags) => flags.rome_have_key && !flags.rome_complete },
+        { dialog: 'rossi_journal_bonus', condition: (flags) => flags.rome_pages_complete && !flags.rome_bonus_seen },
         { dialog: 'rossi_after_quest', condition: (flags) => flags.rome_complete },
         { dialog: 'rossi_intro', condition: () => true }
     ],
@@ -133,7 +136,8 @@ export const NPC_DIALOG_ROUTES = {
     ],
 
     marrakech_merchant: [
-        { dialog: 'hassan_with_locket', condition: (flags) => flags.rome_complete && !flags.marrakech_has_journal },
+        { dialog: 'hassan_with_locket_choice', condition: (flags) => flags.rome_complete && !flags.marrakech_has_journal },
+        { dialog: 'hassan_journal_bonus', condition: (flags) => flags.marrakech_pages_complete && !flags.marrakech_bonus_seen },
         { dialog: 'hassan_after_quest', condition: (flags) => flags.marrakech_has_journal },
         { dialog: 'hassan_intro', condition: () => true }
     ],
@@ -167,6 +171,7 @@ export const NPC_DIALOG_ROUTES = {
 
     tokyo_gardener: [
         { dialog: 'yuki_with_journal', condition: (flags) => flags.marrakech_complete && !flags.tokyo_has_jade_key },
+        { dialog: 'yuki_journal_bonus', condition: (flags) => flags.tokyo_pages_complete && !flags.tokyo_bonus_seen },
         { dialog: 'yuki_after_quest', condition: (flags) => flags.tokyo_has_jade_key },
         { dialog: 'yuki_intro', condition: () => true }
     ],
@@ -183,7 +188,7 @@ export const NPC_DIALOG_ROUTES = {
         { dialog: 'aiko_intro', condition: () => true }
     ],
     tokyo_shrine_keeper: [
-        { dialog: 'tanaka_riddle_complete', condition: (flags) => flags.tokyo_riddle_part1 && flags.tokyo_riddle_part2 && flags.tokyo_riddle_part3 && !flags.tokyo_riddle_solved },
+        { dialog: 'tanaka_riddle_choice', condition: (flags) => flags.tokyo_riddle_part1 && flags.tokyo_riddle_part2 && flags.tokyo_riddle_part3 && !flags.tokyo_riddle_solved },
         { dialog: 'tanaka_waiting', condition: (flags) => !flags.tokyo_riddle_solved && (flags.tokyo_riddle_part1 || flags.tokyo_riddle_part2) },
         { dialog: 'tanaka_intro', condition: () => true }
     ],

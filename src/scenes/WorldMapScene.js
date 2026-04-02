@@ -76,6 +76,17 @@ export class WorldMapScene extends Phaser.Scene {
             ease: 'Sine.easeInOut'
         });
 
+        // Back button (for touch and mouse)
+        this.backButton = this.add.text(80, height - 36, t('ui.back'), {
+            fontSize: '21px', fontFamily: 'monospace', color: '#ccaaff',
+            backgroundColor: '#2d1b69', padding: { x: 18, y: 6 }
+        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+        this.backButton.on('pointerdown', () => {
+            if (!this.traveling) this.returnToExplore();
+        });
+        this.backButton.on('pointerover', () => this.backButton.setColor('#ffffff'));
+        this.backButton.on('pointerout', () => this.backButton.setColor('#ccaaff'));
+
         // ESC to return (store ref for cleanup)
         this._onEsc = () => {
             if (!this.traveling) this.returnToExplore();

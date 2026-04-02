@@ -30,10 +30,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             return;
         }
 
-        const up = this.cursors.up.isDown || this.wasd.up.isDown;
-        const down = this.cursors.down.isDown || this.wasd.down.isDown;
-        const left = this.cursors.left.isDown || this.wasd.left.isDown;
-        const right = this.cursors.right.isDown || this.wasd.right.isDown;
+        const touch = this.scene.scene.get('UI')?.touchDpad || {};
+        const up = this.cursors.up.isDown || this.wasd.up.isDown || touch.up;
+        const down = this.cursors.down.isDown || this.wasd.down.isDown || touch.down;
+        const left = this.cursors.left.isDown || this.wasd.left.isDown || touch.left;
+        const right = this.cursors.right.isDown || this.wasd.right.isDown || touch.right;
 
         let vx = 0;
         let vy = 0;

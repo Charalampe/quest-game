@@ -5,7 +5,7 @@ export default {
         newGame: "Nouvelle Partie",
         continue: "Continuer",
         version: "v1.0",
-        hudHints: "I:Objets Q:Quêtes M:Carte",
+        hudHints: "I:Objets Q:Quêtes J:Journal M:Carte",
         inventory: "INVENTAIRE",
         inventoryEmpty: "Aucun objet pour l'instant.\n\nExplore et parle aux\ngens pour trouver des indices !",
         inventoryClose: "Appuie sur I pour fermer",
@@ -36,7 +36,16 @@ export default {
         gotItem: "Obtenu : {name}",
         doorLocked: "La porte est verrouillée.",
         doorEnter: "Tu entres dans le bâtiment...",
-        fallbackDialog: "..."
+        fallbackDialog: "...",
+        journal: "JOURNAL DE LÉA",
+        journalEmpty: "Aucune entrée pour l'instant.\n\nTon journal se remplira\nen explorant !",
+        journalClose: "Appuie sur J pour fermer",
+        journalPageFound: "Trouvé : une page du journal de Madeleine !",
+        journalPageAlready: "Tu as déjà lu cette page.",
+        journalPagesCount: "Pages du journal : {found}/{total}",
+        journalBonusUnlocked: "Toutes les pages trouvées à {city} ! Parle à {npc} pour une surprise !",
+        tapToClose: "Appuie sur X pour fermer",
+        back: "Retour"
     },
     travel: {
         eurostar: "Eurostar",
@@ -597,6 +606,44 @@ export default {
             "Le monde est vaste et magnifique, Léa.",
             "Ne cesse jamais d'explorer. Ne cesse jamais d'être curieuse.",
             "Je suis tellement fière de toi."
+        ],
+
+        // === JOURNAL PAGE BONUS DIALOGS ===
+        grandma_journal_bonus: [
+            "Tu as trouvé les pages du journal de Madeleine ! Les trois de Paris !",
+            "Je ne savais pas qu'elle tenait un journal... c'est extraordinaire.",
+            "Elle écrit sur la Tour Eiffel, la librairie, même les fleuristes.",
+            "Tu sais, elle a dit un jour à ma mère : 'Paris est là où toute aventure commence.'",
+            "Je crois qu'elle t'aurait adorée, Léa."
+        ],
+        curator_journal_bonus: [
+            "Trois pages du journal de Londres ? C'est une découverte historique majeure !",
+            "On savait que Madeleine avait fait don de la Collection Beaumont, mais on ne savait pas pourquoi.",
+            "Ces pages révèlent qu'elle voulait partager ses découvertes avec le monde.",
+            "Je les ajouterai à nos archives — avec votre permission, bien sûr !",
+            "Vous avez fait un travail remarquable, jeune exploratrice."
+        ],
+        rossi_journal_bonus: [
+            "Les pages du journal de Madeleine sur Rome ! Incroyable !",
+            "Elle écrit que les chats l'ont menée aux catacombes !",
+            "Et un musicien nommé Giovanni — serait-ce le grand-père d'Enzo ?",
+            "L'histoire est pleine de ces belles connexions.",
+            "Merci de les avoir mises en lumière, Léa."
+        ],
+        hassan_journal_bonus: [
+            "Tu as trouvé toutes ses pages de Marrakech ? Mashallah !",
+            "Elle écrit sur les couleurs, les épices, les histoires...",
+            "Et la pierre portail ! Ma grand-mère disait toujours que c'était magique, mais je croyais qu'elle racontait des histoires.",
+            "Madeleine aimait vraiment cette ville. Elle était des nôtres.",
+            "Que sa mémoire soit une bénédiction."
+        ],
+        yuki_journal_bonus: [
+            "Les trois pages du journal de Tokyo... je sens son esprit dans ces mots.",
+            "Elle écrit avoir planté les cerisiers avec moi... enfin, avec ma grand-mère.",
+            "Les femmes Yuki ont entretenu ce jardin pendant trois générations.",
+            "La dernière entrée de Madeleine est la plus belle.",
+            "'Le plus grand trésor n'est pas ce que l'on trouve — c'est ce que l'on apprend en chemin.'",
+            "Des mots sages. Des mots pour vivre."
         ]
     }
 };

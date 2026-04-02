@@ -1,4 +1,5 @@
 import { DIALOGUES } from '../data/dialogues.js';
+import { DIALOG_CHOICES } from '../data/dialogChoices.js';
 import { t, getDialogueLines, getItemText } from '../data/i18n/index.js';
 
 export class DialogManager {
@@ -20,6 +21,13 @@ export class DialogManager {
     }
 
     startDialog(dialogId, speakerName, callback) {
+        // Check if this dialog has a branching choice version
+        const choiceDialog = DIALOG_CHOICES[dialogId];
+        if (choiceDialog) {
+            this._startChoiceDialog(choiceDialog, speakerName, callback);
+            return;
+        }
+
         const dialog = DIALOGUES[dialogId];
         if (!dialog) {
             this.showMessage(t('ui.fallbackDialog'), callback);
@@ -37,6 +45,77 @@ export class DialogManager {
         this.speakerName = speakerName;
 
         this.showLine();
+    }
+
+    _startChoiceDialog(choiceDialog, speakerName, callback) {
+        this.active = true;
+        this.speakerName = speakerName;
+
+        // Show preamble lines first, then present choices
+        const preamble = choiceDialog.preamble || [];
+        if (preamble.length > 0) {
+            this.currentDialog = { lines: preamble };
+            this.currentLine = 0;
+            this.callback = () => {
+                // After preamble, show choices
+                this._presentDialogChoices(choiceDialog, speakerName, callback);
+            };
+            this.showLine();
+        } else {
+            this._presentDialogChoices(choiceDialog, speakerName, callback);
+        }
+    }
+
+    _presentDialogChoices(choiceDialog, speakerName, originalCallback) {
+        const choices = choiceDialog.choices.map((c, i) => ({
+            text: c.text,
+            value: i
+        }));
+
+        this.showChoice(
+            '',
+            choices,
+            (choiceIndex) => {
+                const chosen = choiceDialog.choices[choiceIndex];
+
+                // Apply choice-specific flag
+                if (chosen.setsFlag) {
+                    const flags = this.scene.registry.get('flags') || {};
+                    flags[chosen.setsFlag] = true;
+                    this.scene.registry.set('flags', flags);
+                }
+
+                // Show the response lines, then apply shared rewards
+                const responseLines = chosen.response || [];
+                if (responseLines.length > 0) {
+                    // Create a synthetic dialog with the shared rewards
+                    this.active = true;
+                    this.currentDialog = {
+                        lines: responseLines,
+                        givesItem: choiceDialog.givesItem,
+                        setsFlag: choiceDialog.setsFlag,
+                        completesObjective: choiceDialog.completesObjective,
+                        unlocksCity: choiceDialog.unlocksCity,
+                        unlocksPortal: choiceDialog.unlocksPortal
+                    };
+                    this.currentLine = 0;
+                    this.callback = originalCallback;
+                    this.speakerName = speakerName;
+                    this.showLine();
+                } else {
+                    // No response lines — apply rewards directly
+                    this.currentDialog = {
+                        givesItem: choiceDialog.givesItem,
+                        setsFlag: choiceDialog.setsFlag,
+                        completesObjective: choiceDialog.completesObjective,
+                        unlocksCity: choiceDialog.unlocksCity,
+                        unlocksPortal: choiceDialog.unlocksPortal
+                    };
+                    this.callback = originalCallback;
+                    this.endDialog();
+                }
+            }
+        );
     }
 
     showLine() {

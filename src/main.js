@@ -15,6 +15,10 @@ const config = {
     pixelArt: true,
     roundPixels: true,
     parent: document.body,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    },
     physics: {
         default: 'arcade',
         arcade: {

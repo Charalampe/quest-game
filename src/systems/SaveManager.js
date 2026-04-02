@@ -11,6 +11,7 @@ export class SaveManager {
             visitedCities: registry.get('visitedCities') || ['paris'],
             flags: registry.get('flags') || {},
             openedChests: registry.get('openedChests') || [],
+            foundJournalPages: registry.get('foundJournalPages') || [],
             timestamp: Date.now()
         };
 

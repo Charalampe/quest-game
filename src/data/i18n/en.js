@@ -5,7 +5,7 @@ export default {
         newGame: "New Game",
         continue: "Continue",
         version: "v1.0",
-        hudHints: "I:Items Q:Quests M:Map",
+        hudHints: "I:Items Q:Quests J:Journal M:Map",
         inventory: "INVENTORY",
         inventoryEmpty: "No items yet.\n\nExplore and talk to\npeople to find clues!",
         inventoryClose: "Press I to close",
@@ -36,7 +36,16 @@ export default {
         gotItem: "Got: {name}",
         doorLocked: "The door is locked.",
         doorEnter: "You enter the building...",
-        fallbackDialog: "..."
+        fallbackDialog: "...",
+        journal: "LEA'S JOURNAL",
+        journalEmpty: "No entries yet.\n\nYour journal will fill\nas you explore!",
+        journalClose: "Press J to close",
+        journalPageFound: "Found: Madeleine's diary page!",
+        journalPageAlready: "You've already read this page.",
+        journalPagesCount: "Diary Pages: {found}/{total}",
+        journalBonusUnlocked: "All pages found in {city}! Talk to {npc} for a surprise!",
+        tapToClose: "Tap X to close",
+        back: "Back"
     },
     travel: {
         eurostar: "Eurostar Train",
@@ -584,10 +593,48 @@ export default {
             "You found me. After all these years...",
             "I planted these cherry trees when I was young, full of wonder.",
             "The treasure I left is not gold or jewels.",
-            "It is the Gem of Understanding — the power to connect with all people.",
+            "It is the Gem of Understanding \u2014 the power to connect with all people.",
             "The world is vast and beautiful, L\u00E9a.",
             "Never stop exploring. Never stop being curious.",
             "I am so proud of you."
+        ],
+
+        // === JOURNAL PAGE BONUS DIALOGS ===
+        grandma_journal_bonus: [
+            "You found Madeleine's diary pages! All three from Paris!",
+            "I never knew she kept a diary... this is extraordinary.",
+            "She writes about the Eiffel Tower, the bookshop, even the flower sellers.",
+            "You know, she once told my mother: 'Paris is where every adventure begins.'",
+            "I think she would have loved you, L\u00E9a."
+        ],
+        curator_journal_bonus: [
+            "Three diary pages from London? This is a major historical find!",
+            "We knew Madeleine donated the Beaumont Collection, but we never knew why.",
+            "These pages reveal she wanted to share her discoveries with the world.",
+            "I shall add these to our archives \u2014 with your permission, of course!",
+            "You've done remarkable work, young explorer."
+        ],
+        rossi_journal_bonus: [
+            "Madeleine's diary entries from Rome! Incredible!",
+            "She writes about the cats leading her to the catacombs!",
+            "And a musician named Giovanni \u2014 could that be Enzo's grandfather?",
+            "History is full of these beautiful connections.",
+            "Thank you for bringing these to light, L\u00E9a."
+        ],
+        hassan_journal_bonus: [
+            "You found all her Marrakech diary pages? Mashallah!",
+            "She writes about the colours, the spices, the stories...",
+            "And the portal stone! My grandmother always said it was magic, but I thought she was just telling tales.",
+            "Madeleine truly loved this city. She was one of us.",
+            "May her memory be a blessing."
+        ],
+        yuki_journal_bonus: [
+            "All three diary pages from Tokyo... I can feel her spirit in these words.",
+            "She writes about planting the cherry trees together with me... well, with my grandmother.",
+            "The Yuki women have tended this garden for three generations.",
+            "Madeleine's last entry is the most beautiful.",
+            "'The greatest treasure is not what you find \u2014 it's what you learn along the way.'",
+            "Wise words. Words to live by."
         ]
     }
 };

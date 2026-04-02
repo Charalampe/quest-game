@@ -2,6 +2,7 @@ import { Player } from '../entities/Player.js';
 import { NPC } from '../entities/NPC.js';
 import { CITIES, ROOM_TRANSITIONS } from '../data/cities.js';
 import { NPC_DATA } from '../data/npcs.js';
+import { JOURNAL_PAGES } from '../data/journalPages.js';
 import { DialogManager } from '../systems/DialogManager.js';
 import { QuestManager } from '../systems/QuestManager.js';
 import { InventoryManager } from '../systems/InventoryManager.js';
@@ -89,15 +90,20 @@ export class ExploreScene extends Phaser.Scene {
         this.createParticles(roomData);
         this.createEnvironmentalAnimations(roomData);
 
+        // Create journal page collectibles
+        this.createJournalPages();
+
         // Input for interaction (store refs for cleanup)
         this._onSpace = () => this.handleInteract();
         this._onI = () => this.toggleInventory();
         this._onQ = () => this.toggleQuestLog();
+        this._onJ = () => this.toggleJournal();
         this._onM = () => this.openWorldMap();
         this._onEsc = () => this.handleEscape();
         this.input.keyboard.on('keydown-SPACE', this._onSpace);
         this.input.keyboard.on('keydown-I', this._onI);
         this.input.keyboard.on('keydown-Q', this._onQ);
+        this.input.keyboard.on('keydown-J', this._onJ);
         this.input.keyboard.on('keydown-M', this._onM);
         this.input.keyboard.on('keydown-ESC', this._onEsc);
 
@@ -106,6 +112,7 @@ export class ExploreScene extends Phaser.Scene {
             this.input.keyboard.off('keydown-SPACE', this._onSpace);
             this.input.keyboard.off('keydown-I', this._onI);
             this.input.keyboard.off('keydown-Q', this._onQ);
+            this.input.keyboard.off('keydown-J', this._onJ);
             this.input.keyboard.off('keydown-M', this._onM);
             this.input.keyboard.off('keydown-ESC', this._onEsc);
             for (const npc of this.npcs) { npc.destroy(); }
@@ -352,6 +359,9 @@ export class ExploreScene extends Phaser.Scene {
             case 'door':
                 this.enterDoor(obj);
                 break;
+            case 'journal_page':
+                this.collectJournalPage(obj);
+                break;
         }
     }
 
@@ -510,6 +520,110 @@ export class ExploreScene extends Phaser.Scene {
             }
         }
         this.enterRoom(transition.targetCity || this.cityId, transition.targetRoom, transition.spawnAt);
+    }
+
+    createJournalPages() {
+        const cityPages = JOURNAL_PAGES[this.cityId] || [];
+        const foundPages = this.registry.get('foundJournalPages') || [];
+
+        for (const page of cityPages) {
+            if (page.room !== this.roomId) continue;
+            if (foundPages.includes(page.id)) continue; // already collected
+
+            // Add as interactable
+            this.interactables.push({
+                type: 'journal_page',
+                x: page.x * TILE_W + TILE_W / 2,
+                y: page.y * TILE_H + TILE_H / 2,
+                tileX: page.x,
+                tileY: page.y,
+                pageData: page,
+                id: page.id
+            });
+
+            // Add shimmer visual effect
+            const worldX = page.x * TILE_W + TILE_W / 2;
+            const worldY = page.y * TILE_H + TILE_H / 2;
+            const shimmer = this.add.rectangle(worldX, worldY, TILE_W - 4, TILE_H - 4, 0xf1c40f, 0.08);
+            shimmer.setDepth(2);
+            this.envObjects.push(shimmer);
+            const tween = this.tweens.add({
+                targets: shimmer,
+                alpha: 0.25,
+                scaleX: 1.2,
+                scaleY: 1.2,
+                duration: 1000,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut'
+            });
+            this.envTweens.push(tween);
+        }
+    }
+
+    collectJournalPage(obj) {
+        const page = obj.pageData;
+        const foundPages = this.registry.get('foundJournalPages') || [];
+
+        if (foundPages.includes(page.id)) {
+            this.dialogActive = true;
+            this.dialogManager.showMessage(t('ui.journalPageAlready'), () => {
+                this.dialogActive = false;
+            });
+            return;
+        }
+
+        // Mark as found
+        foundPages.push(page.id);
+        this.registry.set('foundJournalPages', foundPages);
+
+        // Remove from interactables so it can't be picked up again
+        const idx = this.interactables.indexOf(obj);
+        if (idx >= 0) this.interactables.splice(idx, 1);
+
+        // Show the page text
+        this.dialogActive = true;
+        this.dialogManager.showMessage(`${page.title}\n\n"${page.text}"`, () => {
+            this.dialogActive = false;
+
+            // Show notification
+            const uiScene = this.scene.get('UI');
+            if (uiScene && uiScene.showNotification) {
+                const totalFound = foundPages.length;
+                uiScene.showNotification(t('ui.journalPageFound') + ` (${totalFound}/15)`);
+            }
+
+            // Check if all 3 pages in this city are found
+            const cityPages = JOURNAL_PAGES[this.cityId] || [];
+            const cityPageIds = cityPages.map(p => p.id);
+            const allCityFound = cityPageIds.every(id => foundPages.includes(id));
+            if (allCityFound) {
+                const flags = this.registry.get('flags') || {};
+                flags[`${this.cityId}_pages_complete`] = true;
+                this.registry.set('flags', flags);
+
+                // Show bonus unlock notification after a short delay
+                this.time.delayedCall(1500, () => {
+                    const uiScene = this.scene.get('UI');
+                    if (uiScene && uiScene.showNotification) {
+                        const cityName = this.cityId.charAt(0).toUpperCase() + this.cityId.slice(1);
+                        uiScene.showNotification(t('ui.journalBonusUnlocked', { city: cityName, npc: '' }));
+                    }
+                });
+            }
+
+            // Save progress
+            SaveManager.save(this.registry);
+        });
+    }
+
+    toggleJournal() {
+        if (this.dialogActive) return;
+        const uiScene = this.scene.get('UI');
+        if (uiScene) {
+            uiScene.toggleJournal();
+            this.menuOpen = uiScene.journalVisible;
+        }
     }
 
     enterRoom(cityId, roomId, spawnAt) {

@@ -70,6 +70,9 @@ globalThis.localStorage = {
 
 const { QUESTS, NPC_DIALOG_ROUTES, CHEST_REWARDS } = await import('../src/data/quests.js');
 const { DIALOGUES } = await import('../src/data/dialogues.js');
+const { DIALOG_CHOICES } = await import('../src/data/dialogChoices.js');
+const { JOURNAL_PAGES } = await import('../src/data/journalPages.js');
+const { LEA_JOURNAL_ENTRIES } = await import('../src/data/leaJournal.js');
 const { NPC_DATA } = await import('../src/data/npcs.js');
 const { CITIES, ROOM_TRANSITIONS } = await import('../src/data/cities.js');
 const { TRAVEL_ROUTES, CITY_MAP_POSITIONS } = await import('../src/systems/TravelManager.js');
@@ -88,11 +91,11 @@ setLanguage('en');
 describe('Dialog Data Integrity', () => {
 // ======================================================================
 
-    it('every dialog ID referenced in NPC_DIALOG_ROUTES exists in DIALOGUES', () => {
+    it('every dialog ID referenced in NPC_DIALOG_ROUTES exists in DIALOGUES or DIALOG_CHOICES', () => {
         const missing = [];
         for (const [npcId, routes] of Object.entries(NPC_DIALOG_ROUTES)) {
             for (const route of routes) {
-                if (!DIALOGUES[route.dialog]) {
+                if (!DIALOGUES[route.dialog] && !DIALOG_CHOICES[route.dialog]) {
                     missing.push(`${npcId} -> ${route.dialog}`);
                 }
             }
@@ -945,7 +948,22 @@ describe('Full Quest Playthrough (data layer)', () => {
         const completed = [];
 
         function simulateDialog(dialogId) {
+            // Check both DIALOGUES and DIALOG_CHOICES
             const dialog = DIALOGUES[dialogId];
+            const choiceDialog = DIALOG_CHOICES[dialogId];
+
+            if (choiceDialog) {
+                // Simulate a choice dialog — apply shared rewards
+                if (choiceDialog.givesItem) inventory.push(choiceDialog.givesItem.id);
+                if (choiceDialog.setsFlag) flags[choiceDialog.setsFlag] = true;
+                if (choiceDialog.completesObjective) completed.push(choiceDialog.completesObjective);
+                if (choiceDialog.unlocksCity && !unlocked.includes(choiceDialog.unlocksCity)) {
+                    unlocked.push(choiceDialog.unlocksCity);
+                }
+                if (choiceDialog.unlocksPortal) flags.portal_unlocked = true;
+                return;
+            }
+
             if (!dialog) return;
             if (dialog.givesItem) inventory.push(dialog.givesItem.id);
             if (dialog.setsFlag) flags[dialog.setsFlag] = true;
@@ -986,9 +1004,9 @@ describe('Full Quest Playthrough (data layer)', () => {
         assert.ok(flags.paris_has_paintbrush);
         assert.ok(inventory.includes('paintbrush'));
 
-        // 3. Paris: Return paintbrush to Pierre -> get fastpass
-        assert.equal(getDialog('paris_artist'), 'pierre_has_brush');
-        simulateDialog('pierre_has_brush');
+        // 3. Paris: Return paintbrush to Pierre -> get fastpass (choice dialog)
+        assert.equal(getDialog('paris_artist'), 'pierre_has_brush_choice');
+        simulateDialog('pierre_has_brush_choice');
         assert.ok(flags.paris_has_fastpass);
         assert.ok(inventory.includes('fastpass'));
 
@@ -1008,9 +1026,9 @@ describe('Full Quest Playthrough (data layer)', () => {
         simulateDialog('curator_with_letter');
         assert.ok(flags.london_met_curator);
 
-        // 7. London: Talk to Thomas -> get reading_glasses
-        assert.equal(getDialog('london_schoolkid'), 'thomas_intro');
-        simulateDialog('thomas_intro');
+        // 7. London: Talk to Thomas -> get reading_glasses (choice dialog)
+        assert.equal(getDialog('london_schoolkid'), 'thomas_intro_choice');
+        simulateDialog('thomas_intro_choice');
         assert.ok(flags.london_has_glasses);
         assert.ok(inventory.includes('reading_glasses'));
 
@@ -1036,9 +1054,9 @@ describe('Full Quest Playthrough (data layer)', () => {
         assert.ok(flags.rome_complete);
         assert.ok(unlocked.includes('marrakech'));
 
-        // 12. Marrakech: Talk to Hassan -> get journal
-        assert.equal(getDialog('marrakech_merchant'), 'hassan_with_locket');
-        simulateDialog('hassan_with_locket');
+        // 12. Marrakech: Talk to Hassan -> get journal (choice dialog)
+        assert.equal(getDialog('marrakech_merchant'), 'hassan_with_locket_choice');
+        simulateDialog('hassan_with_locket_choice');
         assert.ok(flags.marrakech_has_journal);
         assert.ok(inventory.includes('journal'));
 
@@ -1071,9 +1089,9 @@ describe('Full Quest Playthrough (data layer)', () => {
         // Part 3 is set by reading the shrine sign (manual flag)
         flags.tokyo_riddle_part3 = true;
 
-        // 17. Tokyo: Talk to Tanaka -> riddle solved
-        assert.equal(getDialog('tokyo_shrine_keeper'), 'tanaka_riddle_complete');
-        simulateDialog('tanaka_riddle_complete');
+        // 17. Tokyo: Talk to Tanaka -> riddle solved (choice dialog)
+        assert.equal(getDialog('tokyo_shrine_keeper'), 'tanaka_riddle_choice');
+        simulateDialog('tanaka_riddle_choice');
         assert.ok(flags.tokyo_riddle_solved);
 
         // 18. Tokyo: Talk to Yuki -> jade key
@@ -2943,5 +2961,200 @@ describe('Game Completability', () => {
         const lastObj = objectives[objectives.length - 1];
         assert.ok(lastObj.id === 'tokyo_find_treasure',
             `Last objective should be tokyo_find_treasure, got ${lastObj.id}`);
+    });
+});
+
+// ======================================================================
+// Journal Pages (Collectibles)
+// ======================================================================
+describe('Journal Pages', () => {
+
+    it('has exactly 15 journal pages across 5 cities', () => {
+        let total = 0;
+        for (const city of ['paris', 'london', 'rome', 'marrakech', 'tokyo']) {
+            assert.ok(JOURNAL_PAGES[city], `Missing journal pages for ${city}`);
+            assert.equal(JOURNAL_PAGES[city].length, 3, `${city} should have exactly 3 pages`);
+            total += JOURNAL_PAGES[city].length;
+        }
+        assert.equal(total, 15, 'Total journal pages should be 15');
+    });
+
+    it('each journal page has required fields', () => {
+        for (const [city, pages] of Object.entries(JOURNAL_PAGES)) {
+            for (const page of pages) {
+                assert.ok(page.id, `Page missing id in ${city}`);
+                assert.ok(page.city, `Page missing city in ${city}`);
+                assert.ok(page.room, `Page missing room in ${city}`);
+                assert.ok(typeof page.x === 'number', `Page ${page.id} missing x`);
+                assert.ok(typeof page.y === 'number', `Page ${page.id} missing y`);
+                assert.ok(page.title, `Page ${page.id} missing title`);
+                assert.ok(page.text, `Page ${page.id} missing text`);
+            }
+        }
+    });
+
+    it('page IDs are unique', () => {
+        const ids = new Set();
+        for (const pages of Object.values(JOURNAL_PAGES)) {
+            for (const page of pages) {
+                assert.ok(!ids.has(page.id), `Duplicate page ID: ${page.id}`);
+                ids.add(page.id);
+            }
+        }
+    });
+
+    it('each page references a valid city and room', () => {
+        for (const [city, pages] of Object.entries(JOURNAL_PAGES)) {
+            assert.ok(CITIES[city], `Invalid city: ${city}`);
+            for (const page of pages) {
+                assert.equal(page.city, city, `Page ${page.id} city mismatch`);
+                // Room must be 'main' or exist in city.rooms
+                if (page.room !== 'main') {
+                    assert.ok(CITIES[city].rooms[page.room],
+                        `Page ${page.id} references invalid room: ${page.room}`);
+                }
+            }
+        }
+    });
+
+    it('journal page positions are within room bounds and not on walls', () => {
+        for (const [city, pages] of Object.entries(JOURNAL_PAGES)) {
+            for (const page of pages) {
+                const roomData = page.room === 'main' ? CITIES[city] : CITIES[city].rooms[page.room];
+                assert.ok(roomData, `Missing room data for ${page.id}`);
+                assert.ok(page.x >= 0 && page.x < roomData.width,
+                    `Page ${page.id} x=${page.x} out of bounds (0-${roomData.width - 1})`);
+                assert.ok(page.y >= 0 && page.y < roomData.height,
+                    `Page ${page.id} y=${page.y} out of bounds (0-${roomData.height - 1})`);
+                // Should not be on a wall tile
+                const wallTile = roomData.walls[page.y][page.x];
+                assert.ok(wallTile < 0,
+                    `Page ${page.id} at (${page.x},${page.y}) is on a wall tile ${wallTile}`);
+            }
+        }
+    });
+
+    it('bonus dialogs exist for all cities', () => {
+        const bonusDialogIds = [
+            'grandma_journal_bonus', 'curator_journal_bonus',
+            'rossi_journal_bonus', 'hassan_journal_bonus', 'yuki_journal_bonus'
+        ];
+        for (const id of bonusDialogIds) {
+            assert.ok(DIALOGUES[id], `Missing bonus dialog: ${id}`);
+            assert.ok(DIALOGUES[id].lines.length > 0, `Bonus dialog ${id} has no lines`);
+            assert.ok(DIALOGUES[id].setsFlag, `Bonus dialog ${id} should set a flag`);
+        }
+    });
+});
+
+// ======================================================================
+// Dialog Choices
+// ======================================================================
+describe('Dialog Choices', () => {
+
+    it('each choice dialog has preamble, choices, and shared rewards', () => {
+        for (const [id, choice] of Object.entries(DIALOG_CHOICES)) {
+            assert.ok(Array.isArray(choice.preamble), `${id} missing preamble`);
+            assert.ok(Array.isArray(choice.choices), `${id} missing choices`);
+            assert.ok(choice.choices.length >= 2, `${id} should have at least 2 choices`);
+            for (const c of choice.choices) {
+                assert.ok(c.text, `${id} choice missing text`);
+                assert.ok(Array.isArray(c.response), `${id} choice missing response`);
+                assert.ok(c.response.length > 0, `${id} choice response empty`);
+            }
+        }
+    });
+
+    it('choice dialog IDs referenced in NPC_DIALOG_ROUTES exist in DIALOG_CHOICES', () => {
+        const choiceDialogIds = Object.keys(DIALOG_CHOICES);
+        const referencedIds = [];
+        for (const [npcId, routes] of Object.entries(NPC_DIALOG_ROUTES)) {
+            for (const route of routes) {
+                if (choiceDialogIds.includes(route.dialog)) {
+                    referencedIds.push(route.dialog);
+                }
+            }
+        }
+        assert.ok(referencedIds.length >= 4, `Expected at least 4 choice dialog references, got ${referencedIds.length}`);
+    });
+
+    it('choice dialogs that give items have valid item data', () => {
+        for (const [id, choice] of Object.entries(DIALOG_CHOICES)) {
+            if (choice.givesItem) {
+                assert.ok(choice.givesItem.id, `${id} givesItem missing id`);
+                assert.ok(choice.givesItem.name, `${id} givesItem missing name`);
+            }
+        }
+    });
+});
+
+// ======================================================================
+// Lea's Journal
+// ======================================================================
+describe("Lea's Journal", () => {
+
+    it('has at least 10 journal entries', () => {
+        assert.ok(LEA_JOURNAL_ENTRIES.length >= 10,
+            `Expected at least 10 entries, got ${LEA_JOURNAL_ENTRIES.length}`);
+    });
+
+    it('each entry has required fields', () => {
+        for (const entry of LEA_JOURNAL_ENTRIES) {
+            assert.ok(entry.id, `Entry missing id`);
+            assert.ok(entry.trigger, `Entry ${entry.id} missing trigger`);
+            assert.ok(entry.city, `Entry ${entry.id} missing city`);
+            assert.ok(entry.title, `Entry ${entry.id} missing title`);
+            assert.ok(entry.text, `Entry ${entry.id} missing text`);
+        }
+    });
+
+    it('entry IDs are unique', () => {
+        const ids = new Set();
+        for (const entry of LEA_JOURNAL_ENTRIES) {
+            assert.ok(!ids.has(entry.id), `Duplicate journal entry ID: ${entry.id}`);
+            ids.add(entry.id);
+        }
+    });
+
+    it('entries reference valid cities', () => {
+        for (const entry of LEA_JOURNAL_ENTRIES) {
+            assert.ok(CITIES[entry.city], `Entry ${entry.id} references invalid city: ${entry.city}`);
+        }
+    });
+
+    it('first entry triggers on quest_started', () => {
+        assert.equal(LEA_JOURNAL_ENTRIES[0].trigger, 'quest_started');
+    });
+
+    it('last entry triggers on game_complete', () => {
+        const last = LEA_JOURNAL_ENTRIES[LEA_JOURNAL_ENTRIES.length - 1];
+        assert.equal(last.trigger, 'game_complete');
+    });
+});
+
+// ======================================================================
+// Save/Load Journal Pages
+// ======================================================================
+describe('SaveManager with Journal Pages', () => {
+
+    beforeEach(() => {
+        _localStorage.clear();
+    });
+
+    it('saves and loads foundJournalPages', () => {
+        const registry = createMockRegistry({
+            currentCity: 'paris',
+            foundJournalPages: ['paris_page_1', 'paris_page_2']
+        });
+        SaveManager.save(registry);
+        const loaded = SaveManager.load();
+        assert.deepEqual(loaded.foundJournalPages, ['paris_page_1', 'paris_page_2']);
+    });
+
+    it('defaults to empty array when no journal pages saved', () => {
+        const registry = createMockRegistry({ currentCity: 'paris' });
+        SaveManager.save(registry);
+        const loaded = SaveManager.load();
+        assert.deepEqual(loaded.foundJournalPages, []);
     });
 });

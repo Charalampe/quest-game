@@ -654,5 +654,58 @@ export const DIALOGUES = {
             "I am so proud of you."
         ],
         setsFlag: 'tokyo_met_madeleine'
+    },
+
+    // === JOURNAL PAGE BONUS DIALOGS ===
+    grandma_journal_bonus: {
+        lines: [
+            "You found Madeleine's diary pages! All three from Paris!",
+            "I never knew she kept a diary... this is extraordinary.",
+            "She writes about the Eiffel Tower, the bookshop, even the flower sellers.",
+            "You know, she once told my mother: 'Paris is where every adventure begins.'",
+            "I think she would have loved you, Léa."
+        ],
+        setsFlag: 'paris_bonus_seen'
+    },
+    curator_journal_bonus: {
+        lines: [
+            "Three diary pages from London? This is a major historical find!",
+            "We knew Madeleine donated the Beaumont Collection, but we never knew why.",
+            "These pages reveal she wanted to share her discoveries with the world.",
+            "I shall add these to our archives — with your permission, of course!",
+            "You've done remarkable work, young explorer."
+        ],
+        setsFlag: 'london_bonus_seen'
+    },
+    rossi_journal_bonus: {
+        lines: [
+            "Madeleine's diary entries from Rome! Incredible!",
+            "She writes about the cats leading her to the catacombs!",
+            "And a musician named Giovanni — could that be Enzo's grandfather?",
+            "History is full of these beautiful connections.",
+            "Thank you for bringing these to light, Léa."
+        ],
+        setsFlag: 'rome_bonus_seen'
+    },
+    hassan_journal_bonus: {
+        lines: [
+            "You found all her Marrakech diary pages? Mashallah!",
+            "She writes about the colours, the spices, the stories...",
+            "And the portal stone! My grandmother always said it was magic, but I thought she was just telling tales.",
+            "Madeleine truly loved this city. She was one of us.",
+            "May her memory be a blessing."
+        ],
+        setsFlag: 'marrakech_bonus_seen'
+    },
+    yuki_journal_bonus: {
+        lines: [
+            "All three diary pages from Tokyo... I can feel her spirit in these words.",
+            "She writes about planting the cherry trees together with me... well, with my grandmother.",
+            "The Yuki women have tended this garden for three generations.",
+            "Madeleine's last entry is the most beautiful.",
+            "'The greatest treasure is not what you find — it's what you learn along the way.'",
+            "Wise words. Words to live by."
+        ],
+        setsFlag: 'tokyo_bonus_seen'
     }
 };
