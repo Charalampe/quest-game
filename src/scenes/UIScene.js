@@ -307,6 +307,7 @@ export class UIScene extends Phaser.Scene {
         this.input.keyboard.on('keydown-ENTER', this._onChoiceConfirm);
 
         this.choiceContainer.setVisible(true);
+        this.updateTouchControlVisibility(false);
     }
 
     _selectChoice(index) {

@@ -319,6 +319,9 @@ export class ExploreScene extends Phaser.Scene {
     }
 
     handleInteract() {
+        // Don't handle SPACE if choice menu is open (UIScene handles it)
+        if (this.dialogManager.choiceMode) return;
+
         if (this.dialogActive) {
             this.dialogManager.advance();
             return;
@@ -731,8 +734,9 @@ export class ExploreScene extends Phaser.Scene {
     ringBell(obj) {
         const flags = this.registry.get('flags') || {};
         if (flags.paris_bells_solved) {
+            const bellName = obj.id.replace('bell_', '');
             this.dialogActive = true;
-            this.dialogManager.showMessage(t('ui.bellRing' + obj.id.replace('bell_', '').charAt(0).toUpperCase() + obj.id.replace('bell_', '').slice(1)), () => {
+            this.dialogManager.startDialog('bell_ring_' + bellName, '', () => {
                 this.dialogActive = false;
             });
             return;
