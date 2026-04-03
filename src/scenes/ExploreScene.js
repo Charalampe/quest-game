@@ -665,22 +665,54 @@ export class ExploreScene extends Phaser.Scene {
                 correctOrder: obj.correctOrder
             });
 
-            // Add shimmer visual
-            const color = obj.type === 'bell' ? 0xFFD700 : 0x3498db;
-            const shimmer = this.add.rectangle(worldX, worldY, TILE_W - 4, TILE_H - 4, color, 0.08);
-            shimmer.setDepth(2);
-            this.envObjects.push(shimmer);
-            const tween = this.tweens.add({
-                targets: shimmer,
-                alpha: 0.2,
-                scaleX: 1.15,
-                scaleY: 1.15,
-                duration: 1200,
-                yoyo: true,
-                repeat: -1,
-                ease: 'Sine.easeInOut'
-            });
-            this.envTweens.push(tween);
+            if (obj.type === 'bell') {
+                // Draw visible bell: colored circle with border + label
+                const bellColors = { bell_gold: 0xFFD700, bell_silver: 0xC0C0C0, bell_bronze: 0xCD7F32 };
+                const color = bellColors[obj.id] || 0xFFD700;
+                // Bell base (dark pedestal)
+                const base = this.add.rectangle(worldX, worldY + 6, 20, 10, 0x4a3320);
+                base.setDepth(3);
+                this.envObjects.push(base);
+                // Bell body (colored dome)
+                const bell = this.add.circle(worldX, worldY - 2, 11, color);
+                bell.setDepth(4);
+                this.envObjects.push(bell);
+                // Bell rim
+                const rim = this.add.rectangle(worldX, worldY + 4, 22, 4, color, 0.8);
+                rim.setDepth(4);
+                this.envObjects.push(rim);
+                // Subtle glow pulse
+                const glow = this.add.circle(worldX, worldY - 2, 14, color, 0.15);
+                glow.setDepth(3);
+                this.envObjects.push(glow);
+                const tween = this.tweens.add({
+                    targets: glow,
+                    alpha: 0.35,
+                    scaleX: 1.3,
+                    scaleY: 1.3,
+                    duration: 1500,
+                    yoyo: true,
+                    repeat: -1,
+                    ease: 'Sine.easeInOut'
+                });
+                this.envTweens.push(tween);
+            } else if (obj.type === 'painting') {
+                // Draw visible painting: colored rectangle with frame
+                const paintingColors = [0xc0392b, 0x2980b9, 0x27ae60, 0x8e44ad];
+                const color = paintingColors[obj.correctOrder] || 0x3498db;
+                // Frame (dark border)
+                const frame = this.add.rectangle(worldX, worldY, TILE_W - 2, TILE_H - 2, 0x3d2b1f);
+                frame.setDepth(3);
+                this.envObjects.push(frame);
+                // Canvas
+                const canvas = this.add.rectangle(worldX, worldY, TILE_W - 8, TILE_H - 8, color);
+                canvas.setDepth(4);
+                this.envObjects.push(canvas);
+                // Highlight detail
+                const detail = this.add.rectangle(worldX, worldY - 4, 8, 8, 0xffffff, 0.4);
+                detail.setDepth(4);
+                this.envObjects.push(detail);
+            }
         }
 
         // Initialize painting puzzle state if in London gallery
