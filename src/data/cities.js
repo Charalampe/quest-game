@@ -276,7 +276,7 @@ function generateParis() {
 
     // Signs at key intersections
     decor[13][24] = 22; decor[26][25] = 22;
-    decor[27][3] = 22; // Bell puzzle clue sign near bookshop park
+    decor[20][4] = 22; // Bell puzzle clue sign on bookshop street (visible from main path)
 
     // Flower planters along main streets
     decor[13][8] = 17; decor[13][16] = 17; decor[13][32] = 17; decor[13][40] = 17;
@@ -354,7 +354,7 @@ function generateParis() {
     // Statues: market square, museum row, boulevards, parks
     walls[30][25] = 19; walls[6][36] = 19;
     walls[20][10] = 19; walls[20][40] = 19;
-    walls[28][6] = 19; walls[28][36] = 19;
+    walls[29][6] = 19; walls[28][36] = 19;
     walls[12][20] = 19; walls[12][28] = 19;
 
     // Tree-lined boulevard (row 12 open sidewalk)

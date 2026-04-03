@@ -81,7 +81,7 @@ export default {
         marrakech_sign_23_7: "Merchant of Wonders",
         tokyo_sign_14_5: "Secret Garden - Enter with Care",
         tokyo_shrine_sign_5_4: "'Wisdom completes what patience and courage begin.'",
-        paris_sign_3_27: "The Three Bells of the Bookshop: Ring Gold, then Silver, then Bronze to hear the harmony.",
+        paris_sign_4_20: "The Three Bells: In the park south of the bookshop, ring Gold, then Silver, then Bronze.",
         london_museum_gallery_sign_5_1: "Gallery Catalog: Greek Vase, Egyptian Mask, Roman Coin, Celtic Shield."
     },
     cities: {

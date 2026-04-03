@@ -81,7 +81,7 @@ export default {
         marrakech_sign_23_7: "Marchand de Merveilles",
         tokyo_sign_14_5: "Jardin Secret - Entrez avec précaution",
         tokyo_shrine_sign_5_4: "« La sagesse complète ce que la patience et le courage ont commencé. »",
-        paris_sign_3_27: "Les Trois Cloches de la Librairie : Sonne Or, puis Argent, puis Bronze pour entendre l'harmonie.",
+        paris_sign_4_20: "Les Trois Cloches : Dans le parc au sud de la librairie, sonne Or, puis Argent, puis Bronze.",
         london_museum_gallery_sign_5_1: "Catalogue de la galerie : Vase grec, Masque égyptien, Pièce romaine, Bouclier celte."
     },
     cities: {

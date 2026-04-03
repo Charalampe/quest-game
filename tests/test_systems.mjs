@@ -3543,7 +3543,7 @@ describe('i18n Parity for Phase 2 Content', () => {
     });
 
     it('all new sign IDs have en and fr entries', () => {
-        const newSigns = ['paris_sign_3_27', 'london_museum_gallery_sign_5_1'];
+        const newSigns = ['paris_sign_4_20', 'london_museum_gallery_sign_5_1'];
         const missingEn = newSigns.filter(id => !enStrings.signs?.[id]);
         const missingFr = newSigns.filter(id => !frStrings.signs?.[id]);
         assert.deepEqual(missingEn, [], `Missing en sign entries: ${missingEn.join(', ')}`);
