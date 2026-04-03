@@ -127,6 +127,19 @@ export class UIScene extends Phaser.Scene {
         if (this.cityName) {
             this.showCityName(this.cityName, this.cityDescription);
         }
+
+        // Cleanup on scene shutdown
+        this.events.on('shutdown', () => {
+            if (this._onChoiceUp) {
+                this.input.keyboard.off('keydown-UP', this._onChoiceUp);
+                this.input.keyboard.off('keydown-DOWN', this._onChoiceDown);
+                this.input.keyboard.off('keydown-W', this._onChoiceUp);
+                this.input.keyboard.off('keydown-S', this._onChoiceDown);
+                this.input.keyboard.off('keydown-SPACE', this._onChoiceConfirm);
+                this.input.keyboard.off('keydown-ENTER', this._onChoiceConfirm);
+            }
+            this.npcLabelPool = [];
+        });
     }
 
     // === CITY NAME DISPLAY ===
@@ -203,6 +216,18 @@ export class UIScene extends Phaser.Scene {
     hideDialog() {
         this.dialogContainer.setVisible(false);
         this.choiceContainer.setVisible(false);
+        // Clean up choice keyboard listeners if still active
+        if (this._onChoiceUp) {
+            this.input.keyboard.off('keydown-UP', this._onChoiceUp);
+            this.input.keyboard.off('keydown-DOWN', this._onChoiceDown);
+            this.input.keyboard.off('keydown-W', this._onChoiceUp);
+            this.input.keyboard.off('keydown-S', this._onChoiceDown);
+            this.input.keyboard.off('keydown-SPACE', this._onChoiceConfirm);
+            this.input.keyboard.off('keydown-ENTER', this._onChoiceConfirm);
+            this._onChoiceUp = null;
+            this._onChoiceDown = null;
+            this._onChoiceConfirm = null;
+        }
         this.updateTouchControlVisibility(true);
     }
 
@@ -212,38 +237,49 @@ export class UIScene extends Phaser.Scene {
 
         const { width, height } = this.cameras.main;
 
-        // Background
-        const bgH = 60 + choices.length * 48;
-        const bg = this.add.rectangle(width / 2, height / 2, 600, bgH, 0x1a1a2e, 0.95);
+        // Background — styled like dialog box
+        const promptH = prompt ? 36 : 0;
+        const bgH = 36 + promptH + choices.length * 48;
+        const bgY = height - 96 - bgH / 2 - 10; // above dialog box area
+        const bg = this.add.rectangle(width / 2, bgY, width - 48, bgH, 0x1a1a2e, 0.95);
         bg.setStrokeStyle(2, 0x8866cc);
         this.choiceContainer.add(bg);
 
-        // Prompt
-        const promptText = this.add.text(width / 2, height / 2 - bgH / 2 + 24, prompt, {
-            fontSize: '21px', fontFamily: 'monospace', color: '#ccaaff',
-            wordWrap: { width: 540 }
-        }).setOrigin(0.5, 0);
-        this.choiceContainer.add(promptText);
+        const innerBorder = this.add.rectangle(width / 2, bgY, width - 60, bgH - 12, 0x000000, 0);
+        innerBorder.setStrokeStyle(1, 0x4a3388);
+        this.choiceContainer.add(innerBorder);
+
+        // Prompt (if any)
+        if (prompt) {
+            const promptText = this.add.text(width / 2, bgY - bgH / 2 + 24, prompt, {
+                fontSize: '21px', fontFamily: 'monospace', color: '#f1c40f',
+                wordWrap: { width: width - 120 }
+            }).setOrigin(0.5, 0);
+            this.choiceContainer.add(promptText);
+        }
 
         // Choice buttons
-        const startY = height / 2 - bgH / 2 + 78;
+        const startY = bgY - bgH / 2 + (prompt ? 60 : 24);
+        this._choiceSelectedIndex = 0;
+        this._choiceCallback = callback;
+        this._choiceValues = choices.map(c => c.value);
+
         choices.forEach((choice, i) => {
-            const btnBg = this.add.rectangle(width / 2, startY + i * 48, 540, 42, 0x2d1b69)
+            const btnBg = this.add.rectangle(width / 2, startY + i * 48, width - 96, 42,
+                i === 0 ? 0x4a2d8e : 0x2d1b69)
                 .setInteractive({ useHandCursor: true });
-            const btnText = this.add.text(width / 2, startY + i * 48, choice.text, {
-                fontSize: '21px', fontFamily: 'monospace', color: '#ccaaff'
-            }).setOrigin(0.5);
+            const indicator = i === 0 ? '\u25B6 ' : '  ';
+            const btnText = this.add.text(60, startY + i * 48, indicator + choice.text, {
+                fontSize: '21px', fontFamily: 'monospace',
+                color: i === 0 ? '#ffffff' : '#ccaaff',
+                wordWrap: { width: width - 144 }
+            }).setOrigin(0, 0.5);
 
             btnBg.on('pointerover', () => {
-                btnBg.setFillStyle(0x4a2d8e);
-                btnText.setColor('#ffffff');
-            });
-            btnBg.on('pointerout', () => {
-                btnBg.setFillStyle(0x2d1b69);
-                btnText.setColor('#ccaaff');
+                this._selectChoice(i);
             });
             btnBg.on('pointerdown', () => {
-                callback(choice.value);
+                this._confirmChoice();
             });
 
             this.choiceContainer.add(btnBg);
@@ -251,7 +287,57 @@ export class UIScene extends Phaser.Scene {
             this.choiceButtons.push({ bg: btnBg, text: btnText });
         });
 
+        // Keyboard navigation
+        this._onChoiceUp = () => {
+            const newIdx = (this._choiceSelectedIndex - 1 + this.choiceButtons.length) % this.choiceButtons.length;
+            this._selectChoice(newIdx);
+        };
+        this._onChoiceDown = () => {
+            const newIdx = (this._choiceSelectedIndex + 1) % this.choiceButtons.length;
+            this._selectChoice(newIdx);
+        };
+        this._onChoiceConfirm = () => {
+            this._confirmChoice();
+        };
+        this.input.keyboard.on('keydown-UP', this._onChoiceUp);
+        this.input.keyboard.on('keydown-DOWN', this._onChoiceDown);
+        this.input.keyboard.on('keydown-W', this._onChoiceUp);
+        this.input.keyboard.on('keydown-S', this._onChoiceDown);
+        this.input.keyboard.on('keydown-SPACE', this._onChoiceConfirm);
+        this.input.keyboard.on('keydown-ENTER', this._onChoiceConfirm);
+
         this.choiceContainer.setVisible(true);
+    }
+
+    _selectChoice(index) {
+        this._choiceSelectedIndex = index;
+        this.choiceButtons.forEach((btn, i) => {
+            const selected = i === index;
+            btn.bg.setFillStyle(selected ? 0x4a2d8e : 0x2d1b69);
+            const choice = btn.text.text.substring(2); // strip old indicator
+            btn.text.setText((selected ? '\u25B6 ' : '  ') + choice);
+            btn.text.setColor(selected ? '#ffffff' : '#ccaaff');
+        });
+    }
+
+    _confirmChoice() {
+        // Clean up keyboard listeners
+        this.input.keyboard.off('keydown-UP', this._onChoiceUp);
+        this.input.keyboard.off('keydown-DOWN', this._onChoiceDown);
+        this.input.keyboard.off('keydown-W', this._onChoiceUp);
+        this.input.keyboard.off('keydown-S', this._onChoiceDown);
+        this.input.keyboard.off('keydown-SPACE', this._onChoiceConfirm);
+        this.input.keyboard.off('keydown-ENTER', this._onChoiceConfirm);
+        this._onChoiceUp = null;
+        this._onChoiceDown = null;
+        this._onChoiceConfirm = null;
+
+        const value = this._choiceValues[this._choiceSelectedIndex];
+        const cb = this._choiceCallback;
+        this._choiceCallback = null;
+        this._choiceValues = null;
+        this._choiceSelectedIndex = 0;
+        if (cb) cb(value);
     }
 
     // === INVENTORY ===

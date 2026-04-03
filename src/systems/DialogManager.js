@@ -24,7 +24,7 @@ export class DialogManager {
         // Check if this dialog has a branching choice version
         const choiceDialog = DIALOG_CHOICES[dialogId];
         if (choiceDialog) {
-            this._startChoiceDialog(choiceDialog, speakerName, callback);
+            this._startChoiceDialog(choiceDialog, dialogId, speakerName, callback);
             return;
         }
 
@@ -47,28 +47,30 @@ export class DialogManager {
         this.showLine();
     }
 
-    _startChoiceDialog(choiceDialog, speakerName, callback) {
+    _startChoiceDialog(choiceDialog, dialogId, speakerName, callback) {
         this.active = true;
         this.speakerName = speakerName;
 
-        // Show preamble lines first, then present choices
-        const preamble = choiceDialog.preamble || [];
+        // Try to get localized preamble/choices/responses
+        const localizedLines = getDialogueLines(dialogId);
+        const preamble = localizedLines?.preamble || choiceDialog.preamble || [];
+        const localizedChoices = localizedLines?.choices || null;
+
         if (preamble.length > 0) {
             this.currentDialog = { lines: preamble };
             this.currentLine = 0;
             this.callback = () => {
-                // After preamble, show choices
-                this._presentDialogChoices(choiceDialog, speakerName, callback);
+                this._presentDialogChoices(choiceDialog, localizedChoices, speakerName, callback);
             };
             this.showLine();
         } else {
-            this._presentDialogChoices(choiceDialog, speakerName, callback);
+            this._presentDialogChoices(choiceDialog, localizedChoices, speakerName, callback);
         }
     }
 
-    _presentDialogChoices(choiceDialog, speakerName, originalCallback) {
+    _presentDialogChoices(choiceDialog, localizedChoices, speakerName, originalCallback) {
         const choices = choiceDialog.choices.map((c, i) => ({
-            text: c.text,
+            text: localizedChoices?.[i]?.text || c.text,
             value: i
         }));
 
@@ -85,8 +87,8 @@ export class DialogManager {
                     this.scene.registry.set('flags', flags);
                 }
 
-                // Show the response lines, then apply shared rewards
-                const responseLines = chosen.response || [];
+                // Show the response lines (localized if available), then apply shared rewards
+                const responseLines = localizedChoices?.[choiceIndex]?.response || chosen.response || [];
                 if (responseLines.length > 0) {
                     // Create a synthetic dialog with shared + choice-level rewards
                     this.active = true;

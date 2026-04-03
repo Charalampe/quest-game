@@ -894,6 +894,92 @@ export default {
             "Comme promis, voici un ancien parchemin d'histoire.",
             "Il raconte l'histoire d'une princesse marchande qui a parcouru la Route de la Soie.",
             "Porte-le à Karim — il en cherchait un comme celui-ci."
-        ]
+        ],
+
+        // === CHOICE DIALOG LOCALIZATIONS ===
+        pierre_has_brush_choice: {
+            preamble: [
+                "Mon pinceau ! Tu l'as retrouv\u00E9 ! Merci beaucoup !",
+                "Mais dis-moi \u2014 comment tu l'as trouv\u00E9 ?"
+            ],
+            choices: [
+                { text: "Colette au stand de fleurs l'avait !", response: ["Ah, Colette ! Elle veille toujours sur moi.", "Tu sais, une fois elle a retrouv\u00E9 tout mon set de peinture dans ses tulipes !", "Comme promis, voici un coupe-file pour la Tour Eiffel.", "Et un petit secret \u2014 dis \u00E0 la photographe Marie que c'est moi qui t'envoie. Elle conna\u00EEt les meilleures vues !"] },
+                { text: "Je suis tomb\u00E9e dessus par hasard.", response: ["Ha ! Parfois les meilleures d\u00E9couvertes sont des accidents !", "C'est ce que Madeleine disait toujours, tu sais.", "Comme promis, voici un coupe-file pour la Tour Eiffel.", "Montre-le \u00E0 l'employ\u00E9e \u00E0 l'entr\u00E9e de la tour."] },
+                { text: "Un petit oiseau m'a dit o\u00F9 chercher !", response: ["Ha ha ! Un petit oiseau ? \u00C0 Paris, m\u00EAme les pigeons sont serviables !", "Tu me rappelles quelqu'un... une exploratrice venue ici il y a longtemps.", "Comme promis, voici un coupe-file pour la Tour Eiffel.", "Bonne chance l\u00E0-haut \u2014 j'ai le sentiment que tu vas trouver quelque chose de sp\u00E9cial !"] }
+            ]
+        },
+        thomas_intro_choice: {
+            preamble: [
+                "H\u00E9 ! Je suis en voyage scolaire. Ce mus\u00E9e est \u00C9NORME !",
+                "J'ai trouv\u00E9 ces dr\u00F4les de lunettes sur un banc. Elles ont l'air vieilles.",
+                "Je crois qu'elles appartiennent \u00E0 ce professeur... mais j'ai peur de les rendre.",
+                "Qu'est-ce que je devrais faire ?"
+            ],
+            choices: [
+                { text: "T'inqui\u00E8te pas, tu as bien fait !", response: ["Tu crois ? Merci ! \u00C7a me rassure.", "Tiens, tu peux les rendre pour moi. Dis au professeur que c'est Thomas qui les a trouv\u00E9es !", "Je veux devenir arch\u00E9ologue quand je serai grand.", "Trouver des trucs, c'est notre m\u00E9tier, non ?"] },
+                { text: "Le Professeur Higgins en a vraiment besoin.", response: ["Ouais, t'as raison. Il plisse les yeux sur tout depuis ce matin !", "Tiens, prends-les. Je ne veux pas avoir d'ennuis.", "Bonne chance pour ton aventure \u2014 je vois bien que tu cherches quelque chose !"] },
+                { text: "Tu pourrais les garder en souvenir...", response: ["Ha ! Tentant, mais... non, ce ne serait pas bien.", "Ma ma\u00EEtresse dit que \u00AB qui trouve garde \u00BB, c'est pas comme \u00E7a que font les vrais explorateurs.", "Tiens, apporte-les au professeur. Moi, j'ai des momies \u00E0 regarder !"] }
+            ]
+        },
+        hassan_with_locket_choice: {
+            preamble: [
+                "Attends... ce symbole sur ton m\u00E9daillon...",
+                "Je l'ai d\u00E9j\u00E0 vu ! Ma grand-m\u00E8re me l'a montr\u00E9.",
+                "Une femme est venue ici il y a de nombreuses ann\u00E9es. Madeleine, elle s'appelait.",
+                "Elle a laiss\u00E9 quelque chose \u00E0 ma famille pour le garder en s\u00E9curit\u00E9.",
+                "Que voudrais-tu savoir ?"
+            ],
+            choices: [
+                { text: "Comment \u00E9tait Madeleine ?", response: ["Ma grand-m\u00E8re disait qu'elle \u00E9tait intrépide ! Elle est arriv\u00E9e seule, parlant un arabe parfait.", "Elle a bu du th\u00E9 \u00E0 la menthe avec nous pendant trois jours, racontant des histoires de Paris et Londres.", "Elle riait beaucoup. Grand-m\u00E8re disait que son rire pouvait remplir tout le souk !", "Tiens \u2014 c'est le journal qu'elle a laiss\u00E9. \u00C0 l'int\u00E9rieur, il y a un dessin d'une oasis dans le d\u00E9sert.", "On dit qu'une guide nomm\u00E9e Nadia sait o\u00F9 elle se trouve.", "Mais elle a perdu l'amulette de sa grand-m\u00E8re. Peut-\u00EAtre que tu peux l'aider ?"] },
+                { text: "Qu'est-ce qu'elle vous a laiss\u00E9 ?", response: ["Un journal ! Ma famille le garde depuis pr\u00E8s de 100 ans.", "Nous avions promis \u00E0 Madeleine de ne le donner qu'\u00E0 quelqu'un portant le m\u00E9daillon.", "Et te voil\u00E0 ! Elle devait savoir que quelqu'un viendrait.", "\u00C0 l'int\u00E9rieur, il y a un \u00E9trange dessin d'une oasis dans le d\u00E9sert...", "On dit qu'une guide nomm\u00E9e Nadia sait o\u00F9 elle se trouve.", "Mais elle a perdu l'amulette de sa grand-m\u00E8re. Peut-\u00EAtre que tu peux l'aider ?"] },
+                { text: "Pourquoi est-elle venue \u00E0 Marrakech ?", response: ["Elle suivait une carte \u2014 des morceaux \u00E9parpill\u00E9s \u00E0 travers le monde.", "Mais je crois qu'elle est aussi venue pour les histoires. Marrakech est une ville d'histoires.", "Chaque carreau, chaque \u00E9pice, chaque tapis a une histoire \u00E0 raconter.", "Elle a laiss\u00E9 ce journal. \u00C0 l'int\u00E9rieur, il y a un dessin d'une oasis dans le d\u00E9sert...", "On dit qu'une guide nomm\u00E9e Nadia sait o\u00F9 elle se trouve.", "Mais elle a perdu l'amulette de sa grand-m\u00E8re. Peut-\u00EAtre que tu peux l'aider ?"] }
+            ]
+        },
+        tanaka_riddle_choice: {
+            preamble: [
+                "\u00AB Patience, Courage et Sagesse. \u00BB",
+                "Tu connais les trois v\u00E9rit\u00E9s ! Mais voici l'\u00E9preuve finale.",
+                "Quel est le sens de ces trois v\u00E9rit\u00E9s r\u00E9unies ?"
+            ],
+            choices: [
+                { text: "Comprendre les autres est la plus grande force.", response: ["Oui ! C'est la r\u00E9ponse que Madeleine elle-m\u00EAme a donn\u00E9e !", "La patience pour \u00E9couter. Le courage pour tendre la main. La sagesse pour comprendre.", "La porte scell\u00E9e est maintenant ouverte. Tu peux entrer dans la for\u00EAt de bambous.", "Fais attention \u2014 la for\u00EAt est enchant\u00E9e. Suis le renard si tu te perds."] },
+                { text: "Elles font de toi un grand guerrier.", response: ["Hmm... un guerrier en a besoin, oui. Mais ce n'est pas le sens le plus profond.", "R\u00E9fl\u00E9chis \u00E0 ce qui relie la patience, le courage et la sagesse...", "Reviens quand tu auras m\u00E9dit\u00E9 plus profond\u00E9ment."] },
+                { text: "Elles aident \u00E0 trouver un tr\u00E9sor.", response: ["Un tr\u00E9sor ? Peut-\u00EAtre... mais pas celui auquel tu penses !", "Le vrai tr\u00E9sor, ce n'est ni l'or ni les bijoux. Pense aux gens.", "Reviens quand tu auras une autre r\u00E9ponse."] }
+            ]
+        },
+        tanaka_riddle_hint1: {
+            preamble: [
+                "Tu es revenue. Les trois v\u00E9rit\u00E9s attendent toujours ta r\u00E9ponse.",
+                "Souviens-toi : patience, courage et sagesse cr\u00E9ent ensemble quelque chose de plus grand.",
+                "Qu'est-ce que c'est ?"
+            ],
+            choices: [
+                { text: "Comprendre les autres est la plus grande force.", response: ["Oui ! Maintenant tu vois !", "La patience pour \u00E9couter. Le courage pour tendre la main. La sagesse pour comprendre.", "La porte scell\u00E9e est maintenant ouverte. Tu peux entrer dans la for\u00EAt de bambous.", "Fais attention \u2014 la for\u00EAt est enchant\u00E9e. Suis le renard si tu te perds."] },
+                { text: "Elles te rendent puissant.", response: ["La puissance seule n'est pas la r\u00E9ponse...", "Pense \u00E0 comment la patience, le courage et la sagesse t'aident \u00E0 te connecter aux autres.", "Reviens quand tu seras pr\u00EAte."] }
+            ]
+        },
+        tanaka_riddle_hint2: {
+            preamble: [
+                "Bon retour. Essayons encore.",
+                "Le tr\u00E9sor que Madeleine cherchait n'\u00E9tait pas mat\u00E9riel.",
+                "Que d\u00E9verrouillent vraiment la patience, le courage et la sagesse ?"
+            ],
+            choices: [
+                { text: "Comprendre les autres est la plus grande force.", response: ["Oui ! C'est la r\u00E9ponse !", "La patience pour \u00E9couter. Le courage pour tendre la main. La sagesse pour comprendre.", "La porte scell\u00E9e est maintenant ouverte. Tu peux entrer dans la for\u00EAt de bambous.", "Fais attention \u2014 la for\u00EAt est enchant\u00E9e. Suis le renard si tu te perds."] },
+                { text: "Elles d\u00E9verrouillent d'anciens secrets.", response: ["Pas tout \u00E0 fait... Pense aux gens, pas aux secrets.", "Madeleine a voyag\u00E9 \u00E0 travers le monde non pour un tr\u00E9sor, mais pour les liens.", "Reviens quand tu comprendras."] }
+            ]
+        },
+        marco_torch_choice: {
+            preamble: [
+                "Les tunnels se s\u00E9parent en trois chemins ici.",
+                "Chacun est marqu\u00E9 par des torches diff\u00E9rentes.",
+                "Quel chemin devrais-je te recommander ?"
+            ],
+            choices: [
+                { text: "Suivre les torches allum\u00E9es \u00E0 gauche.", response: ["Le chemin de gauche ! Oui, ces torches br\u00FBlent d'une flamme ancienne.", "Elles sont allum\u00E9es depuis l'\u00E9poque romaine \u2014 du moins c'est ce que dit la l\u00E9gende.", "Je les ai suivies une fois et j'ai trouv\u00E9 une salle incroyable en dessous !", "Vas-y \u2014 les catacombes inf\u00E9rieures t'attendent !"] },
+                { text: "Prendre le passage sombre du milieu.", response: ["Le passage du milieu ? J'ai essay\u00E9 une fois...", "J'ai march\u00E9 dix minutes et je me suis retrouv\u00E9 ici m\u00EAme !", "Les Romains ont construit ces tunnels comme un labyrinthe. Les chemins non \u00E9clair\u00E9s font des boucles.", "Essaie un chemin avec des torches \u2014 la lumi\u00E8re montre le chemin."] },
+                { text: "Suivre les torches vacillantes \u00E0 droite.", response: ["Le chemin de droite... ces torches vacillent \u00E0 cause d'un courant d'air.", "Il m\u00E8ne \u00E0 un cul-de-sac pr\u00E8s du vieux puits de ventilation.", "Les flammes stables sont celles que les anciens ont plac\u00E9es comme guides.", "Cherche les torches qui br\u00FBlent r\u00E9guli\u00E8rement \u2014 elles marquent le vrai chemin."] }
+            ]
+        }
     }
 };

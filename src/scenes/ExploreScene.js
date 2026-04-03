@@ -770,8 +770,7 @@ export class ExploreScene extends Phaser.Scene {
 
     interactPainting(obj) {
         const flags = this.registry.get('flags') || {};
-        if (flags.london_paintings_solved) return;
-        if (!this.paintingOrder) return;
+        if (flags.london_paintings_solved || !this.paintingOrder) return;
 
         if (this.selectedPainting === null) {
             // Select first painting
@@ -1252,6 +1251,9 @@ export class ExploreScene extends Phaser.Scene {
                     this.cutsceneWalkTimer.remove();
                     this.cutsceneWalkTimer = null;
                 }
+                // Final body sync at resting position
+                grandma.body.reset(grandma.x, grandma.y);
+                grandma.updateIndicatorPosition();
                 // Set idle right-facing frame (grandma faces player)
                 grandma.setFrame(8);
                 grandma.cutsceneWalking = false;
