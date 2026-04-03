@@ -3,6 +3,8 @@ import { NPC } from '../entities/NPC.js';
 import { CITIES, ROOM_TRANSITIONS } from '../data/cities.js';
 import { NPC_DATA } from '../data/npcs.js';
 import { JOURNAL_PAGES } from '../data/journalPages.js';
+import { PUZZLE_OBJECTS, PUZZLES } from '../data/puzzles.js';
+import { HIDDEN_ITEMS } from '../data/sideQuests.js';
 import { DialogManager } from '../systems/DialogManager.js';
 import { QuestManager } from '../systems/QuestManager.js';
 import { InventoryManager } from '../systems/InventoryManager.js';
@@ -22,6 +24,9 @@ export class ExploreScene extends Phaser.Scene {
         this.dialogActive = false;
         this.menuOpen = false;
         this.exitTriggered = false;
+        this.bellSequence = [];
+        this.selectedPainting = null;
+        this.paintingOrder = null;
     }
 
     getRoomData() {
@@ -92,6 +97,12 @@ export class ExploreScene extends Phaser.Scene {
 
         // Create journal page collectibles
         this.createJournalPages();
+
+        // Create puzzle objects (bells, paintings)
+        this.createPuzzleObjects();
+
+        // Create hidden items (whistle, music sheets, cat)
+        this.createHiddenItems();
 
         // Input for interaction (store refs for cleanup)
         this._onSpace = () => this.handleInteract();
@@ -362,6 +373,15 @@ export class ExploreScene extends Phaser.Scene {
             case 'journal_page':
                 this.collectJournalPage(obj);
                 break;
+            case 'bell':
+                this.ringBell(obj);
+                break;
+            case 'painting':
+                this.interactPainting(obj);
+                break;
+            case 'hidden_item':
+                this.collectHiddenItem(obj);
+                break;
         }
     }
 
@@ -613,6 +633,210 @@ export class ExploreScene extends Phaser.Scene {
             }
 
             // Save progress
+            SaveManager.save(this.registry);
+        });
+    }
+
+    createPuzzleObjects() {
+        const cityPuzzles = PUZZLE_OBJECTS[this.cityId] || [];
+        const flags = this.registry.get('flags') || {};
+
+        for (const obj of cityPuzzles) {
+            if (obj.room !== this.roomId) continue;
+
+            // Skip if puzzle already solved
+            const puzzle = Object.values(PUZZLES).find(p => p.city === this.cityId && p.room === this.roomId && p.type === (obj.type === 'bell' ? 'bell_sequence' : 'painting_swap'));
+            if (puzzle && flags[puzzle.completionFlag]) continue;
+
+            const worldX = obj.x * TILE_W + TILE_W / 2;
+            const worldY = obj.y * TILE_H + TILE_H / 2;
+
+            this.interactables.push({
+                type: obj.type,
+                x: worldX,
+                y: worldY,
+                tileX: obj.x,
+                tileY: obj.y,
+                id: obj.id,
+                label: obj.label,
+                correctOrder: obj.correctOrder
+            });
+
+            // Add shimmer visual
+            const color = obj.type === 'bell' ? 0xFFD700 : 0x3498db;
+            const shimmer = this.add.rectangle(worldX, worldY, TILE_W - 4, TILE_H - 4, color, 0.08);
+            shimmer.setDepth(2);
+            this.envObjects.push(shimmer);
+            const tween = this.tweens.add({
+                targets: shimmer,
+                alpha: 0.2,
+                scaleX: 1.15,
+                scaleY: 1.15,
+                duration: 1200,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut'
+            });
+            this.envTweens.push(tween);
+        }
+
+        // Initialize painting puzzle state if in London gallery
+        if (this.cityId === 'london' && this.roomId === 'museum_gallery') {
+            const puzzle = PUZZLES.london_paintings;
+            if (puzzle && !flags[puzzle.completionFlag]) {
+                this.paintingOrder = [...puzzle.initialOrder];
+            }
+        }
+    }
+
+    createHiddenItems() {
+        const flags = this.registry.get('flags') || {};
+
+        for (const item of HIDDEN_ITEMS) {
+            if (item.city !== this.cityId || item.room !== this.roomId) continue;
+            if (flags[item.setsFlag]) continue; // already collected
+            if (item.requiresFlag && !flags[item.requiresFlag]) continue; // not yet available
+
+            const worldX = item.x * TILE_W + TILE_W / 2;
+            const worldY = item.y * TILE_H + TILE_H / 2;
+
+            this.interactables.push({
+                type: 'hidden_item',
+                x: worldX,
+                y: worldY,
+                tileX: item.x,
+                tileY: item.y,
+                id: item.id,
+                itemData: item
+            });
+
+            // Add shimmer visual (green for hidden items)
+            const shimmer = this.add.rectangle(worldX, worldY, TILE_W - 4, TILE_H - 4, 0x2ecc71, 0.08);
+            shimmer.setDepth(2);
+            this.envObjects.push(shimmer);
+            const tween = this.tweens.add({
+                targets: shimmer,
+                alpha: 0.25,
+                scaleX: 1.2,
+                scaleY: 1.2,
+                duration: 1000,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut'
+            });
+            this.envTweens.push(tween);
+        }
+    }
+
+    ringBell(obj) {
+        const flags = this.registry.get('flags') || {};
+        if (flags.paris_bells_solved) {
+            this.dialogActive = true;
+            this.dialogManager.showMessage(t('ui.bellRing' + obj.id.replace('bell_', '').charAt(0).toUpperCase() + obj.id.replace('bell_', '').slice(1)), () => {
+                this.dialogActive = false;
+            });
+            return;
+        }
+
+        // Show ring feedback
+        const bellName = obj.id.replace('bell_', '');
+        const bellKey = 'bell_ring_' + bellName;
+        this.bellSequence.push(obj.id);
+
+        this.dialogActive = true;
+        this.dialogManager.startDialog(bellKey, '', () => {
+            this.dialogActive = false;
+
+            // Check sequence when 3 bells rung
+            if (this.bellSequence.length >= 3) {
+                const puzzle = PUZZLES.paris_bells;
+                const correct = puzzle.correctSequence.every((id, i) => this.bellSequence[i] === id);
+
+                this.dialogActive = true;
+                if (correct) {
+                    this.dialogManager.startDialog('bells_correct', '', () => {
+                        this.dialogActive = false;
+                        SaveManager.save(this.registry);
+                    });
+                } else {
+                    this.dialogManager.startDialog('bells_wrong', '', () => {
+                        this.dialogActive = false;
+                    });
+                }
+                this.bellSequence = [];
+            }
+        });
+    }
+
+    interactPainting(obj) {
+        const flags = this.registry.get('flags') || {};
+        if (flags.london_paintings_solved) return;
+        if (!this.paintingOrder) return;
+
+        if (this.selectedPainting === null) {
+            // Select first painting
+            this.selectedPainting = obj.id;
+            this.dialogActive = true;
+            this.dialogManager.startDialog('painting_select', '', () => {
+                this.dialogActive = false;
+            });
+        } else if (this.selectedPainting === obj.id) {
+            // Deselect
+            this.selectedPainting = null;
+        } else {
+            // Swap the two paintings
+            const idx1 = this.paintingOrder.indexOf(this.selectedPainting);
+            const idx2 = this.paintingOrder.indexOf(obj.id);
+            if (idx1 >= 0 && idx2 >= 0) {
+                [this.paintingOrder[idx1], this.paintingOrder[idx2]] = [this.paintingOrder[idx2], this.paintingOrder[idx1]];
+            }
+            this.selectedPainting = null;
+
+            // Check if correct
+            const puzzle = PUZZLES.london_paintings;
+            const correct = puzzle.correctOrder.every((id, i) => this.paintingOrder[i] === id);
+
+            this.dialogActive = true;
+            if (correct) {
+                this.dialogManager.startDialog('paintings_correct', '', () => {
+                    this.dialogActive = false;
+                    SaveManager.save(this.registry);
+                });
+            } else {
+                this.dialogManager.startDialog('paintings_wrong', '', () => {
+                    this.dialogActive = false;
+                });
+            }
+        }
+    }
+
+    collectHiddenItem(obj) {
+        const item = obj.itemData;
+        const flags = this.registry.get('flags') || {};
+
+        if (flags[item.setsFlag]) {
+            this.dialogActive = true;
+            this.dialogManager.showMessage(t('ui.chestEmpty'), () => {
+                this.dialogActive = false;
+            });
+            return;
+        }
+
+        // Set flag and give item
+        flags[item.setsFlag] = true;
+        this.registry.set('flags', flags);
+        this.inventoryManager.addItem(item.item);
+
+        // Remove from interactables
+        const idx = this.interactables.indexOf(obj);
+        if (idx >= 0) this.interactables.splice(idx, 1);
+
+        // Show notification
+        const itemText = getItemText(item.item.id);
+        const localName = itemText ? itemText.name : item.item.name;
+        this.dialogActive = true;
+        this.dialogManager.showMessage(t('ui.hiddenItemCollected', { name: localName }), () => {
+            this.dialogActive = false;
             SaveManager.save(this.registry);
         });
     }

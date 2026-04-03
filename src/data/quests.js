@@ -34,6 +34,7 @@ export const NPC_DIALOG_ROUTES = {
         { dialog: 'grandma_after_locket', condition: (flags) => flags.quest_started }
     ],
     paris_librarian: [
+        { dialog: 'librarian_side_flower', condition: (flags) => flags.side_paris_flowers_started && !flags.side_flower_librarian },
         { dialog: 'librarian_with_letter', condition: (flags) => flags.paris_has_eiffel_letter && !flags.paris_complete },
         { dialog: 'librarian_after_quest', condition: (flags) => flags.paris_complete },
         { dialog: 'librarian_progress', condition: (flags) => flags.quest_started && flags.paris_has_paintbrush },
@@ -41,6 +42,7 @@ export const NPC_DIALOG_ROUTES = {
         { dialog: 'librarian_intro', condition: () => true }
     ],
     paris_guide: [
+        { dialog: 'sophie_side_flower', condition: (flags) => flags.side_paris_flowers_started && !flags.side_flower_sophie },
         { dialog: 'sophie_after_quest', condition: (flags) => flags.quest_started },
         { dialog: 'sophie_intro', condition: () => true }
     ],
@@ -51,6 +53,8 @@ export const NPC_DIALOG_ROUTES = {
         { dialog: 'pierre_intro', condition: () => true }
     ],
     paris_florist: [
+        { dialog: 'colette_side_complete', condition: (flags) => flags.side_paris_flowers_started && !flags.side_paris_flowers_complete && flags.side_flower_sophie && flags.side_flower_marie && flags.side_flower_librarian },
+        { dialog: 'colette_side_start', condition: (flags) => flags.paris_has_paintbrush && !flags.side_paris_flowers_started },
         { dialog: 'colette_intro', condition: (flags) => flags.quest_started && !flags.paris_has_paintbrush },
         { dialog: 'colette_after', condition: (flags) => flags.paris_has_paintbrush },
         { dialog: 'colette_after', condition: () => true }
@@ -74,6 +78,7 @@ export const NPC_DIALOG_ROUTES = {
         { dialog: 'attendant_intro', condition: () => true }
     ],
     paris_photographer: [
+        { dialog: 'marie_side_flower', condition: (flags) => flags.side_paris_flowers_started && !flags.side_flower_marie },
         { dialog: 'marie_intro', condition: () => true }
     ],
 
@@ -91,6 +96,9 @@ export const NPC_DIALOG_ROUTES = {
         { dialog: 'emma_intro', condition: () => true }
     ],
     london_bobby: [
+        { dialog: 'bobby_side_return', condition: (flags) => flags.side_has_whistle && !flags.side_london_whistle_complete },
+        { dialog: 'bobby_madeleine_story', condition: (flags) => flags.side_london_whistle_complete },
+        { dialog: 'bobby_side_start', condition: (flags) => flags.london_met_curator && !flags.side_london_whistle_started },
         { dialog: 'bobby_intro', condition: () => true }
     ],
     london_tea_lady: [
@@ -117,15 +125,20 @@ export const NPC_DIALOG_ROUTES = {
         { dialog: 'rossi_intro', condition: () => true }
     ],
     rome_artist: [
+        { dialog: 'marco_torch_choice', condition: (flags) => flags.rome_have_key && !flags.rome_torch_solved },
         { dialog: 'marco_intro', condition: () => true }
     ],
     rome_girl: [
+        { dialog: 'giulia_side_sheet', condition: (flags) => flags.side_rome_music_started && !flags.side_has_sheet_3 },
         { dialog: 'giulia_intro', condition: () => true }
     ],
     rome_gelato: [
         { dialog: 'lorenzo_intro', condition: () => true }
     ],
     rome_musician: [
+        { dialog: 'enzo_side_return', condition: (flags) => flags.side_rome_music_started && flags.side_has_sheet_1 && flags.side_has_sheet_2 && flags.side_has_sheet_3 && !flags.side_rome_music_complete },
+        { dialog: 'enzo_plays_song', condition: (flags) => flags.side_rome_music_complete },
+        { dialog: 'enzo_side_start', condition: (flags) => flags.rome_have_key && !flags.side_rome_music_started },
         { dialog: 'enzo_intro', condition: () => true }
     ],
     rome_tour_guide: [
@@ -142,24 +155,37 @@ export const NPC_DIALOG_ROUTES = {
         { dialog: 'hassan_intro', condition: () => true }
     ],
     marrakech_storyteller: [
+        { dialog: 'fatima_side_complete', condition: (flags) => flags.side_marrakech_stories_started && !flags.side_marrakech_stories_complete && flags.side_story_amina && flags.side_story_karim && flags.side_story_zahra },
+        { dialog: 'fatima_madeleine_tale', condition: (flags) => flags.side_marrakech_stories_complete },
+        { dialog: 'fatima_side_start', condition: (flags) => flags.marrakech_has_journal && !flags.side_marrakech_stories_started },
         { dialog: 'fatima_after_amulet', condition: (flags) => flags.marrakech_has_amulet && !flags.marrakech_met_nadia },
         { dialog: 'fatima_intro', condition: () => true }
     ],
     marrakech_girl: [
+        { dialog: 'amina_side_story', condition: (flags) => flags.side_marrakech_stories_started && !flags.side_story_amina },
         { dialog: 'amina_intro', condition: () => true }
     ],
     marrakech_spice: [
+        { dialog: 'karim_trade', condition: (flags) => flags.marrakech_karim_wants_scroll && flags.marrakech_has_scroll && !flags.marrakech_trading_complete },
+        { dialog: 'karim_wants_scroll', condition: (flags) => flags.marrakech_has_journal && !flags.marrakech_has_spice && !flags.marrakech_karim_wants_scroll },
+        { dialog: 'karim_gives_spice', condition: (flags) => flags.marrakech_karim_wants_scroll && !flags.marrakech_has_spice },
+        { dialog: 'karim_side_story', condition: (flags) => flags.side_marrakech_stories_started && !flags.side_story_karim },
         { dialog: 'karim_intro', condition: () => true }
     ],
     marrakech_youssef: [
+        { dialog: 'youssef_trade', condition: (flags) => flags.marrakech_youssef_wants_carpet && flags.marrakech_has_carpet && !flags.marrakech_has_scroll },
+        { dialog: 'youssef_wants_carpet', condition: (flags) => flags.marrakech_has_spice && !flags.marrakech_youssef_wants_carpet },
         { dialog: 'youssef_after_amulet', condition: (flags) => flags.marrakech_has_amulet && !flags.marrakech_met_nadia },
         { dialog: 'youssef_intro', condition: () => true }
     ],
     marrakech_tariq: [
+        { dialog: 'tariq_trade', condition: (flags) => flags.marrakech_tariq_wants_spice && flags.marrakech_has_spice && !flags.marrakech_has_carpet },
+        { dialog: 'tariq_wants_spice', condition: (flags) => flags.marrakech_has_journal && !flags.marrakech_tariq_wants_spice },
         { dialog: 'tariq_after_amulet', condition: (flags) => flags.marrakech_has_amulet && !flags.marrakech_met_nadia },
         { dialog: 'tariq_intro', condition: () => true }
     ],
     marrakech_zahra: [
+        { dialog: 'zahra_side_story', condition: (flags) => flags.side_marrakech_stories_started && !flags.side_story_zahra },
         { dialog: 'zahra_after_amulet', condition: (flags) => flags.marrakech_has_amulet && !flags.marrakech_met_nadia },
         { dialog: 'zahra_intro', condition: () => true }
     ],
@@ -185,9 +211,13 @@ export const NPC_DIALOG_ROUTES = {
         { dialog: 'hiro_intro', condition: () => true }
     ],
     tokyo_manga: [
+        { dialog: 'aiko_side_return', condition: (flags) => flags.side_has_cat && !flags.side_tokyo_cat_complete },
+        { dialog: 'aiko_side_start', condition: (flags) => flags.tokyo_riddle_solved && !flags.side_tokyo_cat_started },
         { dialog: 'aiko_intro', condition: () => true }
     ],
     tokyo_shrine_keeper: [
+        { dialog: 'tanaka_riddle_hint1', condition: (flags) => flags.tokyo_riddle_hint1 && !flags.tokyo_riddle_solved && flags.tokyo_riddle_part1 && flags.tokyo_riddle_part2 && flags.tokyo_riddle_part3 },
+        { dialog: 'tanaka_riddle_hint2', condition: (flags) => flags.tokyo_riddle_hint2 && !flags.tokyo_riddle_solved && flags.tokyo_riddle_part1 && flags.tokyo_riddle_part2 && flags.tokyo_riddle_part3 },
         { dialog: 'tanaka_riddle_choice', condition: (flags) => flags.tokyo_riddle_part1 && flags.tokyo_riddle_part2 && flags.tokyo_riddle_part3 && !flags.tokyo_riddle_solved },
         { dialog: 'tanaka_waiting', condition: (flags) => !flags.tokyo_riddle_solved && (flags.tokyo_riddle_part1 || flags.tokyo_riddle_part2) },
         { dialog: 'tanaka_intro', condition: () => true }

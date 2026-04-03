@@ -88,15 +88,16 @@ export class DialogManager {
                 // Show the response lines, then apply shared rewards
                 const responseLines = chosen.response || [];
                 if (responseLines.length > 0) {
-                    // Create a synthetic dialog with the shared rewards
+                    // Create a synthetic dialog with shared + choice-level rewards
                     this.active = true;
                     this.currentDialog = {
                         lines: responseLines,
-                        givesItem: choiceDialog.givesItem,
-                        setsFlag: choiceDialog.setsFlag,
-                        completesObjective: choiceDialog.completesObjective,
-                        unlocksCity: choiceDialog.unlocksCity,
-                        unlocksPortal: choiceDialog.unlocksPortal
+                        givesItem: choiceDialog.givesItem || chosen.givesItem,
+                        removesItem: choiceDialog.removesItem || chosen.removesItem,
+                        setsFlag: choiceDialog.setsFlag || chosen.completionFlag,
+                        completesObjective: choiceDialog.completesObjective || chosen.completesObjective,
+                        unlocksCity: choiceDialog.unlocksCity || chosen.unlocksCity,
+                        unlocksPortal: choiceDialog.unlocksPortal || chosen.unlocksPortal
                     };
                     this.currentLine = 0;
                     this.callback = originalCallback;
@@ -105,11 +106,12 @@ export class DialogManager {
                 } else {
                     // No response lines — apply rewards directly
                     this.currentDialog = {
-                        givesItem: choiceDialog.givesItem,
-                        setsFlag: choiceDialog.setsFlag,
-                        completesObjective: choiceDialog.completesObjective,
-                        unlocksCity: choiceDialog.unlocksCity,
-                        unlocksPortal: choiceDialog.unlocksPortal
+                        givesItem: choiceDialog.givesItem || chosen.givesItem,
+                        removesItem: choiceDialog.removesItem || chosen.removesItem,
+                        setsFlag: choiceDialog.setsFlag || chosen.completionFlag,
+                        completesObjective: choiceDialog.completesObjective || chosen.completesObjective,
+                        unlocksCity: choiceDialog.unlocksCity || chosen.unlocksCity,
+                        unlocksPortal: choiceDialog.unlocksPortal || chosen.unlocksPortal
                     };
                     this.callback = originalCallback;
                     this.endDialog();
@@ -187,6 +189,10 @@ export class DialogManager {
 
         // Handle dialog rewards
         if (this.currentDialog) {
+            if (this.currentDialog.removesItem) {
+                const inv = this.scene.inventoryManager;
+                if (inv) inv.removeItem(this.currentDialog.removesItem);
+            }
             if (this.currentDialog.givesItem) {
                 const inv = this.scene.inventoryManager;
                 if (inv) inv.addItem(this.currentDialog.givesItem);

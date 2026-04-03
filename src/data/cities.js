@@ -276,6 +276,7 @@ function generateParis() {
 
     // Signs at key intersections
     decor[13][24] = 22; decor[26][25] = 22;
+    decor[27][3] = 22; // Bell puzzle clue sign near bookshop park
 
     // Flower planters along main streets
     decor[13][8] = 17; decor[13][16] = 17; decor[13][32] = 17; decor[13][40] = 17;
@@ -767,6 +768,7 @@ function generateLondonMuseumGallery() {
     walls[6][9] = 27; walls[6][10] = 27; walls[13][9] = 27; walls[13][10] = 27;
     decor[2][5] = 28; decor[2][14] = 28; decor[10][5] = 28; decor[10][14] = 28;
     decor[1][10] = 22;
+    decor[1][5] = 22; // Painting catalog sign
     decor[H-1][10] = 23; walls[H-1][10] = -1;
 
     // ── Indoor enrichment ──

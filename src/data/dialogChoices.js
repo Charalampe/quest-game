@@ -139,7 +139,7 @@ export const DIALOG_CHOICES = {
         completesObjective: 'marrakech_find_journal'
     },
 
-    // Tokyo: The shrine riddle becomes a REAL choice
+    // Tokyo: The shrine riddle — only "Understanding others" solves it
     tanaka_riddle_choice: {
         preamble: [
             "'Patience, Courage, and Wisdom.'",
@@ -155,30 +155,134 @@ export const DIALOG_CHOICES = {
                     "The sealed door is now open. You may enter the bamboo forest.",
                     "Be careful — the forest is enchanted. Follow the fox if you get lost."
                 ],
-                setsFlag: 'tanaka_impressed'
+                setsFlag: 'tanaka_impressed',
+                completionFlag: 'tokyo_riddle_solved',
+                completesObjective: 'tokyo_solve_riddle'
             },
             {
                 text: "They make you a great warrior.",
                 response: [
                     "Hmm... a warrior needs these, yes. But that is not the deepest meaning.",
-                    "Think again — what connects patience, courage, and wisdom?",
-                    "...Actually, I see the truth in your eyes. You already understand.",
-                    "The sealed door is now open. You may enter the bamboo forest.",
-                    "Be careful — the forest is enchanted. Follow the fox if you get lost."
-                ]
+                    "Think about what connects patience, courage, and wisdom...",
+                    "Come back when you have reflected more deeply."
+                ],
+                setsFlag: 'tokyo_riddle_hint1'
             },
             {
                 text: "They help you find treasure.",
                 response: [
                     "Treasure? Perhaps... but not the kind you might think!",
-                    "The real treasure is understanding between people.",
-                    "Patience, Courage, Wisdom — together they open hearts, not just doors.",
+                    "The real treasure is not gold or jewels. Think about people.",
+                    "Come back when you have a different answer."
+                ],
+                setsFlag: 'tokyo_riddle_hint2'
+            }
+        ]
+        // Note: NO shared setsFlag/completesObjective — only correct answer solves it
+    },
+
+    // Tokyo: Hint follow-up after wrong answer 1
+    tanaka_riddle_hint1: {
+        preamble: [
+            "You have returned. The three truths still await your answer.",
+            "Remember: patience, courage, and wisdom together create something greater.",
+            "What is it?"
+        ],
+        choices: [
+            {
+                text: "Understanding others is the greatest strength.",
+                response: [
+                    "Yes! Now you see it!",
+                    "Patience to listen. Courage to reach out. Wisdom to understand.",
                     "The sealed door is now open. You may enter the bamboo forest.",
                     "Be careful — the forest is enchanted. Follow the fox if you get lost."
+                ],
+                setsFlag: 'tanaka_impressed',
+                completionFlag: 'tokyo_riddle_solved',
+                completesObjective: 'tokyo_solve_riddle'
+            },
+            {
+                text: "They make you powerful.",
+                response: [
+                    "Power alone is not the answer...",
+                    "Think about how patience, courage, and wisdom help you connect with others.",
+                    "Return when you are ready."
                 ]
             }
+        ]
+        // No shared flags — only correct answer solves
+    },
+
+    // Tokyo: Hint follow-up after wrong answer 2
+    tanaka_riddle_hint2: {
+        preamble: [
+            "Welcome back. Let us try again.",
+            "The treasure Madeleine sought was not material.",
+            "What do patience, courage, and wisdom truly unlock?"
         ],
-        setsFlag: 'tokyo_riddle_solved',
-        completesObjective: 'tokyo_solve_riddle'
+        choices: [
+            {
+                text: "Understanding others is the greatest strength.",
+                response: [
+                    "Yes! That is the answer!",
+                    "Patience to listen. Courage to reach out. Wisdom to understand.",
+                    "The sealed door is now open. You may enter the bamboo forest.",
+                    "Be careful — the forest is enchanted. Follow the fox if you get lost."
+                ],
+                setsFlag: 'tanaka_impressed',
+                completionFlag: 'tokyo_riddle_solved',
+                completesObjective: 'tokyo_solve_riddle'
+            },
+            {
+                text: "They unlock ancient secrets.",
+                response: [
+                    "Not quite... Think about people, not secrets.",
+                    "Madeleine traveled the world not for treasure, but for connection.",
+                    "Come back when you understand."
+                ]
+            }
+        ]
+        // No shared flags — only correct answer solves
+    },
+
+    // Rome: Marco's torch path choice in the catacombs
+    marco_torch_choice: {
+        preamble: [
+            "The tunnels split into three paths here.",
+            "Each one is marked with different torches.",
+            "Which path should I recommend?"
+        ],
+        choices: [
+            {
+                text: "Follow the lit torches on the left.",
+                response: [
+                    "The left path! Yes, those torches burn with an ancient flame.",
+                    "They've been lit since Roman times — or so the legend says.",
+                    "I followed them once and found an incredible chamber below!",
+                    "Go ahead — the lower catacombs await!"
+                ],
+                setsFlag: 'rome_torch_solved'
+            },
+            {
+                text: "Take the dark middle passage.",
+                response: [
+                    "The middle passage? I tried that once...",
+                    "I walked for ten minutes and ended up right back here!",
+                    "The Romans built these tunnels as a maze. The unlit paths loop around.",
+                    "Try a path with torches — the light guides the way."
+                ],
+                setsFlag: 'rome_torch_hint1'
+            },
+            {
+                text: "Follow the flickering torches on the right.",
+                response: [
+                    "The right path... those torches flicker because of a draft.",
+                    "It leads to a dead end near the old ventilation shaft.",
+                    "The steady flames are the ones the ancients placed as guides.",
+                    "Look for torches that burn steadily — they mark the true path."
+                ],
+                setsFlag: 'rome_torch_hint2'
+            }
+        ]
     }
 };

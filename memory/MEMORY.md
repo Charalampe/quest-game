@@ -46,16 +46,37 @@
   - Finding all 3 in a city sets `{city}_pages_complete` flag → unlocks bonus NPC dialog
   - Counter shown in Quest Log panel
 - **Dialog Choices**: Branching dialog system in `src/data/dialogChoices.js`
-  - 4 choice dialogs: Pierre, Thomas, Hassan, Tanaka (replace old linear versions)
+  - 7 choice dialogs: Pierre, Thomas, Hassan, Tanaka (3 variants), Marco torch
   - DialogManager checks `DIALOG_CHOICES` before `DIALOGUES` — choice dialogs have preamble→choices→response flow
   - Each choice can set a unique flag; shared rewards (items, flags, objectives) apply regardless
+  - Choices can also have `completionFlag` and `completesObjective` for conditional completion (e.g. riddle)
   - NPC_DIALOG_ROUTES references `_choice` suffixed IDs (e.g. `pierre_has_brush_choice`)
 - **Lea's Journal**: Auto-populated diary entries in `src/data/leaJournal.js`
-  - 16 entries triggered by flags, shown newest-first via J key
+  - 25 entries triggered by flags, shown newest-first via J key
   - UIScene has `journalContainer` panel with `toggleJournal()` / `refreshJournal()`
 
+## Engagement Features (Phase 2) — Puzzles + Side Quests
+- **Puzzles** (5 cities): Data in `src/data/puzzles.js`
+  - Paris: Bell sequence (ring Gold→Silver→Bronze near bookshop)
+  - London: Painting swap (reorder 4 paintings in museum gallery)
+  - Rome: Torch path choice (Marco's `marco_torch_choice` dialog)
+  - Marrakech: Trading chain (Karim→Tariq→Youssef→Karim via flag-gated dialogs)
+  - Tokyo: Enhanced riddle (wrong answers give hints, require re-talking to Tanaka)
+- **Side Quests** (5): Data in `src/data/sideQuests.js`, tracked via `SIDE_QUESTS`
+  - Paris: Flower Deliveries (Colette→Sophie/Marie/Librarian)
+  - London: Bobby's Whistle (find in basement, return)
+  - Rome: Enzo's Music Sheets (3 sheets: colosseum, catacombs, Giulia)
+  - Marrakech: Fatima's Stories (collect from Amina/Karim/Zahra)
+  - Tokyo: Aiko's Lost Cat (find Mochi in bamboo forest)
+- **Hidden Items**: `HIDDEN_ITEMS` array, same shimmer pattern as journal pages
+- **`removesItem`**: DialogManager supports removing items on dialog end (for trade-ins)
+- **QuestManager** extended with `SIDE_QUESTS` — `getActiveQuests()` returns main + side quests
+- **UIScene** shows side quests with ✦ marker below main quest in quest log
+- **ExploreScene** has `createPuzzleObjects()`, `createHiddenItems()`, `ringBell()`, `interactPainting()`, `collectHiddenItem()`
+- **Choice-level completion**: `completionFlag` and `completesObjective` on individual choices allow conditional reward (only correct answer completes)
+
 ## Testing
-- Unit tests: `node tests/test_systems.mjs` — 478 tests, pure data/logic, no Phaser runtime
+- Unit tests: `node tests/test_systems.mjs` — 506 tests, pure data/logic, no Phaser runtime
 - Integration tests: `node test_game.mjs` — 25 Playwright tests, requires server on port 8080
 - `package.json` has `"type": "module"` for ESM support
 - Both suites must pass before any change is considered complete

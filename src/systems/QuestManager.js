@@ -1,4 +1,5 @@
 import { QUESTS, NPC_DIALOG_ROUTES, CHEST_REWARDS } from '../data/quests.js';
+import { SIDE_QUESTS } from '../data/sideQuests.js';
 import { t, getQuestText } from '../data/i18n/index.js';
 
 export class QuestManager {
@@ -132,12 +133,33 @@ export class QuestManager {
             city: obj.city
         }));
 
-        return [{
+        const result = [{
             id: quest.id,
             name: questText?.name ?? quest.name,
             description: questText?.description ?? quest.description,
             objectives
         }];
+
+        // Add active side quests
+        for (const [sqId, sq] of Object.entries(SIDE_QUESTS)) {
+            if (!flags[sq.startFlag]) continue; // not started
+            const sqText = getQuestText(sqId);
+            const sqObjectives = sq.objectives.map(obj => ({
+                id: obj.id,
+                text: obj.text,
+                completed: !!flags[obj.flag]
+            }));
+            result.push({
+                id: sq.id,
+                name: sqText?.name ?? sq.name,
+                description: sqText?.description ?? sq.description,
+                objectives: sqObjectives,
+                isSideQuest: true,
+                city: sq.city
+            });
+        }
+
+        return result;
     }
 
     getCurrentObjective() {

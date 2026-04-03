@@ -656,6 +656,328 @@ export const DIALOGUES = {
         setsFlag: 'tokyo_met_madeleine'
     },
 
+    // === PUZZLE FEEDBACK ===
+    bell_ring_gold: {
+        lines: ["*DONG* The gold bell rings with a deep, warm tone."]
+    },
+    bell_ring_silver: {
+        lines: ["*DING* The silver bell chimes with a bright, clear note."]
+    },
+    bell_ring_bronze: {
+        lines: ["*BONG* The bronze bell resonates with a rich, mellow sound."]
+    },
+    bells_correct: {
+        lines: [
+            "The three bells ring in perfect harmony!",
+            "A hidden compartment opens in the wall nearby...",
+            "Inside, you find a folded note from Madeleine!"
+        ],
+        setsFlag: 'paris_bells_solved'
+    },
+    bells_wrong: {
+        lines: [
+            "The notes clash discordantly...",
+            "That didn't sound right. Maybe there's a clue nearby about the correct order?"
+        ]
+    },
+    painting_select: {
+        lines: ["You examine the painting carefully. Select another painting to swap with it."]
+    },
+    paintings_correct: {
+        lines: [
+            "The paintings are in the correct order!",
+            "A small drawer slides open beneath the display...",
+            "You find a note: 'Order reveals truth — M.B.'"
+        ],
+        setsFlag: 'london_paintings_solved'
+    },
+    paintings_wrong: {
+        lines: ["The paintings have been swapped, but the order doesn't seem right yet."]
+    },
+
+    // === SIDE QUEST DIALOGS ===
+    // Paris - Flower Deliveries
+    colette_side_start: {
+        lines: [
+            "Oh, Léa! Could you do me a favour?",
+            "I have three flower bouquets to deliver today, but I can't leave my stall.",
+            "Sophie, Marie, and Monsieur Dupont each ordered one.",
+            "Could you deliver them for me? I'd be so grateful!"
+        ],
+        setsFlag: 'side_paris_flowers_started',
+        givesItem: { id: 'flower_bouquet', name: 'Flower Bouquets', icon: 'item_key', description: "Three bouquets for Sophie, Marie, and the Librarian." }
+    },
+    sophie_side_flower: {
+        lines: [
+            "Flowers from Colette? How lovely!",
+            "Sunflowers are my favourite — she remembered!",
+            "Tell Colette I said merci beaucoup!"
+        ],
+        setsFlag: 'side_flower_sophie'
+    },
+    marie_side_flower: {
+        lines: [
+            "Oh! Roses from Colette! They're perfect for my photos.",
+            "I'll photograph them with the Eiffel Tower in the background.",
+            "Thank you for delivering these!"
+        ],
+        setsFlag: 'side_flower_marie'
+    },
+    librarian_side_flower: {
+        lines: [
+            "Lavender! My favourite. Colette knows me well.",
+            "Did you know Madeleine loved lavender too?",
+            "She pressed a sprig inside every book she read.",
+            "Thank you, Léa. Tell Colette the flowers are beautiful."
+        ],
+        setsFlag: 'side_flower_librarian'
+    },
+    colette_side_complete: {
+        lines: [
+            "You delivered all three? Wonderful!",
+            "You're a natural errand-runner, Léa.",
+            "You know, Madeleine used to buy flowers from my grandmother.",
+            "She always said flowers are the universal language.",
+            "Here — keep one bouquet for yourself. You've earned it!"
+        ],
+        setsFlag: 'side_paris_flowers_complete',
+        removesItem: 'flower_bouquet'
+    },
+
+    // London - Bobby's Whistle
+    bobby_side_start: {
+        lines: [
+            "Oh dear... I seem to have lost my whistle!",
+            "It's not just any whistle — it was my grandfather's.",
+            "He was a bobby too, you know. Fifty years on the beat!",
+            "I think I dropped it when I visited the museum basement.",
+            "Could you look for it? I can't go down there without a Research Pass."
+        ],
+        setsFlag: 'side_london_whistle_started'
+    },
+    bobby_side_return: {
+        lines: [
+            "My grandfather's whistle! You found it!",
+            "Oh, thank you so much! I was worried sick.",
+            "You know, your great-great-grandmother Madeleine once helped my grandfather too.",
+            "He told me the story when I was little...",
+            "She returned a lost badge to him in 1924. Small world, isn't it?",
+            "Thank you, Léa. You're just like her."
+        ],
+        setsFlag: 'side_london_whistle_complete',
+        removesItem: 'whistle'
+    },
+    bobby_madeleine_story: {
+        lines: [
+            "Did I ever tell you about Madeleine and my grandfather?",
+            "He was guarding the museum when a young French woman approached.",
+            "She'd found his badge in the street and walked two miles to return it!",
+            "He said she had 'the heart of a lion and the smile of a summer day.'",
+            "That was your Madeleine. Quite a lady."
+        ]
+    },
+
+    // Rome - Enzo's Music Sheets
+    enzo_side_start: {
+        lines: [
+            "Oh no, oh no, oh no!",
+            "I've lost three pages of my best composition!",
+            "The wind scattered them when I was playing near the Colosseum.",
+            "One blew into the arena, one into the catacombs...",
+            "And I think Giulia picked one up. Could you find them for me?",
+            "This piece is special — it's based on a melody my grandfather Giovanni wrote!"
+        ],
+        setsFlag: 'side_rome_music_started'
+    },
+    giulia_side_sheet: {
+        lines: [
+            "This music sheet? I found it blowing down the street!",
+            "It looked too beautiful to leave on the ground.",
+            "The melody is lovely — tell Enzo I'd love to hear him play it!"
+        ],
+        givesItem: { id: 'music_sheet_3', name: 'Music Sheet (3/3)', icon: 'item_letter', description: "A page of violin music." },
+        setsFlag: 'side_has_sheet_3'
+    },
+    enzo_side_return: {
+        lines: [
+            "All three sheets! You found them all!",
+            "Let me play it for you...",
+            "♪ ♫ ♪ ... A beautiful melody fills the air...",
+            "My grandfather Giovanni wrote this when he met a French explorer.",
+            "She told him music was the language that needs no translation.",
+            "That explorer was Madeleine Beaumont — your great-great-grandmother!",
+            "Thank you, Léa. This music connects us across time."
+        ],
+        setsFlag: 'side_rome_music_complete',
+        removesItem: 'music_sheet_1'
+    },
+    enzo_plays_song: {
+        lines: [
+            "♪ ♫ ♪ ... The melody of Madeleine and Giovanni...",
+            "Every note tells a story of two people who spoke different languages,",
+            "but understood each other perfectly through music.",
+            "Madeleine would be proud to know the song lives on."
+        ]
+    },
+
+    // Marrakech - Fatima's Stories
+    fatima_side_start: {
+        lines: [
+            "Ah, Léa! I am writing a book of stories from Marrakech.",
+            "But my old legs can't carry me around the medina like they used to.",
+            "Could you collect stories for me?",
+            "Talk to Amina, Karim, and Zahra — each has a tale worth telling.",
+            "Then come back and share them with me!"
+        ],
+        setsFlag: 'side_marrakech_stories_started'
+    },
+    amina_side_story: {
+        lines: [
+            "A story for Fatima? I know a good one!",
+            "My grandmother said that on the night of the full moon,",
+            "the fountains of Marrakech whisper the names of everyone who ever drank from them.",
+            "She said if you listen carefully, you can hear Madeleine's name.",
+            "Tell Fatima — she'll love that one!"
+        ],
+        setsFlag: 'side_story_amina'
+    },
+    karim_side_story: {
+        lines: [
+            "A story? Hmm... Here's one about my spices.",
+            "Long ago, a merchant traveled the Silk Road carrying one precious saffron flower.",
+            "He planted it here in Marrakech, and from that single flower,",
+            "grew the entire saffron trade of Morocco!",
+            "My family has tended those fields for generations. Tell Fatima!"
+        ],
+        setsFlag: 'side_story_karim'
+    },
+    zahra_side_story: {
+        lines: [
+            "A story about the riad? Of course!",
+            "This building was once a meeting place for explorers from all over the world.",
+            "They would share maps, stories, and dreams under these stars.",
+            "Your great-great-grandmother Madeleine sat in this very courtyard.",
+            "She said: 'The best stories are the ones that bring people together.'",
+            "Please tell Fatima — she knew Madeleine too."
+        ],
+        setsFlag: 'side_story_zahra'
+    },
+    fatima_side_complete: {
+        lines: [
+            "Three wonderful stories! Amina, Karim, Zahra — all magnificent!",
+            "You know, I once knew a storyteller even better than me.",
+            "Madeleine Beaumont came to my mother's house when I was a little girl.",
+            "She told us about Paris, London, Rome... places I'd never seen.",
+            "She made the whole world feel close, like it was just next door.",
+            "Her stories changed my life. That's why I became a storyteller too.",
+            "Thank you, Léa. You carry her gift."
+        ],
+        setsFlag: 'side_marrakech_stories_complete'
+    },
+    fatima_madeleine_tale: {
+        lines: [
+            "Let me tell you one more story about Madeleine...",
+            "When she came to Marrakech, she didn't speak a word of Arabic.",
+            "But she sat in the market square and drew pictures in the dust.",
+            "Children gathered around, then adults. Soon the whole square was watching!",
+            "She drew the Eiffel Tower, Big Ben, the Colosseum...",
+            "And everyone understood her perfectly. That is the power of stories."
+        ]
+    },
+
+    // Tokyo - Aiko's Cat
+    aiko_side_start: {
+        lines: [
+            "Oh no! My cat Mochi has escaped again!",
+            "She loves chasing butterflies into the bamboo forest.",
+            "But it's dangerous in there — the paths twist and turn!",
+            "Could you bring her back if you find her?",
+            "She's orange and fluffy. You can't miss her!"
+        ],
+        setsFlag: 'side_tokyo_cat_started'
+    },
+    aiko_side_return: {
+        lines: [
+            "Mochi! You found her! Oh, thank you, thank you!",
+            "She looks like she had quite an adventure.",
+            "To say thank you, let me teach you something...",
+            "In Japanese, we say 'Arigatou gozaimasu' — it means 'thank you very much.'",
+            "And 'Tomodachi' means 'friend.' You are my tomodachi, Léa!",
+            "Madeleine-san knew these words too. Yuki-san told me."
+        ],
+        setsFlag: 'side_tokyo_cat_complete',
+        removesItem: 'cat_mochi'
+    },
+
+    // === TRADING CHAIN (Marrakech) ===
+    karim_wants_scroll: {
+        lines: [
+            "Hmm, you want a rare spice? I might have something...",
+            "But first, I need an ancient story scroll for my collection.",
+            "Youssef the storyteller might have one. He collects old manuscripts."
+        ],
+        setsFlag: 'marrakech_karim_wants_scroll'
+    },
+    karim_trade: {
+        lines: [
+            "A story scroll! This is exactly what I was looking for!",
+            "The calligraphy is exquisite... 14th century, I'd say.",
+            "As promised, here is a bundle of my rarest spice — Star of the Atlas.",
+            "It's worth more than gold in some places!"
+        ],
+        givesItem: { id: 'rare_spice', name: 'Star of the Atlas', icon: 'item_gem', description: "An extremely rare spice from the Atlas Mountains." },
+        setsFlag: 'marrakech_trading_complete',
+        removesItem: 'story_scroll'
+    },
+    tariq_wants_spice: {
+        lines: [
+            "A fine carpet, you say? I have the finest!",
+            "But for my best carpet, I need a bundle of rare spice.",
+            "Karim the spice merchant has what I need.",
+            "Bring me a spice bundle and the carpet is yours!"
+        ],
+        setsFlag: 'marrakech_tariq_wants_spice'
+    },
+    tariq_trade: {
+        lines: [
+            "Ah, spice_bundle! These are excellent quality!",
+            "Here is my finest carpet — woven with patterns from the Atlas Mountains.",
+            "It's said that Madeleine once sat on this very carpet to read her maps!"
+        ],
+        givesItem: { id: 'fine_carpet', name: 'Fine Carpet', icon: 'item_book', description: "A beautifully woven carpet from Marrakech." },
+        setsFlag: 'marrakech_has_carpet',
+        removesItem: 'spice_bundle'
+    },
+    youssef_wants_carpet: {
+        lines: [
+            "A story scroll? I have a wonderful one!",
+            "But I need a fine carpet to sit on when I tell my tales.",
+            "Tariq the carpet merchant has the best. Bring me one of his carpets!"
+        ],
+        setsFlag: 'marrakech_youssef_wants_carpet'
+    },
+    youssef_trade: {
+        lines: [
+            "What a magnificent carpet! I'll look wonderful telling stories on this!",
+            "As promised, here's an ancient story scroll.",
+            "It tells the tale of a merchant princess who traveled the Silk Road.",
+            "Take it to Karim — he's been looking for one like this."
+        ],
+        givesItem: { id: 'story_scroll', name: 'Story Scroll', icon: 'item_letter', description: "An ancient scroll with a tale from the Silk Road." },
+        setsFlag: 'marrakech_has_scroll',
+        removesItem: 'fine_carpet'
+    },
+    karim_gives_spice: {
+        lines: [
+            "You want to start the great trade? Very well!",
+            "Here's a bundle of my finest spices to get you started.",
+            "Take them to Tariq the carpet merchant — he's been asking for spices.",
+            "He'll give you something good in return, and the trading goes round!"
+        ],
+        givesItem: { id: 'spice_bundle', name: 'Spice Bundle', icon: 'item_key', description: "A fragrant bundle of Moroccan spices." },
+        setsFlag: 'marrakech_has_spice'
+    },
+
     // === JOURNAL PAGE BONUS DIALOGS ===
     grandma_journal_bonus: {
         lines: [

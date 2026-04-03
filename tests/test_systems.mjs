@@ -73,6 +73,8 @@ const { DIALOGUES } = await import('../src/data/dialogues.js');
 const { DIALOG_CHOICES } = await import('../src/data/dialogChoices.js');
 const { JOURNAL_PAGES } = await import('../src/data/journalPages.js');
 const { LEA_JOURNAL_ENTRIES } = await import('../src/data/leaJournal.js');
+const { PUZZLE_OBJECTS, PUZZLES } = await import('../src/data/puzzles.js');
+const { SIDE_QUESTS, HIDDEN_ITEMS } = await import('../src/data/sideQuests.js');
 const { NPC_DATA } = await import('../src/data/npcs.js');
 const { CITIES, ROOM_TRANSITIONS } = await import('../src/data/cities.js');
 const { TRAVEL_ROUTES, CITY_MAP_POSITIONS } = await import('../src/systems/TravelManager.js');
@@ -82,6 +84,8 @@ const { DialogManager } = await import('../src/systems/DialogManager.js');
 const { QuestManager } = await import('../src/systems/QuestManager.js');
 const { TravelManager } = await import('../src/systems/TravelManager.js');
 const { initLanguage, setLanguage, getLanguage, toggleLanguage, t, getDialogueLines, getItemText, getQuestText } = await import('../src/data/i18n/index.js');
+const enStrings = (await import('../src/data/i18n/en.js')).default;
+const frStrings = (await import('../src/data/i18n/fr.js')).default;
 
 // Initialize i18n and set English for existing test assertions
 initLanguage();
@@ -953,7 +957,11 @@ describe('Full Quest Playthrough (data layer)', () => {
             const choiceDialog = DIALOG_CHOICES[dialogId];
 
             if (choiceDialog) {
-                // Simulate a choice dialog — apply shared rewards
+                // Simulate a choice dialog — apply shared rewards + correct choice rewards
+                const correct = choiceDialog.choices[0]; // assume first choice is "correct"
+                if (correct.setsFlag) flags[correct.setsFlag] = true;
+                if (correct.completionFlag) flags[correct.completionFlag] = true;
+                if (correct.completesObjective) completed.push(correct.completesObjective);
                 if (choiceDialog.givesItem) inventory.push(choiceDialog.givesItem.id);
                 if (choiceDialog.setsFlag) flags[choiceDialog.setsFlag] = true;
                 if (choiceDialog.completesObjective) completed.push(choiceDialog.completesObjective);
@@ -3126,9 +3134,10 @@ describe("Lea's Journal", () => {
         assert.equal(LEA_JOURNAL_ENTRIES[0].trigger, 'quest_started');
     });
 
-    it('last entry triggers on game_complete', () => {
-        const last = LEA_JOURNAL_ENTRIES[LEA_JOURNAL_ENTRIES.length - 1];
-        assert.equal(last.trigger, 'game_complete');
+    it('game_complete journal entry exists', () => {
+        const entry = LEA_JOURNAL_ENTRIES.find(e => e.trigger === 'game_complete');
+        assert.ok(entry, 'No journal entry with trigger game_complete');
+        assert.strictEqual(entry.city, 'tokyo');
     });
 });
 
@@ -3156,5 +3165,421 @@ describe('SaveManager with Journal Pages', () => {
         SaveManager.save(registry);
         const loaded = SaveManager.load();
         assert.deepEqual(loaded.foundJournalPages, []);
+    });
+});
+
+// ======================================================================
+describe('Puzzle Data Integrity', () => {
+// ======================================================================
+
+    it('all puzzle objects have valid city and room', () => {
+        for (const [city, objects] of Object.entries(PUZZLE_OBJECTS)) {
+            assert.ok(CITIES[city], `City ${city} not found`);
+            for (const obj of objects) {
+                assert.strictEqual(obj.city, city);
+                const roomData = city === obj.city ?
+                    (CITIES[city].rooms?.[obj.room] || (obj.room === 'main' ? CITIES[city] : null)) : null;
+                assert.ok(roomData, `Room ${obj.room} not found in ${city}`);
+            }
+        }
+    });
+
+    it('all puzzle objects are on walkable tiles', () => {
+        for (const [city, objects] of Object.entries(PUZZLE_OBJECTS)) {
+            for (const obj of objects) {
+                const roomData = obj.room === 'main' ? CITIES[city] : CITIES[city].rooms[obj.room];
+                if (!roomData || !roomData.walls) continue;
+                const wallTile = roomData.walls[obj.y]?.[obj.x];
+                assert.ok(wallTile === undefined || wallTile === -1,
+                    `Puzzle object ${obj.id} at (${obj.x},${obj.y}) is on wall tile ${wallTile}`);
+            }
+        }
+    });
+
+    it('all puzzles have correct sequences or valid config', () => {
+        for (const [id, puzzle] of Object.entries(PUZZLES)) {
+            assert.ok(puzzle.completionFlag, `Puzzle ${id} has no completionFlag`);
+            if (puzzle.type === 'bell_sequence') {
+                assert.ok(puzzle.correctSequence?.length > 0, `Puzzle ${id} has no correctSequence`);
+            }
+            if (puzzle.type === 'painting_swap') {
+                assert.ok(puzzle.correctOrder?.length > 0, `Puzzle ${id} has no correctOrder`);
+                assert.ok(puzzle.initialOrder?.length > 0, `Puzzle ${id} has no initialOrder`);
+                assert.strictEqual(puzzle.correctOrder.length, puzzle.initialOrder.length);
+            }
+        }
+    });
+
+    it('bell sequence references valid bell IDs', () => {
+        const puzzle = PUZZLES.paris_bells;
+        const bellIds = (PUZZLE_OBJECTS.paris || []).filter(o => o.type === 'bell').map(o => o.id);
+        for (const id of puzzle.correctSequence) {
+            assert.ok(bellIds.includes(id), `Bell ${id} not found in PUZZLE_OBJECTS`);
+        }
+    });
+
+    it('painting swap references valid painting IDs', () => {
+        const puzzle = PUZZLES.london_paintings;
+        const paintingIds = (PUZZLE_OBJECTS.london || []).filter(o => o.type === 'painting').map(o => o.id);
+        for (const id of puzzle.correctOrder) {
+            assert.ok(paintingIds.includes(id), `Painting ${id} not found in PUZZLE_OBJECTS`);
+        }
+        for (const id of puzzle.initialOrder) {
+            assert.ok(paintingIds.includes(id), `Painting ${id} not found in PUZZLE_OBJECTS`);
+        }
+    });
+});
+
+// ======================================================================
+describe('Side Quest Data Integrity', () => {
+// ======================================================================
+
+    it('all side quests have valid structure', () => {
+        for (const [id, sq] of Object.entries(SIDE_QUESTS)) {
+            assert.ok(sq.id, `Side quest ${id} has no id`);
+            assert.ok(sq.city, `Side quest ${id} has no city`);
+            assert.ok(sq.name, `Side quest ${id} has no name`);
+            assert.ok(sq.startFlag, `Side quest ${id} has no startFlag`);
+            assert.ok(sq.completeFlag, `Side quest ${id} has no completeFlag`);
+            assert.ok(sq.objectives?.length > 0, `Side quest ${id} has no objectives`);
+            for (const obj of sq.objectives) {
+                assert.ok(obj.id, `Objective in ${id} has no id`);
+                assert.ok(obj.flag, `Objective ${obj.id} in ${id} has no flag`);
+            }
+        }
+    });
+
+    it('all hidden items have valid positions in valid rooms', () => {
+        for (const item of HIDDEN_ITEMS) {
+            assert.ok(CITIES[item.city], `Hidden item ${item.id}: city ${item.city} not found`);
+            const roomData = item.room === 'main' ? CITIES[item.city] : CITIES[item.city].rooms?.[item.room];
+            assert.ok(roomData, `Hidden item ${item.id}: room ${item.room} not found in ${item.city}`);
+            assert.ok(item.x >= 0 && item.x < roomData.width, `Hidden item ${item.id} x out of bounds`);
+            assert.ok(item.y >= 0 && item.y < roomData.height, `Hidden item ${item.id} y out of bounds`);
+        }
+    });
+
+    it('hidden items are on walkable tiles', () => {
+        for (const item of HIDDEN_ITEMS) {
+            const roomData = item.room === 'main' ? CITIES[item.city] : CITIES[item.city].rooms?.[item.room];
+            if (!roomData || !roomData.walls) continue;
+            const wallTile = roomData.walls[item.y]?.[item.x];
+            assert.ok(wallTile === undefined || wallTile === -1,
+                `Hidden item ${item.id} at (${item.x},${item.y}) is on wall tile ${wallTile}`);
+        }
+    });
+
+    it('all side quest NPC dialog IDs exist in DIALOGUES or DIALOG_CHOICES', () => {
+        const sideDialogIds = [
+            'colette_side_start', 'colette_side_complete',
+            'sophie_side_flower', 'marie_side_flower', 'librarian_side_flower',
+            'bobby_side_start', 'bobby_side_return', 'bobby_madeleine_story',
+            'enzo_side_start', 'enzo_side_return', 'enzo_plays_song',
+            'giulia_side_sheet',
+            'fatima_side_start', 'fatima_side_complete', 'fatima_madeleine_tale',
+            'amina_side_story', 'karim_side_story', 'zahra_side_story',
+            'aiko_side_start', 'aiko_side_return'
+        ];
+        const missing = [];
+        for (const id of sideDialogIds) {
+            if (!DIALOGUES[id] && !DIALOG_CHOICES[id]) {
+                missing.push(id);
+            }
+        }
+        assert.deepEqual(missing, [], `Missing side quest dialogs: ${missing.join(', ')}`);
+    });
+
+    it('all trading chain dialog IDs exist', () => {
+        const tradingDialogIds = [
+            'karim_wants_scroll', 'karim_trade', 'karim_gives_spice',
+            'tariq_wants_spice', 'tariq_trade',
+            'youssef_wants_carpet', 'youssef_trade'
+        ];
+        const missing = [];
+        for (const id of tradingDialogIds) {
+            if (!DIALOGUES[id] && !DIALOG_CHOICES[id]) {
+                missing.push(id);
+            }
+        }
+        assert.deepEqual(missing, [], `Missing trading chain dialogs: ${missing.join(', ')}`);
+    });
+});
+
+// ======================================================================
+describe('Dialog Routing with Puzzles', () => {
+// ======================================================================
+
+    it('Marco shows torch choice when player has key and not solved', () => {
+        const scene = createMockScene({
+            flags: { rome_have_key: true }
+        });
+        const qm = new QuestManager(scene);
+        const dialogId = qm.getNPCDialogId('rome_artist');
+        assert.strictEqual(dialogId, 'marco_torch_choice');
+    });
+
+    it('Marco shows default when torch solved', () => {
+        const scene = createMockScene({
+            flags: { rome_have_key: true, rome_torch_solved: true }
+        });
+        const qm = new QuestManager(scene);
+        const dialogId = qm.getNPCDialogId('rome_artist');
+        assert.strictEqual(dialogId, 'marco_intro');
+    });
+
+    it('Tanaka shows hint dialog after wrong answer 1', () => {
+        const scene = createMockScene({
+            flags: {
+                tokyo_riddle_part1: true, tokyo_riddle_part2: true, tokyo_riddle_part3: true,
+                tokyo_riddle_hint1: true
+            }
+        });
+        const qm = new QuestManager(scene);
+        const dialogId = qm.getNPCDialogId('tokyo_shrine_keeper');
+        assert.strictEqual(dialogId, 'tanaka_riddle_hint1');
+    });
+
+    it('Tanaka shows hint dialog after wrong answer 2', () => {
+        const scene = createMockScene({
+            flags: {
+                tokyo_riddle_part1: true, tokyo_riddle_part2: true, tokyo_riddle_part3: true,
+                tokyo_riddle_hint2: true
+            }
+        });
+        const qm = new QuestManager(scene);
+        const dialogId = qm.getNPCDialogId('tokyo_shrine_keeper');
+        assert.strictEqual(dialogId, 'tanaka_riddle_hint2');
+    });
+
+    it('Tanaka riddle_choice only works with correct answer for completion', () => {
+        const choice = DIALOG_CHOICES.tanaka_riddle_choice;
+        assert.ok(choice);
+        // No shared completion flag — must pick correct answer
+        assert.ok(!choice.setsFlag, 'Shared setsFlag should not be set');
+        assert.ok(!choice.completesObjective, 'Shared completesObjective should not be set');
+        // Choice 0 (correct) should set completion
+        assert.strictEqual(choice.choices[0].setsFlag, 'tanaka_impressed');
+        assert.strictEqual(choice.choices[0].completionFlag, 'tokyo_riddle_solved');
+        assert.strictEqual(choice.choices[0].completesObjective, 'tokyo_solve_riddle');
+        // Choice 1 (wrong) should set hint flag, not solve
+        assert.strictEqual(choice.choices[1].setsFlag, 'tokyo_riddle_hint1');
+        assert.ok(!choice.choices[1].completionFlag);
+        // Choice 2 (wrong) should set hint flag, not solve
+        assert.strictEqual(choice.choices[2].setsFlag, 'tokyo_riddle_hint2');
+        assert.ok(!choice.choices[2].completionFlag);
+    });
+
+    it('trading chain flag sequence works: karim→tariq→youssef→karim', () => {
+        // Step 1: Karim wants scroll (starts chain)
+        const scene = createMockScene({ flags: { marrakech_has_journal: true } });
+        const qm = new QuestManager(scene);
+        assert.strictEqual(qm.getNPCDialogId('marrakech_spice'), 'karim_wants_scroll');
+
+        // Step 2: After karim_wants_scroll, karim gives spice
+        scene.registry.get('flags').marrakech_karim_wants_scroll = true;
+        assert.strictEqual(qm.getNPCDialogId('marrakech_spice'), 'karim_gives_spice');
+
+        // Step 3: Player has spice, tariq wants spice
+        scene.registry.get('flags').marrakech_has_spice = true;
+        assert.strictEqual(qm.getNPCDialogId('marrakech_tariq'), 'tariq_wants_spice');
+
+        // Step 4: tariq now has spice flag, trades for carpet
+        scene.registry.get('flags').marrakech_tariq_wants_spice = true;
+        assert.strictEqual(qm.getNPCDialogId('marrakech_tariq'), 'tariq_trade');
+
+        // Step 5: Player has carpet, youssef wants carpet
+        scene.registry.get('flags').marrakech_has_carpet = true;
+        assert.strictEqual(qm.getNPCDialogId('marrakech_youssef'), 'youssef_wants_carpet');
+
+        // Step 6: youssef trades scroll
+        scene.registry.get('flags').marrakech_youssef_wants_carpet = true;
+        assert.strictEqual(qm.getNPCDialogId('marrakech_youssef'), 'youssef_trade');
+
+        // Step 7: karim trades rare spice for scroll
+        scene.registry.get('flags').marrakech_has_scroll = true;
+        assert.strictEqual(qm.getNPCDialogId('marrakech_spice'), 'karim_trade');
+    });
+});
+
+// ======================================================================
+describe('DialogManager removesItem', () => {
+// ======================================================================
+
+    it('removes item from inventory on dialog end', () => {
+        const scene = createMockScene({ flags: {} });
+        const inv = new InventoryManager(scene);
+        scene.inventoryManager = inv;
+        const dm = new DialogManager(scene);
+
+        // Add an item
+        inv.addItem({ id: 'whistle', name: 'Whistle' });
+        assert.strictEqual(inv.getItems().length, 1);
+
+        // Simulate a dialog that removes the item
+        dm.active = true;
+        dm.currentDialog = {
+            removesItem: 'whistle',
+            setsFlag: 'side_london_whistle_complete'
+        };
+        dm.callback = null;
+        dm.endDialog();
+
+        assert.strictEqual(inv.getItems().length, 0);
+    });
+});
+
+// ======================================================================
+describe('QuestManager Side Quests', () => {
+// ======================================================================
+
+    it('getActiveQuests returns only main quest when no side quests started', () => {
+        const scene = createMockScene({ flags: { quest_started: true } });
+        const qm = new QuestManager(scene);
+        const quests = qm.getActiveQuests();
+        assert.strictEqual(quests.length, 1);
+        assert.strictEqual(quests[0].id, 'main_quest');
+    });
+
+    it('getActiveQuests includes started side quest', () => {
+        const scene = createMockScene({
+            flags: { quest_started: true, side_paris_flowers_started: true }
+        });
+        const qm = new QuestManager(scene);
+        const quests = qm.getActiveQuests();
+        assert.ok(quests.length >= 2);
+        const sideQuest = quests.find(q => q.id === 'paris_flowers');
+        assert.ok(sideQuest, 'paris_flowers side quest not found in active quests');
+        assert.strictEqual(sideQuest.isSideQuest, true);
+    });
+
+    it('side quest objectives track completion via flags', () => {
+        const scene = createMockScene({
+            flags: {
+                quest_started: true,
+                side_paris_flowers_started: true,
+                side_flower_sophie: true,
+                side_flower_marie: true
+            }
+        });
+        const qm = new QuestManager(scene);
+        const quests = qm.getActiveQuests();
+        const sideQuest = quests.find(q => q.id === 'paris_flowers');
+        assert.ok(sideQuest);
+        const sophie = sideQuest.objectives.find(o => o.id === 'flower_sophie');
+        assert.strictEqual(sophie.completed, true);
+        const librarian = sideQuest.objectives.find(o => o.id === 'flower_librarian');
+        assert.strictEqual(librarian.completed, false);
+    });
+
+    it('multiple side quests can be active simultaneously', () => {
+        const scene = createMockScene({
+            flags: {
+                quest_started: true,
+                side_paris_flowers_started: true,
+                side_london_whistle_started: true,
+                side_rome_music_started: true
+            }
+        });
+        const qm = new QuestManager(scene);
+        const quests = qm.getActiveQuests();
+        const sideQuests = quests.filter(q => q.isSideQuest);
+        assert.strictEqual(sideQuests.length, 3);
+    });
+});
+
+// ======================================================================
+describe('i18n Parity for Phase 2 Content', () => {
+// ======================================================================
+
+    it('all new dialog IDs have en entries', () => {
+        const newDialogIds = [
+            'bell_ring_gold', 'bell_ring_silver', 'bell_ring_bronze',
+            'bells_correct', 'bells_wrong',
+            'painting_select', 'paintings_correct', 'paintings_wrong',
+            'colette_side_start', 'colette_side_complete',
+            'sophie_side_flower', 'marie_side_flower', 'librarian_side_flower',
+            'bobby_side_start', 'bobby_side_return', 'bobby_madeleine_story',
+            'enzo_side_start', 'enzo_side_return', 'enzo_plays_song',
+            'giulia_side_sheet',
+            'fatima_side_start', 'fatima_side_complete', 'fatima_madeleine_tale',
+            'amina_side_story', 'karim_side_story', 'zahra_side_story',
+            'aiko_side_start', 'aiko_side_return',
+            'karim_wants_scroll', 'karim_trade', 'karim_gives_spice',
+            'tariq_wants_spice', 'tariq_trade',
+            'youssef_wants_carpet', 'youssef_trade'
+        ];
+        const missing = newDialogIds.filter(id => !enStrings.dialogues?.[id]);
+        assert.deepEqual(missing, [], `Missing en dialog entries: ${missing.join(', ')}`);
+    });
+
+    it('all new dialog IDs have fr entries', () => {
+        const newDialogIds = [
+            'bell_ring_gold', 'bell_ring_silver', 'bell_ring_bronze',
+            'bells_correct', 'bells_wrong',
+            'painting_select', 'paintings_correct', 'paintings_wrong',
+            'colette_side_start', 'colette_side_complete',
+            'sophie_side_flower', 'marie_side_flower', 'librarian_side_flower',
+            'bobby_side_start', 'bobby_side_return', 'bobby_madeleine_story',
+            'enzo_side_start', 'enzo_side_return', 'enzo_plays_song',
+            'giulia_side_sheet',
+            'fatima_side_start', 'fatima_side_complete', 'fatima_madeleine_tale',
+            'amina_side_story', 'karim_side_story', 'zahra_side_story',
+            'aiko_side_start', 'aiko_side_return',
+            'karim_wants_scroll', 'karim_trade', 'karim_gives_spice',
+            'tariq_wants_spice', 'tariq_trade',
+            'youssef_wants_carpet', 'youssef_trade'
+        ];
+        const missing = newDialogIds.filter(id => !frStrings.dialogues?.[id]);
+        assert.deepEqual(missing, [], `Missing fr dialog entries: ${missing.join(', ')}`);
+    });
+
+    it('all new item IDs have en and fr entries', () => {
+        const newItems = ['whistle', 'music_sheet_1', 'music_sheet_2', 'music_sheet_3',
+            'spice_bundle', 'fine_carpet', 'story_scroll', 'rare_spice', 'flower_bouquet', 'cat_mochi'];
+        const missingEn = newItems.filter(id => !enStrings.items?.[id]);
+        const missingFr = newItems.filter(id => !frStrings.items?.[id]);
+        assert.deepEqual(missingEn, [], `Missing en item entries: ${missingEn.join(', ')}`);
+        assert.deepEqual(missingFr, [], `Missing fr item entries: ${missingFr.join(', ')}`);
+    });
+
+    it('all new sign IDs have en and fr entries', () => {
+        const newSigns = ['paris_sign_3_27', 'london_museum_gallery_sign_5_1'];
+        const missingEn = newSigns.filter(id => !enStrings.signs?.[id]);
+        const missingFr = newSigns.filter(id => !frStrings.signs?.[id]);
+        assert.deepEqual(missingEn, [], `Missing en sign entries: ${missingEn.join(', ')}`);
+        assert.deepEqual(missingFr, [], `Missing fr sign entries: ${missingFr.join(', ')}`);
+    });
+
+    it('all side quest IDs have en and fr quest text', () => {
+        const sqIds = Object.keys(SIDE_QUESTS);
+        const missingEn = sqIds.filter(id => !enStrings.quests?.[id]);
+        const missingFr = sqIds.filter(id => !frStrings.quests?.[id]);
+        assert.deepEqual(missingEn, [], `Missing en quest entries: ${missingEn.join(', ')}`);
+        assert.deepEqual(missingFr, [], `Missing fr quest entries: ${missingFr.join(', ')}`);
+    });
+});
+
+// ======================================================================
+describe('Puzzle & Side Quest Journal Entries', () => {
+// ======================================================================
+
+    it('puzzle completion journal entries exist', () => {
+        const puzzleTriggers = ['paris_bells_solved', 'london_paintings_solved', 'rome_torch_solved', 'marrakech_trading_complete'];
+        for (const trigger of puzzleTriggers) {
+            const entry = LEA_JOURNAL_ENTRIES.find(e => e.trigger === trigger);
+            assert.ok(entry, `Missing journal entry for trigger: ${trigger}`);
+        }
+    });
+
+    it('side quest completion journal entries exist', () => {
+        const sideTriggers = [
+            'side_paris_flowers_complete', 'side_london_whistle_complete',
+            'side_rome_music_complete', 'side_marrakech_stories_complete',
+            'side_tokyo_cat_complete'
+        ];
+        for (const trigger of sideTriggers) {
+            const entry = LEA_JOURNAL_ENTRIES.find(e => e.trigger === trigger);
+            assert.ok(entry, `Missing journal entry for trigger: ${trigger}`);
+        }
     });
 });

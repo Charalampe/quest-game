@@ -14,5 +14,15 @@ export const ITEM_DEFS = [
     { name: 'research_pass', color: '#27AE60', detail: 'rect' },
     { name: 'amulet', color: '#FFD700', detail: 'diamond' },
     { name: 'portal_stone', color: '#9b59b6', detail: 'diamond' },
-    { name: 'jade_key', color: '#2ecc71', detail: 'key' }
+    { name: 'jade_key', color: '#2ecc71', detail: 'key' },
+    { name: 'whistle', color: '#C0C0C0', detail: 'key' },
+    { name: 'music_sheet_1', color: '#F5DEB3', detail: 'rect' },
+    { name: 'music_sheet_2', color: '#F5DEB3', detail: 'rect' },
+    { name: 'music_sheet_3', color: '#F5DEB3', detail: 'rect' },
+    { name: 'spice_bundle', color: '#E67E22', detail: 'circle' },
+    { name: 'fine_carpet', color: '#C0392B', detail: 'rect' },
+    { name: 'story_scroll', color: '#DEB887', detail: 'torn' },
+    { name: 'rare_spice', color: '#F1C40F', detail: 'diamond' },
+    { name: 'flower_bouquet', color: '#E74C3C', detail: 'circle' },
+    { name: 'cat_mochi', color: '#E67E22', detail: 'circle' }
 ];

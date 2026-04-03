@@ -45,7 +45,17 @@ export default {
         journalPagesCount: "Diary Pages: {found}/{total}",
         journalBonusUnlocked: "All pages found in {city}! Talk to {npc} for a surprise!",
         tapToClose: "Tap X to close",
-        back: "Back"
+        back: "Back",
+        sideQuestLabel: "\u2726 Side Quest",
+        bellRingGold: "*DONG* The gold bell rings with a deep, warm tone.",
+        bellRingSilver: "*DING* The silver bell chimes with a bright, clear note.",
+        bellRingBronze: "*BONG* The bronze bell resonates with a rich, mellow sound.",
+        bellsCorrect: "The three bells ring in perfect harmony!",
+        bellsWrong: "The notes clash discordantly... Try a different order.",
+        paintingSelect: "You examine the painting. Select another to swap.",
+        paintingsCorrect: "The paintings are in the correct order!",
+        paintingsWrong: "The paintings have been swapped, but the order doesn't seem right yet.",
+        hiddenItemCollected: "Found: {name}!"
     },
     travel: {
         eurostar: "Eurostar Train",
@@ -70,7 +80,9 @@ export default {
         rome_catacombs_lower_sign_7_1: "Only the worthy shall find what was lost — M.B.",
         marrakech_sign_23_7: "Merchant of Wonders",
         tokyo_sign_14_5: "Secret Garden - Enter with Care",
-        tokyo_shrine_sign_5_4: "'Wisdom completes what patience and courage begin.'"
+        tokyo_shrine_sign_5_4: "'Wisdom completes what patience and courage begin.'",
+        paris_sign_3_27: "The Three Bells of the Bookshop: Ring Gold, then Silver, then Bronze to hear the harmony.",
+        london_museum_gallery_sign_5_1: "Gallery Catalog: Greek Vase, Egyptian Mask, Roman Coin, Celtic Shield."
     },
     cities: {
         paris: "The City of Light",
@@ -95,7 +107,17 @@ export default {
         research_pass: { name: "Research Pass", description: "Grants access to the museum basement archive." },
         amulet: { name: "Nadia's Amulet", description: "A family heirloom lost in the riad courtyard." },
         portal_stone: { name: "Portal Stone", description: "A magical stone that activates portal travel." },
-        jade_key: { name: "Jade Key", description: "A beautiful jade key that opens the sacred garden gate." }
+        jade_key: { name: "Jade Key", description: "A beautiful jade key that opens the sacred garden gate." },
+        whistle: { name: "Whistle", description: "A brass police whistle." },
+        music_sheet_1: { name: "Music Sheet (1/3)", description: "A page of violin music." },
+        music_sheet_2: { name: "Music Sheet (2/3)", description: "A page of violin music." },
+        music_sheet_3: { name: "Music Sheet (3/3)", description: "A page of violin music." },
+        spice_bundle: { name: "Spice Bundle", description: "A fragrant bundle of Moroccan spices." },
+        fine_carpet: { name: "Fine Carpet", description: "A beautifully woven carpet from Marrakech." },
+        story_scroll: { name: "Story Scroll", description: "An ancient scroll with a tale from the Silk Road." },
+        rare_spice: { name: "Star of the Atlas", description: "An extremely rare spice from the Atlas Mountains." },
+        flower_bouquet: { name: "Flower Bouquets", description: "Three bouquets for Sophie, Marie, and the Librarian." },
+        cat_mochi: { name: "Mochi the Cat", description: "Aiko's fluffy orange cat." }
     },
     quests: {
         main_quest: {
@@ -121,6 +143,26 @@ export default {
                 tokyo_talk_gardener: { text: "Find the secret garden keeper in Tokyo", hint: "Show the journal to Yuki-san in the garden." },
                 tokyo_find_treasure: { text: "Discover the treasure", hint: "Open the chest in the secret garden." }
             }
+        },
+        paris_flowers: {
+            name: "Flower Deliveries",
+            description: "Help Colette deliver flowers to her friends around Paris."
+        },
+        london_whistle: {
+            name: "Bobby's Whistle",
+            description: "Bobby lost his whistle somewhere in the museum basement."
+        },
+        rome_music: {
+            name: "Enzo's Music Sheets",
+            description: "Help Enzo find his lost music sheets scattered around Rome."
+        },
+        marrakech_stories: {
+            name: "Fatima's Stories",
+            description: "Help Fatima collect stories from people around Marrakech."
+        },
+        tokyo_cat: {
+            name: "Aiko's Lost Cat",
+            description: "Help Aiko find her cat Mochi who wandered into the bamboo forest."
         }
     },
     dialogues: {
@@ -635,6 +677,214 @@ export default {
             "Madeleine's last entry is the most beautiful.",
             "'The greatest treasure is not what you find \u2014 it's what you learn along the way.'",
             "Wise words. Words to live by."
+        ],
+
+        // === PUZZLE FEEDBACK ===
+        bell_ring_gold: ["*DONG* The gold bell rings with a deep, warm tone."],
+        bell_ring_silver: ["*DING* The silver bell chimes with a bright, clear note."],
+        bell_ring_bronze: ["*BONG* The bronze bell resonates with a rich, mellow sound."],
+        bells_correct: [
+            "The three bells ring in perfect harmony!",
+            "A hidden compartment opens in the wall nearby...",
+            "Inside, you find a folded note from Madeleine!"
+        ],
+        bells_wrong: [
+            "The notes clash discordantly...",
+            "That didn't sound right. Maybe there's a clue nearby about the correct order?"
+        ],
+        painting_select: ["You examine the painting carefully. Select another painting to swap with it."],
+        paintings_correct: [
+            "The paintings are in the correct order!",
+            "A small drawer slides open beneath the display...",
+            "You find a note: 'Order reveals truth \u2014 M.B.'"
+        ],
+        paintings_wrong: ["The paintings have been swapped, but the order doesn't seem right yet."],
+
+        // === SIDE QUEST DIALOGS ===
+        colette_side_start: [
+            "Oh, L\u00E9a! Could you do me a favour?",
+            "I have three flower bouquets to deliver today, but I can't leave my stall.",
+            "Sophie, Marie, and Monsieur Dupont each ordered one.",
+            "Could you deliver them for me? I'd be so grateful!"
+        ],
+        sophie_side_flower: [
+            "Flowers from Colette? How lovely!",
+            "Sunflowers are my favourite \u2014 she remembered!",
+            "Tell Colette I said merci beaucoup!"
+        ],
+        marie_side_flower: [
+            "Oh! Roses from Colette! They're perfect for my photos.",
+            "I'll photograph them with the Eiffel Tower in the background.",
+            "Thank you for delivering these!"
+        ],
+        librarian_side_flower: [
+            "Lavender! My favourite. Colette knows me well.",
+            "Did you know Madeleine loved lavender too?",
+            "She pressed a sprig inside every book she read.",
+            "Thank you, L\u00E9a. Tell Colette the flowers are beautiful."
+        ],
+        colette_side_complete: [
+            "You delivered all three? Wonderful!",
+            "You're a natural errand-runner, L\u00E9a.",
+            "You know, Madeleine used to buy flowers from my grandmother.",
+            "She always said flowers are the universal language.",
+            "Here \u2014 keep one bouquet for yourself. You've earned it!"
+        ],
+
+        bobby_side_start: [
+            "Oh dear... I seem to have lost my whistle!",
+            "It's not just any whistle \u2014 it was my grandfather's.",
+            "He was a bobby too, you know. Fifty years on the beat!",
+            "I think I dropped it when I visited the museum basement.",
+            "Could you look for it? I can't go down there without a Research Pass."
+        ],
+        bobby_side_return: [
+            "My grandfather's whistle! You found it!",
+            "Oh, thank you so much! I was worried sick.",
+            "You know, your great-great-grandmother Madeleine once helped my grandfather too.",
+            "He told me the story when I was little...",
+            "She returned a lost badge to him in 1924. Small world, isn't it?",
+            "Thank you, L\u00E9a. You're just like her."
+        ],
+        bobby_madeleine_story: [
+            "Did I ever tell you about Madeleine and my grandfather?",
+            "He was guarding the museum when a young French woman approached.",
+            "She'd found his badge in the street and walked two miles to return it!",
+            "He said she had 'the heart of a lion and the smile of a summer day.'",
+            "That was your Madeleine. Quite a lady."
+        ],
+
+        enzo_side_start: [
+            "Oh no, oh no, oh no!",
+            "I've lost three pages of my best composition!",
+            "The wind scattered them when I was playing near the Colosseum.",
+            "One blew into the arena, one into the catacombs...",
+            "And I think Giulia picked one up. Could you find them for me?",
+            "This piece is special \u2014 it's based on a melody my grandfather Giovanni wrote!"
+        ],
+        giulia_side_sheet: [
+            "This music sheet? I found it blowing down the street!",
+            "It looked too beautiful to leave on the ground.",
+            "The melody is lovely \u2014 tell Enzo I'd love to hear him play it!"
+        ],
+        enzo_side_return: [
+            "All three sheets! You found them all!",
+            "Let me play it for you...",
+            "\u266A \u266B \u266A ... A beautiful melody fills the air...",
+            "My grandfather Giovanni wrote this when he met a French explorer.",
+            "She told him music was the language that needs no translation.",
+            "That explorer was Madeleine Beaumont \u2014 your great-great-grandmother!",
+            "Thank you, L\u00E9a. This music connects us across time."
+        ],
+        enzo_plays_song: [
+            "\u266A \u266B \u266A ... The melody of Madeleine and Giovanni...",
+            "Every note tells a story of two people who spoke different languages,",
+            "but understood each other perfectly through music.",
+            "Madeleine would be proud to know the song lives on."
+        ],
+
+        fatima_side_start: [
+            "Ah, L\u00E9a! I am writing a book of stories from Marrakech.",
+            "But my old legs can't carry me around the medina like they used to.",
+            "Could you collect stories for me?",
+            "Talk to Amina, Karim, and Zahra \u2014 each has a tale worth telling.",
+            "Then come back and share them with me!"
+        ],
+        amina_side_story: [
+            "A story for Fatima? I know a good one!",
+            "My grandmother said that on the night of the full moon,",
+            "the fountains of Marrakech whisper the names of everyone who ever drank from them.",
+            "She said if you listen carefully, you can hear Madeleine's name.",
+            "Tell Fatima \u2014 she'll love that one!"
+        ],
+        karim_side_story: [
+            "A story? Hmm... Here's one about my spices.",
+            "Long ago, a merchant traveled the Silk Road carrying one precious saffron flower.",
+            "He planted it here in Marrakech, and from that single flower,",
+            "grew the entire saffron trade of Morocco!",
+            "My family has tended those fields for generations. Tell Fatima!"
+        ],
+        zahra_side_story: [
+            "A story about the riad? Of course!",
+            "This building was once a meeting place for explorers from all over the world.",
+            "They would share maps, stories, and dreams under these stars.",
+            "Your great-great-grandmother Madeleine sat in this very courtyard.",
+            "She said: 'The best stories are the ones that bring people together.'",
+            "Please tell Fatima \u2014 she knew Madeleine too."
+        ],
+        fatima_side_complete: [
+            "Three wonderful stories! Amina, Karim, Zahra \u2014 all magnificent!",
+            "You know, I once knew a storyteller even better than me.",
+            "Madeleine Beaumont came to my mother's house when I was a little girl.",
+            "She told us about Paris, London, Rome... places I'd never seen.",
+            "She made the whole world feel close, like it was just next door.",
+            "Her stories changed my life. That's why I became a storyteller too.",
+            "Thank you, L\u00E9a. You carry her gift."
+        ],
+        fatima_madeleine_tale: [
+            "Let me tell you one more story about Madeleine...",
+            "When she came to Marrakech, she didn't speak a word of Arabic.",
+            "But she sat in the market square and drew pictures in the dust.",
+            "Children gathered around, then adults. Soon the whole square was watching!",
+            "She drew the Eiffel Tower, Big Ben, the Colosseum...",
+            "And everyone understood her perfectly. That is the power of stories."
+        ],
+
+        aiko_side_start: [
+            "Oh no! My cat Mochi has escaped again!",
+            "She loves chasing butterflies into the bamboo forest.",
+            "But it's dangerous in there \u2014 the paths twist and turn!",
+            "Could you bring her back if you find her?",
+            "She's orange and fluffy. You can't miss her!"
+        ],
+        aiko_side_return: [
+            "Mochi! You found her! Oh, thank you, thank you!",
+            "She looks like she had quite an adventure.",
+            "To say thank you, let me teach you something...",
+            "In Japanese, we say 'Arigatou gozaimasu' \u2014 it means 'thank you very much.'",
+            "And 'Tomodachi' means 'friend.' You are my tomodachi, L\u00E9a!",
+            "Madeleine-san knew these words too. Yuki-san told me."
+        ],
+
+        // === TRADING CHAIN ===
+        karim_wants_scroll: [
+            "Hmm, you want a rare spice? I might have something...",
+            "But first, I need an ancient story scroll for my collection.",
+            "Youssef the storyteller might have one. He collects old manuscripts."
+        ],
+        karim_trade: [
+            "A story scroll! This is exactly what I was looking for!",
+            "The calligraphy is exquisite... 14th century, I'd say.",
+            "As promised, here is a bundle of my rarest spice \u2014 Star of the Atlas.",
+            "It's worth more than gold in some places!"
+        ],
+        karim_gives_spice: [
+            "You want to start the great trade? Very well!",
+            "Here's a bundle of my finest spices to get you started.",
+            "Take them to Tariq the carpet merchant \u2014 he's been asking for spices.",
+            "He'll give you something good in return, and the trading goes round!"
+        ],
+        tariq_wants_spice: [
+            "A fine carpet, you say? I have the finest!",
+            "But for my best carpet, I need a bundle of rare spice.",
+            "Karim the spice merchant has what I need.",
+            "Bring me a spice bundle and the carpet is yours!"
+        ],
+        tariq_trade: [
+            "Ah, spice bundle! These are excellent quality!",
+            "Here is my finest carpet \u2014 woven with patterns from the Atlas Mountains.",
+            "It's said that Madeleine once sat on this very carpet to read her maps!"
+        ],
+        youssef_wants_carpet: [
+            "A story scroll? I have a wonderful one!",
+            "But I need a fine carpet to sit on when I tell my tales.",
+            "Tariq the carpet merchant has the best. Bring me one of his carpets!"
+        ],
+        youssef_trade: [
+            "What a magnificent carpet! I'll look wonderful telling stories on this!",
+            "As promised, here's an ancient story scroll.",
+            "It tells the tale of a merchant princess who traveled the Silk Road.",
+            "Take it to Karim \u2014 he's been looking for one like this."
         ]
     }
 };

@@ -383,13 +383,28 @@ export class UIScene extends Phaser.Scene {
         if (quests.length === 0) {
             this.questLogText.setText(t('ui.questLogEmpty') + '\n\n' + pagesText);
         } else {
-            const text = quests.map(q => {
+            const mainQuests = quests.filter(q => !q.isSideQuest);
+            const sideQuests = quests.filter(q => q.isSideQuest);
+
+            let text = mainQuests.map(q => {
                 const objectives = q.objectives.map(o => {
                     const check = o.completed ? '\u2713' : '\u25CB';
                     return `  ${check} ${o.text}`;
                 }).join('\n');
                 return `\u2606 ${q.name}\n${objectives}`;
             }).join('\n\n');
+
+            if (sideQuests.length > 0) {
+                const sideText = sideQuests.map(q => {
+                    const objectives = q.objectives.map(o => {
+                        const check = o.completed ? '\u2713' : '\u25CB';
+                        return `  ${check} ${o.text}`;
+                    }).join('\n');
+                    return `\u2726 ${q.name}\n${objectives}`;
+                }).join('\n\n');
+                text += '\n\n' + sideText;
+            }
+
             this.questLogText.setText(text + '\n\n' + pagesText);
         }
     }

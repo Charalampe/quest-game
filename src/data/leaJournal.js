@@ -115,5 +115,70 @@ export const LEA_JOURNAL_ENTRIES = [
         city: 'tokyo',
         title: 'The Real Treasure',
         text: "The Gem of Understanding. Not gold, not jewels — the power to connect with all people. Madeleine was right. The journey taught me more than any treasure could. But I'm not done exploring. Not even close."
+    },
+
+    // === PUZZLE & SIDE QUEST JOURNAL ENTRIES ===
+    {
+        id: 'journal_paris_bells',
+        trigger: 'paris_bells_solved',
+        city: 'paris',
+        title: 'The Three Bells',
+        text: "I rang the bells near the bookshop in the right order — Gold, Silver, Bronze. They made the most beautiful harmony! A note from Madeleine was hidden behind them. She really did leave clues everywhere."
+    },
+    {
+        id: 'journal_london_paintings',
+        trigger: 'london_paintings_solved',
+        city: 'london',
+        title: 'The Gallery Puzzle',
+        text: "The paintings in the gallery were out of order! Once I rearranged them to match the catalog, a hidden drawer opened. Madeleine's message said 'Order reveals truth.' She was so clever."
+    },
+    {
+        id: 'journal_rome_torch',
+        trigger: 'rome_torch_solved',
+        city: 'rome',
+        title: 'The Torch Path',
+        text: "Marco helped me find the right path in the catacombs — follow the steady torches, not the flickering ones. The Romans knew their architecture. The path led deeper underground."
+    },
+    {
+        id: 'journal_marrakech_trading',
+        trigger: 'marrakech_trading_complete',
+        city: 'marrakech',
+        title: 'The Great Trade',
+        text: "I completed a full trading circle: spices to Tariq, carpet to Youssef, scroll to Karim. And Karim gave me the Star of the Atlas — the rarest spice in Morocco! Trading is like a puzzle where everyone wins."
+    },
+    {
+        id: 'journal_side_flowers',
+        trigger: 'side_paris_flowers_complete',
+        city: 'paris',
+        title: 'Flower Deliveries',
+        text: "I delivered bouquets for Colette — sunflowers to Sophie, roses to Marie, and lavender to Monsieur Dupont. Colette said Madeleine loved flowers too. The universal language, she called them."
+    },
+    {
+        id: 'journal_side_whistle',
+        trigger: 'side_london_whistle_complete',
+        city: 'london',
+        title: "Bobby's Whistle",
+        text: "Bobby's grandfather was a bobby too — and Madeleine once returned his lost badge! Fifty years later, I returned Bobby's whistle. Some things run in families."
+    },
+    {
+        id: 'journal_side_music',
+        trigger: 'side_rome_music_complete',
+        city: 'rome',
+        title: "Giovanni's Melody",
+        text: "Enzo played his grandfather Giovanni's melody for me. Giovanni wrote it after meeting Madeleine. The music was so beautiful — two people who couldn't speak each other's language, connected by music."
+    },
+    {
+        id: 'journal_side_stories',
+        trigger: 'side_marrakech_stories_complete',
+        city: 'marrakech',
+        title: "Fatima's Book of Stories",
+        text: "I collected stories from Amina, Karim, and Zahra for Fatima's book. The best part? Fatima knew Madeleine as a little girl. Madeleine drew the world in the dust and everyone understood."
+    },
+    {
+        id: 'journal_side_cat',
+        trigger: 'side_tokyo_cat_complete',
+        city: 'tokyo',
+        title: 'Mochi the Cat',
+        text: "I found Aiko's cat Mochi in the bamboo forest! Aiko taught me 'Arigatou gozaimasu' (thank you) and 'Tomodachi' (friend). Madeleine-san knew these words too. I'm learning the language of friendship."
     }
 ];
