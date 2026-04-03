@@ -3,10 +3,10 @@
 
 export const PUZZLE_OBJECTS = {
     paris: [
-        // 3 bells near the bookshop (main room, grassy park) — ring in correct order: Gold, Silver, Bronze
-        { id: 'bell_gold', city: 'paris', room: 'main', x: 3, y: 28, type: 'bell', label: 'Gold Bell' },
-        { id: 'bell_silver', city: 'paris', room: 'main', x: 5, y: 28, type: 'bell', label: 'Silver Bell' },
-        { id: 'bell_bronze', city: 'paris', room: 'main', x: 7, y: 28, type: 'bell', label: 'Bronze Bell' }
+        // 3 bells in the south-west park — ring in correct order: Gold, Silver, Bronze
+        { id: 'bell_gold', city: 'paris', room: 'main', x: 3, y: 30, type: 'bell', label: 'Gold Bell' },
+        { id: 'bell_silver', city: 'paris', room: 'main', x: 5, y: 30, type: 'bell', label: 'Silver Bell' },
+        { id: 'bell_bronze', city: 'paris', room: 'main', x: 7, y: 30, type: 'bell', label: 'Bronze Bell' }
     ],
     london: [
         // 4 paintings on north wall of museum gallery — swap to correct order
