@@ -17,7 +17,7 @@ export const TILE_DEFS = [
     { color: '#6c3483', detail: 'brick' },     // 12: purple wall (marrakech)
     { color: '#2e86c1', detail: 'brick' },     // 13: blue wall
     { color: '#f0e6d3', detail: 'brick' },     // 14: white wall (rome)
-    { color: '#e74c3c', detail: null },         // 15: red roof
+    { color: '#c0392b', detail: 'roof' },        // 15: red roof (shingles)
 
     // Row 2: decorative/interactive
     { color: '#2ecc71', detail: 'tree' },       // 16: tree

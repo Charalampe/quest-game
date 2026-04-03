@@ -994,6 +994,54 @@ export class MangaSpriteProvider extends AssetProvider {
                 }
                 break;
             }
+            case 'roof': {
+                const roofBase = tile.color;
+                // Dark outline
+                ctx.fillStyle = '#4a1a1a';
+                ctx.fillRect(x, y, s, s);
+
+                // Ridge cap (top decorative strip)
+                ctx.fillStyle = '#8B2500';
+                ctx.fillRect(x, y, s, 4);
+                ctx.fillStyle = '#A03020';
+                ctx.fillRect(x+1, y+1, s-2, 2);
+
+                // Shingle rows — 4 overlapping rows with offset
+                for (let row = 0; row < 4; row++) {
+                    const ry = y + 4 + row * 7;
+                    const offset = (row % 2) * 8;
+                    for (let sx = -8; sx < s + 8; sx += 16) {
+                        const shingleX = x + sx + offset;
+                        const sw = 14;
+                        const clippedX = Math.max(shingleX, x);
+                        const clippedW = Math.min(shingleX + sw, x + s) - clippedX;
+                        if (clippedW <= 0) continue;
+
+                        // Shingle shadow
+                        ctx.fillStyle = '#6B1A1A';
+                        ctx.fillRect(clippedX, ry, clippedW, 7);
+
+                        // Shingle body
+                        ctx.fillStyle = roofBase;
+                        ctx.fillRect(clippedX, ry, clippedW, 5);
+
+                        // Shingle highlight (top edge)
+                        ctx.fillStyle = '#E05040';
+                        ctx.fillRect(clippedX, ry, clippedW, 2);
+
+                        // Shingle bottom curve shadow
+                        ctx.fillStyle = '#7B2020';
+                        ctx.fillRect(clippedX + 1, ry + 5, clippedW - 2, 1);
+                    }
+                }
+
+                // Bottom edge trim
+                ctx.fillStyle = '#5B1515';
+                ctx.fillRect(x, y + s - 2, s, 2);
+                ctx.fillStyle = '#8B2500';
+                ctx.fillRect(x, y + s - 2, s, 1);
+                break;
+            }
             case 'tree': {
                 // Ground shadow
                 ctx.fillStyle = '#1a4618';
