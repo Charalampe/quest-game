@@ -208,12 +208,17 @@ function generateParis() {
     // Northern residential
     for (let y = 1; y < 6; y++) { for (let x = 33; x < 39; x++) walls[y][x] = 10; for (let x = 41; x < 47; x++) walls[y][x] = 8; }
     walls[5][36] = 23; walls[5][44] = 23;
-    walls[1][34] = 30; walls[1][37] = 30; walls[1][42] = 30; walls[1][45] = 30;
+    for (let x = 33; x < 39; x++) walls[1][x] = 15; // roof
+    for (let x = 41; x < 47; x++) walls[1][x] = 15; // roof
+    walls[2][34] = 30; walls[2][37] = 30; walls[2][42] = 30; walls[2][45] = 30; // windows below roof
+    decor[4][35] = 29; decor[4][37] = 29; decor[4][43] = 29; decor[4][45] = 29; // awnings above doors
 
     // Museum row
     for (let y = 7; y < 11; y++) for (let x = 33; x < 48; x++) walls[y][x] = 10;
     walls[10][38] = 23; walls[10][42] = 23;
-    walls[7][35] = 30; walls[7][37] = 30; walls[7][40] = 30; walls[7][43] = 30; walls[7][46] = 30;
+    for (let x = 33; x < 48; x++) walls[7][x] = 15; // roof
+    walls[8][35] = 30; walls[8][37] = 30; walls[8][40] = 30; walls[8][43] = 30; walls[8][46] = 30; // windows below roof
+    decor[9][37] = 29; decor[9][41] = 29; // awnings above doors
 
     // Main streets
     for (let x = 0; x < W; x++) { ground[13][x] = 0; ground[14][x] = 0; }
@@ -221,12 +226,16 @@ function generateParis() {
 
     // South bank buildings
     for (let y = 21; y < 26; y++) for (let x = 2; x < 9; x++) walls[y][x] = 8;
-    walls[25][5] = 23; walls[21][3] = 30; walls[21][5] = 30; walls[21][7] = 30;
-    decor[21][2] = 29; decor[21][8] = 29; decor[20][5] = 22;
+    walls[25][5] = 23;
+    for (let x = 2; x < 9; x++) walls[21][x] = 15; // roof
+    walls[22][3] = 30; walls[22][5] = 30; walls[22][7] = 30; // windows below roof
+    decor[24][4] = 29; decor[24][6] = 29; // awnings above door
 
     for (let y = 21; y < 26; y++) for (let x = 11; x < 18; x++) walls[y][x] = 11;
-    walls[25][14] = 23; walls[21][12] = 30; walls[21][14] = 30; walls[21][16] = 30;
-    decor[21][11] = 29; decor[21][17] = 29;
+    walls[25][14] = 23;
+    for (let x = 11; x < 18; x++) walls[21][x] = 15; // roof
+    walls[22][12] = 30; walls[22][14] = 30; walls[22][16] = 30; // windows below roof
+    decor[24][13] = 29; decor[24][15] = 29; // awnings above door
 
     // Market square
     for (let y = 27; y < 33; y++) for (let x = 20; x < 31; x++) ground[y][x] = 4;
@@ -236,11 +245,18 @@ function generateParis() {
     // South-east residential
     for (let y = 21; y < 26; y++) { for (let x = 33; x < 39; x++) walls[y][x] = 9; for (let x = 41; x < 48; x++) walls[y][x] = 8; }
     walls[25][36] = 23; walls[25][44] = 23;
-    walls[21][34] = 30; walls[21][37] = 30; walls[21][42] = 30; walls[21][46] = 30;
+    for (let x = 33; x < 39; x++) walls[21][x] = 15; // roof
+    for (let x = 41; x < 48; x++) walls[21][x] = 15; // roof
+    walls[22][34] = 30; walls[22][37] = 30; walls[22][42] = 30; walls[22][46] = 30; // windows below roof
+    decor[24][35] = 29; decor[24][37] = 29; decor[24][43] = 29; decor[24][45] = 29; // awnings above doors
 
     // Grandmother's house
     for (let y = 27; y < 32; y++) for (let x = 40; x < 48; x++) walls[y][x] = 8;
-    walls[31][44] = 23; walls[27][42] = 30; walls[27][45] = 30; decor[26][44] = 22;
+    walls[31][44] = 23;
+    for (let x = 40; x < 48; x++) walls[27][x] = 15; // roof
+    walls[28][42] = 30; walls[28][45] = 30; // windows below roof
+    decor[30][43] = 29; decor[30][45] = 29; // awnings above door
+    decor[26][44] = 22;
 
     // Southern buildings
     for (let y = 33; y < 37; y++) {
@@ -249,6 +265,12 @@ function generateParis() {
         for (let x = 30; x < 38; x++) walls[y][x] = 11;
         for (let x = 40; x < 48; x++) walls[y][x] = 9;
     }
+    // Roofs
+    for (let x = 2; x < 10; x++) walls[33][x] = 15;
+    for (let x = 12; x < 20; x++) walls[33][x] = 15;
+    for (let x = 30; x < 38; x++) walls[33][x] = 15;
+    for (let x = 40; x < 48; x++) walls[33][x] = 15;
+    // Doors
     walls[36][6] = 23; walls[36][16] = 23; walls[36][34] = 23; walls[36][44] = 23;
 
     // Street lamps
@@ -271,8 +293,7 @@ function generateParis() {
     // Park benches in open areas
     decor[26][6] = 27; decor[26][12] = 27; decor[30][10] = 27;
 
-    // More awnings on south bank buildings
-    decor[21][4] = 29; decor[21][6] = 29; decor[21][14] = 29; decor[21][16] = 29;
+    // (awnings moved to above-door rows in building definitions above)
 
     // Signs at key intersections
     decor[13][24] = 22; decor[26][25] = 22;
@@ -340,16 +361,13 @@ function generateParis() {
     decor[30][6] = 27; decor[30][16] = 27; decor[30][22] = 27; decor[30][36] = 27;
     decor[37][10] = 27; decor[37][18] = 27; decor[37][30] = 27; decor[37][40] = 27;
 
-    // Awnings on ALL building fronts
-    decor[33][3] = 29; decor[33][7] = 29; decor[33][13] = 29; decor[33][17] = 29;
-    decor[33][31] = 29; decor[33][35] = 29; decor[33][41] = 29; decor[33][45] = 29;
-    decor[21][34] = 29; decor[21][36] = 29; decor[21][42] = 29; decor[21][46] = 29;
+    // Awnings on southern building fronts (above doors, below windows)
+    decor[35][5] = 29; decor[35][7] = 29; decor[35][15] = 29; decor[35][17] = 29;
+    decor[35][33] = 29; decor[35][35] = 29; decor[35][43] = 29; decor[35][45] = 29;
 
-    // Windows on buildings missing them
-    walls[33][4] = 30; walls[33][8] = 30; walls[33][14] = 30; walls[33][18] = 30;
-    walls[33][32] = 30; walls[33][36] = 30; walls[33][42] = 30; walls[33][46] = 30;
-    walls[27][41] = 30; walls[27][43] = 30; walls[27][46] = 30;
-    walls[21][35] = 30; walls[21][44] = 30;
+    // Windows on southern buildings (below roof row)
+    walls[34][4] = 30; walls[34][8] = 30; walls[34][14] = 30; walls[34][18] = 30;
+    walls[34][32] = 30; walls[34][36] = 30; walls[34][42] = 30; walls[34][46] = 30;
 
     // Statues: market square, museum row, boulevards, parks
     walls[30][25] = 19; walls[6][36] = 19;
@@ -543,15 +561,18 @@ function generateLondon() {
     for (let y = 9; y < 16; y++) for (let x = 14; x < 35; x++) walls[y][x] = 34;
     walls[15][22] = -1; decor[15][22] = 23; // museum entrance door
     walls[15][23] = 23; walls[15][24] = 23;
-    walls[9][16] = 30; walls[9][19] = 30; walls[9][22] = 30; walls[9][25] = 30;
-    walls[9][28] = 30; walls[9][31] = 30; walls[9][33] = 30;
+    for (let x = 14; x < 35; x++) walls[9][x] = 15; // roof
+    walls[10][16] = 30; walls[10][19] = 30; walls[10][22] = 30; walls[10][25] = 30;
+    walls[10][28] = 30; walls[10][31] = 30; walls[10][33] = 30; // windows below roof
     walls[15][17] = 40; walls[15][20] = 40; walls[15][27] = 40; walls[15][30] = 40;
     decor[8][24] = 22;
 
     // Victorian terraces
     for (let y = 1; y < 5; y++) { for (let x = 14; x < 20; x++) walls[y][x] = 35; for (let x = 22; x < 28; x++) walls[y][x] = 11; for (let x = 30; x < 36; x++) walls[y][x] = 35; }
     walls[4][17] = 23; walls[4][25] = 36; walls[4][33] = 23;
-    walls[1][15] = 30; walls[1][18] = 30; walls[1][23] = 30; walls[1][26] = 30; walls[1][31] = 30; walls[1][34] = 30;
+    for (let x = 14; x < 20; x++) walls[1][x] = 15; for (let x = 22; x < 28; x++) walls[1][x] = 15; for (let x = 30; x < 36; x++) walls[1][x] = 15; // roofs
+    walls[2][15] = 30; walls[2][18] = 30; walls[2][23] = 30; walls[2][26] = 30; walls[2][31] = 30; walls[2][34] = 30; // windows below roof
+    decor[3][16] = 29; decor[3][18] = 29; decor[3][24] = 29; decor[3][26] = 29; decor[3][32] = 29; decor[3][34] = 29; // awnings above doors
 
     // South bank houses
     for (let y = 23; y < 28; y++) {
@@ -562,9 +583,20 @@ function generateLondon() {
         for (let x = 38; x < 45; x++) walls[y][x] = 35;
     }
     walls[27][5] = 23; walls[27][14] = 36; walls[27][23] = 23; walls[27][32] = 23; walls[27][41] = 23;
-    walls[23][3] = 30; walls[23][7] = 30; walls[23][12] = 30; walls[23][16] = 30;
-    walls[23][21] = 30; walls[23][25] = 30; walls[23][30] = 30; walls[23][34] = 30;
-    walls[23][39] = 30; walls[23][43] = 30;
+    // Roofs
+    for (let x = 2; x < 9; x++) walls[23][x] = 15;
+    for (let x = 11; x < 18; x++) walls[23][x] = 15;
+    for (let x = 20; x < 27; x++) walls[23][x] = 15;
+    for (let x = 29; x < 36; x++) walls[23][x] = 15;
+    for (let x = 38; x < 45; x++) walls[23][x] = 15;
+    // Windows below roof
+    walls[24][3] = 30; walls[24][7] = 30; walls[24][12] = 30; walls[24][16] = 30;
+    walls[24][21] = 30; walls[24][25] = 30; walls[24][30] = 30; walls[24][34] = 30;
+    walls[24][39] = 30; walls[24][43] = 30;
+    // Awnings above doors
+    decor[26][4] = 29; decor[26][6] = 29; decor[26][13] = 29; decor[26][15] = 29;
+    decor[26][22] = 29; decor[26][24] = 29; decor[26][31] = 29; decor[26][33] = 29;
+    decor[26][40] = 29; decor[26][42] = 29;
 
     // Southern park
     for (let y = 30; y < 37; y++) for (let x = 2; x < 15; x++) ground[y][x] = 37;
@@ -575,6 +607,14 @@ function generateLondon() {
     // More south houses
     for (let y = 30; y < 35; y++) { for (let x = 18; x < 25; x++) walls[y][x] = 11; for (let x = 27; x < 34; x++) walls[y][x] = 35; for (let x = 36; x < 43; x++) walls[y][x] = 9; }
     walls[34][21] = 23; walls[34][30] = 23; walls[34][39] = 23;
+    // Roofs
+    for (let x = 18; x < 25; x++) walls[30][x] = 15;
+    for (let x = 27; x < 34; x++) walls[30][x] = 15;
+    for (let x = 36; x < 43; x++) walls[30][x] = 15;
+    // Windows
+    walls[31][19] = 30; walls[31][23] = 30; walls[31][28] = 30; walls[31][32] = 30; walls[31][37] = 30; walls[31][41] = 30;
+    // Awnings
+    decor[33][20] = 29; decor[33][22] = 29; decor[33][29] = 29; decor[33][31] = 29; decor[33][38] = 29; decor[33][40] = 29;
 
     walls[29][10] = 32; walls[36][30] = 32;
     decor[16][8] = 28; decor[16][18] = 28; decor[16][30] = 28; decor[16][40] = 28;
@@ -667,14 +707,7 @@ function generateLondon() {
     walls[17][10] = 16; walls[17][20] = 16; walls[17][34] = 16; walls[17][44] = 16;
     walls[28][4] = 16; walls[28][12] = 16; walls[28][22] = 16; walls[28][32] = 16; walls[28][42] = 16;
 
-    // Windows on south bank houses
-    walls[23][4] = 30; walls[23][6] = 30; walls[23][13] = 30; walls[23][15] = 30;
-    walls[23][22] = 30; walls[23][24] = 30; walls[23][31] = 30; walls[23][33] = 30;
-
-    // More awnings
-    decor[23][3] = 29; decor[23][8] = 29; decor[23][11] = 29; decor[23][17] = 29;
-    decor[23][20] = 29; decor[23][26] = 29; decor[23][29] = 29; decor[23][35] = 29;
-    decor[23][38] = 29; decor[23][44] = 29;
+    // (south bank windows/awnings moved to building definitions above)
 
     // More lamps along under-lit streets
     decor[5][12] = 28; decor[8][13] = 28; decor[37][6] = 28; decor[37][12] = 28;
@@ -850,7 +883,9 @@ function generateRome() {
 
     for (let y = 1; y < 6; y++) { for (let x = 2; x < 9; x++) walls[y][x] = 47; for (let x = 40; x < 48; x++) walls[y][x] = 14; }
     walls[5][5] = 23; walls[5][44] = 23;
-    walls[1][3] = 30; walls[1][6] = 30; walls[1][41] = 30; walls[1][46] = 30;
+    for (let x = 2; x < 9; x++) walls[1][x] = 15; for (let x = 40; x < 48; x++) walls[1][x] = 15; // roofs
+    walls[2][3] = 30; walls[2][6] = 30; walls[2][41] = 30; walls[2][46] = 30; // windows below roof
+    decor[4][4] = 29; decor[4][6] = 29; decor[4][43] = 29; decor[4][45] = 29; // awnings above doors
 
     // Aqueduct
     for (let x = 1; x < W-1; x++) walls[10][x] = 41;
@@ -868,11 +903,17 @@ function generateRome() {
     decor[22][30] = 20; // chest near fountain
 
     for (let y = 13; y < 18; y++) for (let x = 2; x < 10; x++) walls[y][x] = 46;
-    walls[17][6] = 23; walls[13][3] = 30; walls[13][5] = 30; walls[13][8] = 30;
+    walls[17][6] = 23;
+    for (let x = 2; x < 10; x++) walls[13][x] = 15; // roof
+    walls[14][3] = 30; walls[14][5] = 30; walls[14][8] = 30; // windows below roof
+    decor[16][5] = 29; decor[16][7] = 29; // awnings above door
     decor[13][2] = 45; decor[13][9] = 45;
 
     for (let y = 13; y < 18; y++) for (let x = 38; x < 48; x++) walls[y][x] = 47;
-    walls[17][42] = 23; walls[13][39] = 30; walls[13][42] = 30; walls[13][46] = 30;
+    walls[17][42] = 23;
+    for (let x = 38; x < 48; x++) walls[13][x] = 15; // roof
+    walls[14][39] = 30; walls[14][42] = 30; walls[14][46] = 30; // windows below roof
+    decor[16][41] = 29; decor[16][43] = 29; // awnings above door
 
     for (let y = 27; y < 32; y++) {
         for (let x = 2; x < 10; x++) walls[y][x] = 46;
@@ -881,7 +922,21 @@ function generateRome() {
         for (let x = 31; x < 38; x++) walls[y][x] = 46;
         for (let x = 40; x < 48; x++) walls[y][x] = 47;
     }
+    // Roofs
+    for (let x = 2; x < 10; x++) walls[27][x] = 15;
+    for (let x = 13; x < 20; x++) walls[27][x] = 15;
+    for (let x = 23; x < 28; x++) walls[27][x] = 15;
+    for (let x = 31; x < 38; x++) walls[27][x] = 15;
+    for (let x = 40; x < 48; x++) walls[27][x] = 15;
+    // Windows below roof
+    walls[28][4] = 30; walls[28][7] = 30; walls[28][15] = 30; walls[28][18] = 30;
+    walls[28][25] = 30; walls[28][33] = 30; walls[28][36] = 30; walls[28][42] = 30; walls[28][46] = 30;
+    // Doors
     walls[31][6] = 23; walls[31][16] = 23; walls[31][25] = 23; walls[31][34] = 23; walls[31][44] = 23;
+    // Awnings above doors
+    decor[30][5] = 29; decor[30][7] = 29; decor[30][15] = 29; decor[30][17] = 29;
+    decor[30][24] = 29; decor[30][26] = 29; decor[30][33] = 29; decor[30][35] = 29;
+    decor[30][43] = 29; decor[30][45] = 29;
 
     for (let x = 0; x < W; x++) { ground[12][x] = 0; ground[26][x] = 0; }
     for (let y = 0; y < H; y++) { ground[y][24] = 0; ground[y][25] = 0; }
@@ -1169,11 +1224,24 @@ function generateMarrakech() {
         for (let x = 28; x < 34; x++) walls[y][x] = 53;
         for (let x = 42; x < 48; x++) walls[y][x] = 12;
     }
+    // Roofs
+    for (let x = 1; x < 8; x++) walls[1][x] = 15;
+    for (let x = 16; x < 22; x++) walls[1][x] = 15;
+    for (let x = 28; x < 34; x++) walls[1][x] = 15;
+    for (let x = 42; x < 48; x++) walls[1][x] = 15;
+    // Windows below roof
+    walls[2][3] = 30; walls[2][6] = 30; walls[2][17] = 30; walls[2][20] = 30;
+    walls[2][29] = 30; walls[2][32] = 30; walls[2][43] = 30; walls[2][46] = 30;
     walls[6][4] = 23; walls[6][19] = 54; walls[6][31] = 54; walls[6][45] = 23;
+    // Awnings above doors
+    decor[5][3] = 29; decor[5][5] = 29; decor[5][18] = 29; decor[5][20] = 29;
+    decor[5][30] = 29; decor[5][32] = 29; decor[5][44] = 29; decor[5][46] = 29;
 
     for (let y = 2; y < 7; y++) for (let x = 38; x < 41; x++) ground[y][x] = 49;
 
     for (let y = 13; y < 18; y++) for (let x = 36; x < 44; x++) walls[y][x] = 53;
+    for (let x = 36; x < 44; x++) walls[13][x] = 15; // roof
+    walls[14][38] = 30; walls[14][42] = 30; // windows below roof
     walls[17][40] = 54; decor[12][40] = 22;
 
     decor[20][48] = 23; // door to Desert Oasis (east border)
@@ -1184,7 +1252,18 @@ function generateMarrakech() {
         for (let x = 28; x < 34; x++) walls[y][x] = 53;
         for (let x = 42; x < 48; x++) walls[y][x] = 12;
     }
-    walls[31][4] = 23; walls[31][19] = 54; walls[31][31] = 54; walls[31][45] = 23;
+    // Roofs
+    for (let x = 1; x < 8; x++) walls[31][x] = 15;
+    for (let x = 16; x < 22; x++) walls[31][x] = 15;
+    for (let x = 28; x < 34; x++) walls[31][x] = 15;
+    for (let x = 42; x < 48; x++) walls[31][x] = 15;
+    // Windows below roof
+    walls[32][3] = 30; walls[32][6] = 30; walls[32][17] = 30; walls[32][20] = 30;
+    walls[32][29] = 30; walls[32][32] = 30; walls[32][43] = 30; walls[32][46] = 30;
+    walls[36][4] = 23; walls[36][19] = 54; walls[36][31] = 54; walls[36][45] = 23; // doors at bottom
+    // Awnings above doors
+    decor[35][3] = 29; decor[35][5] = 29; decor[35][18] = 29; decor[35][20] = 29;
+    decor[35][30] = 29; decor[35][32] = 29; decor[35][44] = 29; decor[35][46] = 29;
 
     // Palm trees — top canopy and trunk variants
     walls[1][10] = 89; walls[1][14] = 89; walls[1][35] = 89; walls[1][40] = 89;
@@ -1513,8 +1592,17 @@ function generateTokyo() {
         for (let x = 38; x < 46; x++) walls[y][x] = 57;
     }
     walls[27][6] = 23; walls[27][18] = 23; walls[27][32] = 23; walls[27][42] = 23;
-    walls[22][3] = 30; walls[22][8] = 30; walls[22][15] = 30; walls[22][20] = 30;
-    walls[22][29] = 30; walls[22][34] = 30; walls[22][39] = 30; walls[22][44] = 30;
+    // Roofs
+    for (let x = 2; x < 10; x++) walls[22][x] = 15;
+    for (let x = 14; x < 22; x++) walls[22][x] = 15;
+    for (let x = 28; x < 36; x++) walls[22][x] = 15;
+    for (let x = 38; x < 46; x++) walls[22][x] = 15;
+    // Windows below roof
+    walls[23][3] = 30; walls[23][8] = 30; walls[23][15] = 30; walls[23][20] = 30;
+    walls[23][29] = 30; walls[23][34] = 30; walls[23][39] = 30; walls[23][44] = 30;
+    // Awnings above doors
+    decor[26][5] = 29; decor[26][7] = 29; decor[26][17] = 29; decor[26][19] = 29;
+    decor[26][31] = 29; decor[26][33] = 29; decor[26][41] = 29; decor[26][43] = 29;
 
     // Southern buildings
     for (let y = 32; y < 37; y++) {
@@ -1523,7 +1611,18 @@ function generateTokyo() {
         for (let x = 28; x < 36; x++) walls[y][x] = 57;
         for (let x = 38; x < 46; x++) walls[y][x] = 58;
     }
+    // Roofs
+    for (let x = 2; x < 10; x++) walls[32][x] = 15;
+    for (let x = 14; x < 22; x++) walls[32][x] = 15;
+    for (let x = 28; x < 36; x++) walls[32][x] = 15;
+    for (let x = 38; x < 46; x++) walls[32][x] = 15;
+    // Windows
+    walls[33][4] = 30; walls[33][8] = 30; walls[33][16] = 30; walls[33][20] = 30;
+    walls[33][30] = 30; walls[33][34] = 30; walls[33][40] = 30; walls[33][44] = 30;
     walls[36][6] = 23; walls[36][18] = 23; walls[36][32] = 23; walls[36][42] = 23;
+    // Awnings above doors
+    decor[35][5] = 29; decor[35][7] = 29; decor[35][17] = 29; decor[35][19] = 29;
+    decor[35][31] = 29; decor[35][33] = 29; decor[35][41] = 29; decor[35][43] = 29;
 
     // Bamboo
     walls[1][2] = 63; walls[1][3] = 63; walls[2][2] = 63; walls[2][4] = 63;
