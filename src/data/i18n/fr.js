@@ -81,7 +81,7 @@ export default {
         marrakech_sign_23_7: "Marchand de Merveilles",
         tokyo_sign_14_5: "Jardin Secret - Entrez avec précaution",
         tokyo_shrine_sign_5_4: "« La sagesse complète ce que la patience et le courage ont commencé. »",
-        paris_sign_4_20: "Les Trois Cloches : Dans le parc au sud de la librairie, sonne Or, puis Argent, puis Bronze.",
+        paris_sign_5_29: "Les Trois Cloches : Sonne Or, puis Argent, puis Bronze.",
         london_museum_gallery_sign_5_1: "Catalogue de la galerie : Vase grec, Masque égyptien, Pièce romaine, Bouclier celte."
     },
     cities: {
@@ -211,9 +211,21 @@ export default {
             "Montre cette lettre au conservateur là-bas. Ça devrait t'aider à entrer."
         ],
         librarian_after_quest: [
-            "Bon voyage, Léa ! Londres t'attend.",
+            "Bon voyage, L\u00E9a ! Londres t'attend.",
             "N'oublie pas, le British Museum est ta destination.",
-            "Appuie sur M pour ouvrir la carte du monde quand tu es prête."
+            "Appuie sur M pour ouvrir la carte du monde quand tu es pr\u00EAte."
+        ],
+        librarian_bells_hint: [
+            "Au fait, Madeleine a laiss\u00E9 quelque chose dans le parc au sud d'ici.",
+            "Trois cloches \u2014 elle les a accord\u00E9es elle-m\u00EAme en 1923 !",
+            "Sonne-les dans le bon ordre \u2014 Or, Argent, Bronze \u2014 et tu trouveras un mot cach\u00E9.",
+            "Elle adorait les \u00E9nigmes musicales. Elle disait que la musique \u00E9tait sa \u00AB premi\u00E8re langue \u00BB."
+        ],
+        librarian_bells_done: [
+            "Tu as r\u00E9solu l'\u00E9nigme des cloches de Madeleine ! Merveilleux !",
+            "Elle \u00E9crivait dans son journal que la musique \u00E9tait sa \u00AB premi\u00E8re langue \u00BB.",
+            "Avant le fran\u00E7ais, avant les mots \u2014 la musique.",
+            "Tu marches vraiment dans ses pas, L\u00E9a."
         ],
         sophie_intro: [
             "Salut ! Je suis Sophie. J'adore explorer Paris !",
@@ -389,7 +401,18 @@ export default {
         ],
         higgins_after: [
             "La Collection Beaumont au sous-sol est fascinante.",
-            "Donnée anonymement en 1935. Personne ne sait qui l'a apportée."
+            "Donn\u00E9e anonymement en 1935. Personne ne sait qui l'a apport\u00E9e."
+        ],
+        higgins_paintings_hint: [
+            "Oh, encore une chose ! Les tableaux dans la galerie \u2014 ceux de la Collection Beaumont \u2014",
+            "ils sont tous m\u00E9lang\u00E9s ! Madeleine les a r\u00E9arrang\u00E9s en puzzle avant de les donner.",
+            "Le catalogue sur le mur montre le bon ordre.",
+            "Sacr\u00E9e farceur, votre anc\u00EAtre !"
+        ],
+        higgins_paintings_done: [
+            "Les tableaux sont dans l'ordre ! Madeleine serait ravie.",
+            "Elle disait toujours que l'art \u00E9tait la seule chose qui ne pouvait jamais se perdre en traduction.",
+            "Une femme selon mon c\u0153ur, cette Madeleine Beaumont."
         ],
 
         thomas_intro: [
@@ -418,8 +441,19 @@ export default {
             "Bianca et ses chats semblent savoir où se trouve la porte..."
         ],
         rossi_after_key: [
-            "Utilise la clé sur la porte verrouillée dans le Colisée !",
+            "Utilise la cl\u00E9 sur la porte verrouill\u00E9e dans le Colis\u00E9e !",
             "Les catacombes en dessous devraient contenir le secret de Madeleine."
+        ],
+        rossi_torch_hint: [
+            "Encore une chose \u2014 Madeleine a cartographi\u00E9 ces catacombes en 1925.",
+            "Elle a allum\u00E9 elle-m\u00EAme les torches le long du vrai chemin.",
+            "Si tu trouves Marco l\u00E0-bas, demande-lui quelles torches suivre.",
+            "Les flammes stables sont celles de Madeleine \u2014 elles br\u00FBlent encore apr\u00E8s toutes ces ann\u00E9es."
+        ],
+        rossi_torch_done: [
+            "Tu as suivi les torches de Madeleine dans les catacombes !",
+            "Elle a cartographi\u00E9 chaque tunnel. La carte est encore dans nos archives \u2014 on ne savait juste pas que c'\u00E9tait la sienne.",
+            "Quelle femme incroyable elle \u00E9tait."
         ],
         rossi_after_quest: [
             "Marrakech ! Quelle aventure !",
@@ -581,10 +615,16 @@ export default {
             "Le portail vers le jardin sacré est juste devant."
         ],
         yuki_after_quest: [
-            "Tu l'as trouvé ! Le trésor de Madeleine Beaumont !",
+            "Tu l'as trouv\u00E9 ! Le tr\u00E9sor de Madeleine Beaumont !",
             "Une gemme qui permet de comprendre toutes les langues du monde.",
-            "Elle disait toujours que le plus grand trésor est la compréhension entre les peuples.",
-            "Ton aventure ne fait que commencer, Léa. Le monde est plein de merveilles !"
+            "Elle disait toujours que le plus grand tr\u00E9sor est la compr\u00E9hension entre les peuples.",
+            "Ton aventure ne fait que commencer, L\u00E9a. Le monde est plein de merveilles !"
+        ],
+        yuki_cat_hint: [
+            "Tu sais, Madeleine s'est li\u00E9e d'amiti\u00E9 avec un chat du temple quand elle \u00E9tait ici.",
+            "Un chat orange appel\u00E9 Hana. Elle adorait explorer la for\u00EAt de bambous.",
+            "Les chats ici sont tous les descendants de Hana.",
+            "Le chat d'Aiko, Mochi, lui ressemble trait pour trait \u2014 m\u00EAme fourrure orange, m\u00EAmes yeux curieux."
         ],
         takeshi_intro: [
             "Que la paix soit avec toi, voyageuse.",
@@ -694,8 +734,9 @@ export default {
         bell_ring_bronze: ["*BONG* La cloche de bronze résonne d'un son riche et doux."],
         bells_correct: [
             "Les trois cloches sonnent en parfaite harmonie !",
-            "Un compartiment caché s'ouvre dans le mur...",
-            "À l'intérieur, tu trouves un mot plié de Madeleine !"
+            "Un compartiment cach\u00E9 s'ouvre dans le mur...",
+            "\u00C0 l'int\u00E9rieur, tu trouves un mot pli\u00E9 de Madeleine !",
+            "Le mot dit : \u00AB La musique relie ce que les mots ne peuvent pas. \u2014 Madeleine, 1923 \u00BB"
         ],
         bells_wrong: [
             "Les notes s'entrechoquent...",
@@ -705,7 +746,7 @@ export default {
         paintings_correct: [
             "Les tableaux sont dans le bon ordre !",
             "Un petit tiroir glisse sous la vitrine...",
-            "Tu trouves un mot : « L'ordre révèle la vérité — M.B. »"
+            "Tu trouves un mot : \u00AB L'art traverse les si\u00E8cles. Tu vois ce que j'ai vu. \u2014 M.B., 1924 \u00BB"
         ],
         paintings_wrong: ["Les tableaux ont été échangés, mais l'ordre ne semble pas encore correct."],
 
@@ -840,18 +881,21 @@ export default {
         ],
 
         aiko_side_start: [
-            "Oh non ! Mon chat Mochi s'est encore échappé !",
-            "Elle adore poursuivre les papillons dans la forêt de bambous.",
-            "Mais c'est dangereux là-bas — les chemins tournent et se tordent !",
+            "Oh non ! Mon chat Mochi s'est encore \u00E9chapp\u00E9 !",
+            "Elle adore poursuivre les papillons dans la for\u00EAt de bambous.",
+            "Mais c'est dangereux l\u00E0-bas \u2014 les chemins tournent et se tordent !",
             "Tu pourrais la ramener si tu la trouves ?",
-            "Elle est orange et toute douce. Tu ne peux pas la rater !"
+            "Elle est orange et toute douce. Tu ne peux pas la rater !",
+            "Elle ressemble trait pour trait au chat sur les vieilles photos de Yuki-san... celui avec qui Madeleine jouait !"
         ],
         aiko_side_return: [
-            "Mochi ! Tu l'as trouvée ! Oh, merci, merci !",
-            "On dirait qu'elle a vécu toute une aventure.",
+            "Mochi ! Tu l'as trouv\u00E9e ! Oh, merci, merci !",
+            "On dirait qu'elle a v\u00E9cu toute une aventure.",
+            "Yuki-san dit que Mochi descend du chat de Madeleine, Hana.",
+            "C'est pour \u00E7a qu'elle court toujours vers le jardin sacr\u00E9 \u2014 c'est dans son sang !",
             "Pour te remercier, laisse-moi t'apprendre quelque chose...",
-            "En japonais, on dit « Arigatou gozaimasu » — ça veut dire « merci beaucoup ».",
-            "Et « Tomodachi » veut dire « ami ». Tu es ma tomodachi, Léa !",
+            "En japonais, on dit \u00AB Arigatou gozaimasu \u00BB \u2014 \u00E7a veut dire \u00AB merci beaucoup \u00BB.",
+            "Et \u00AB Tomodachi \u00BB veut dire \u00AB ami \u00BB. Tu es ma tomodachi, L\u00E9a !",
             "Madeleine-san connaissait ces mots aussi. Yuki-san me l'a dit."
         ],
 
@@ -976,7 +1020,7 @@ export default {
                 "Quel chemin devrais-je te recommander ?"
             ],
             choices: [
-                { text: "Suivre les torches allum\u00E9es \u00E0 gauche.", response: ["Le chemin de gauche ! Oui, ces torches br\u00FBlent d'une flamme ancienne.", "Elles sont allum\u00E9es depuis l'\u00E9poque romaine \u2014 du moins c'est ce que dit la l\u00E9gende.", "Je les ai suivies une fois et j'ai trouv\u00E9 une salle incroyable en dessous !", "Vas-y \u2014 les catacombes inf\u00E9rieures t'attendent !"] },
+                { text: "Suivre les torches allum\u00E9es \u00E0 gauche.", response: ["Le chemin de gauche ! Oui, ces torches br\u00FBlent d'une flamme stable et ancienne.", "Madeleine elle-m\u00EAme a allum\u00E9 ces torches. Elles guident les explorateurs depuis cent ans.", "Je les ai suivies une fois et j'ai trouv\u00E9 une salle incroyable en dessous !", "Vas-y \u2014 les catacombes inf\u00E9rieures t'attendent !"] },
                 { text: "Prendre le passage sombre du milieu.", response: ["Le passage du milieu ? J'ai essay\u00E9 une fois...", "J'ai march\u00E9 dix minutes et je me suis retrouv\u00E9 ici m\u00EAme !", "Les Romains ont construit ces tunnels comme un labyrinthe. Les chemins non \u00E9clair\u00E9s font des boucles.", "Essaie un chemin avec des torches \u2014 la lumi\u00E8re montre le chemin."] },
                 { text: "Suivre les torches vacillantes \u00E0 droite.", response: ["Le chemin de droite... ces torches vacillent \u00E0 cause d'un courant d'air.", "Il m\u00E8ne \u00E0 un cul-de-sac pr\u00E8s du vieux puits de ventilation.", "Les flammes stables sont celles que les anciens ont plac\u00E9es comme guides.", "Cherche les torches qui br\u00FBlent r\u00E9guli\u00E8rement \u2014 elles marquent le vrai chemin."] }
             ]

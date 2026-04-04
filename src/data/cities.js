@@ -297,7 +297,7 @@ function generateParis() {
 
     // Signs at key intersections
     decor[13][24] = 22; decor[26][25] = 22;
-    decor[20][4] = 22; // Bell puzzle clue sign on bookshop street (visible from main path)
+    decor[29][5] = 22; // Bell puzzle clue sign in park, near the bells
 
     // Flower planters along main streets
     decor[13][8] = 17; decor[13][16] = 17; decor[13][32] = 17; decor[13][40] = 17;

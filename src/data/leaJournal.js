@@ -123,21 +123,21 @@ export const LEA_JOURNAL_ENTRIES = [
         trigger: 'paris_bells_solved',
         city: 'paris',
         title: 'The Three Bells',
-        text: "I rang the bells near the bookshop in the right order — Gold, Silver, Bronze. They made the most beautiful harmony! A note from Madeleine was hidden behind them. She really did leave clues everywhere."
+        text: "Monsieur Dupont told me about Madeleine's bell puzzle. She tuned them herself in 1923! The hidden note said 'Music connects what words cannot.' She was testing whoever followed her — and I passed."
     },
     {
         id: 'journal_london_paintings',
         trigger: 'london_paintings_solved',
         city: 'london',
         title: 'The Gallery Puzzle',
-        text: "The paintings in the gallery were out of order! Once I rearranged them to match the catalog, a hidden drawer opened. Madeleine's message said 'Order reveals truth.' She was so clever."
+        text: "Professor Higgins was right — Madeleine scrambled the paintings as a puzzle! Her note said 'Art speaks across centuries.' She wanted the next explorer to see the world the way she saw it."
     },
     {
         id: 'journal_rome_torch',
         trigger: 'rome_torch_solved',
         city: 'rome',
         title: 'The Torch Path',
-        text: "Marco helped me find the right path in the catacombs — follow the steady torches, not the flickering ones. The Romans knew their architecture. The path led deeper underground."
+        text: "Professoressa Rossi said Madeleine lit those torches herself in 1925. They're still burning! Marco helped me find the right path. Madeleine's light guided me through the darkness — literally."
     },
     {
         id: 'journal_marrakech_trading',

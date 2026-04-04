@@ -69,6 +69,23 @@ export const DIALOGUES = {
             "Press M to open the world map when you're ready to travel."
         ]
     },
+    librarian_bells_hint: {
+        lines: [
+            "By the way, Madeleine left something in the park south of here.",
+            "Three bells — she tuned them herself in 1923!",
+            "Ring them in the right order — Gold, Silver, Bronze — and you'll find a hidden note.",
+            "She loved musical puzzles. Said music was her 'first language.'"
+        ]
+    },
+    librarian_bells_done: {
+        lines: [
+            "You solved Madeleine's bell puzzle! Wonderful!",
+            "She wrote in her diary that music was her 'first language.'",
+            "Before French, before words — music.",
+            "You truly are following in her footsteps, Léa."
+        ],
+        setsFlag: 'paris_bells_acknowledged'
+    },
 
     sophie_intro: {
         lines: [
@@ -295,6 +312,22 @@ export const DIALOGUES = {
             "Donated anonymously in 1935. Nobody knows who brought it."
         ]
     },
+    higgins_paintings_hint: {
+        lines: [
+            "Oh, one more thing! The paintings in the gallery — the Beaumont Collection ones —",
+            "they're all scrambled! Madeleine rearranged them as a puzzle before she donated them.",
+            "The catalog on the wall shows the correct order.",
+            "Quite the prankster, your ancestor!"
+        ]
+    },
+    higgins_paintings_done: {
+        lines: [
+            "The paintings are in order! Madeleine would be pleased.",
+            "She always said art was the one thing that could never be lost in translation.",
+            "A woman after my own heart, that Madeleine Beaumont."
+        ],
+        setsFlag: 'london_paintings_acknowledged'
+    },
 
     thomas_intro: {
         lines: [
@@ -340,6 +373,22 @@ export const DIALOGUES = {
             "Use the key on the locked door in the Colosseum!",
             "The catacombs beneath should hold Madeleine's secret."
         ]
+    },
+    rossi_torch_hint: {
+        lines: [
+            "One more thing — Madeleine mapped these catacombs in 1925.",
+            "She lit torches along the true path herself.",
+            "If you find Marco down there, ask him about the torch patterns.",
+            "The steady flames are Madeleine's — still burning after all these years."
+        ]
+    },
+    rossi_torch_done: {
+        lines: [
+            "You followed Madeleine's torches through the catacombs!",
+            "She mapped every tunnel. The map is still in our archives — we just never knew it was hers.",
+            "What an incredible woman she was."
+        ],
+        setsFlag: 'rome_torch_acknowledged'
     },
     rossi_after_quest: {
         lines: [
@@ -568,6 +617,14 @@ export const DIALOGUES = {
             "Your adventure has just begun, Léa. The world is full of wonders!"
         ]
     },
+    yuki_cat_hint: {
+        lines: [
+            "You know, Madeleine befriended a temple cat when she was here.",
+            "An orange cat named Hana. She loved to explore the bamboo forest.",
+            "The cats here are all Hana's descendants.",
+            "Aiko's cat Mochi looks just like her — same orange fur, same curious eyes."
+        ]
+    },
 
     takeshi_intro: {
         lines: [
@@ -670,7 +727,8 @@ export const DIALOGUES = {
         lines: [
             "The three bells ring in perfect harmony!",
             "A hidden compartment opens in the wall nearby...",
-            "Inside, you find a folded note from Madeleine!"
+            "Inside, you find a folded note from Madeleine!",
+            "The note reads: 'Music connects what words cannot. — Madeleine, 1923'"
         ],
         setsFlag: 'paris_bells_solved'
     },
@@ -687,7 +745,7 @@ export const DIALOGUES = {
         lines: [
             "The paintings are in the correct order!",
             "A small drawer slides open beneath the display...",
-            "You find a note: 'Order reveals truth — M.B.'"
+            "You find a note: 'Art speaks across centuries. You see what I saw. — M.B., 1924'"
         ],
         setsFlag: 'london_paintings_solved'
     },
@@ -892,7 +950,8 @@ export const DIALOGUES = {
             "She loves chasing butterflies into the bamboo forest.",
             "But it's dangerous in there — the paths twist and turn!",
             "Could you bring her back if you find her?",
-            "She's orange and fluffy. You can't miss her!"
+            "She's orange and fluffy. You can't miss her!",
+            "She looks just like the cat in Yuki-san's old photos... the one Madeleine played with!"
         ],
         setsFlag: 'side_tokyo_cat_started'
     },
@@ -900,6 +959,8 @@ export const DIALOGUES = {
         lines: [
             "Mochi! You found her! Oh, thank you, thank you!",
             "She looks like she had quite an adventure.",
+            "Yuki-san says Mochi is descended from Madeleine's cat Hana.",
+            "That's why she always runs to the sacred garden — it's in her blood!",
             "To say thank you, let me teach you something...",
             "In Japanese, we say 'Arigatou gozaimasu' — it means 'thank you very much.'",
             "And 'Tomodachi' means 'friend.' You are my tomodachi, Léa!",

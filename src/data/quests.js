@@ -36,6 +36,8 @@ export const NPC_DIALOG_ROUTES = {
     paris_librarian: [
         { dialog: 'librarian_side_flower', condition: (flags) => flags.side_paris_flowers_started && !flags.side_flower_librarian },
         { dialog: 'librarian_with_letter', condition: (flags) => flags.paris_has_eiffel_letter && !flags.paris_complete },
+        { dialog: 'librarian_bells_done', condition: (flags) => flags.paris_bells_solved && !flags.paris_bells_acknowledged },
+        { dialog: 'librarian_bells_hint', condition: (flags) => flags.paris_complete && !flags.paris_bells_solved },
         { dialog: 'librarian_after_quest', condition: (flags) => flags.paris_complete },
         { dialog: 'librarian_progress', condition: (flags) => flags.quest_started && flags.paris_has_paintbrush },
         { dialog: 'librarian_with_locket', condition: (flags) => flags.quest_started },
@@ -109,6 +111,8 @@ export const NPC_DIALOG_ROUTES = {
     ],
     london_professor: [
         { dialog: 'higgins_with_glasses', condition: (flags) => flags.london_has_glasses && !flags.london_has_research_pass },
+        { dialog: 'higgins_paintings_done', condition: (flags) => flags.london_paintings_solved && !flags.london_paintings_acknowledged },
+        { dialog: 'higgins_paintings_hint', condition: (flags) => flags.london_has_research_pass && !flags.london_paintings_solved },
         { dialog: 'higgins_after', condition: (flags) => flags.london_has_research_pass },
         { dialog: 'higgins_intro', condition: () => true }
     ],
@@ -119,6 +123,8 @@ export const NPC_DIALOG_ROUTES = {
 
     rome_historian: [
         { dialog: 'rossi_with_map', condition: (flags) => flags.london_complete && !flags.rome_have_key },
+        { dialog: 'rossi_torch_done', condition: (flags) => flags.rome_torch_solved && !flags.rome_torch_acknowledged },
+        { dialog: 'rossi_torch_hint', condition: (flags) => flags.rome_have_key && !flags.rome_torch_solved },
         { dialog: 'rossi_after_key', condition: (flags) => flags.rome_have_key && !flags.rome_complete },
         { dialog: 'rossi_journal_bonus', condition: (flags) => flags.rome_pages_complete && !flags.rome_bonus_seen },
         { dialog: 'rossi_after_quest', condition: (flags) => flags.rome_complete },
@@ -198,6 +204,7 @@ export const NPC_DIALOG_ROUTES = {
     tokyo_gardener: [
         { dialog: 'yuki_with_journal', condition: (flags) => flags.marrakech_complete && !flags.tokyo_has_jade_key },
         { dialog: 'yuki_journal_bonus', condition: (flags) => flags.tokyo_pages_complete && !flags.tokyo_bonus_seen },
+        { dialog: 'yuki_cat_hint', condition: (flags) => flags.tokyo_has_jade_key && !flags.side_tokyo_cat_complete },
         { dialog: 'yuki_after_quest', condition: (flags) => flags.tokyo_has_jade_key },
         { dialog: 'yuki_intro', condition: () => true }
     ],

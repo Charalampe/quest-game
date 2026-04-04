@@ -256,8 +256,8 @@ export const DIALOG_CHOICES = {
             {
                 text: "Follow the lit torches on the left.",
                 response: [
-                    "The left path! Yes, those torches burn with an ancient flame.",
-                    "They've been lit since Roman times — or so the legend says.",
+                    "The left path! Yes, those torches burn with a steady, ancient flame.",
+                    "Madeleine herself lit these torches. They've guided explorers for a hundred years.",
                     "I followed them once and found an incredible chamber below!",
                     "Go ahead — the lower catacombs await!"
                 ],

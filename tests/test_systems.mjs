@@ -188,7 +188,7 @@ describe('NPC Dialog Routing', () => {
         assert.equal(find({ quest_started: true }), 'grandma_after_locket');
     });
 
-    it('librarian shows intro, with_locket, progress, with_letter, after_quest', () => {
+    it('librarian shows intro, with_locket, progress, with_letter, bells_hint, after_quest', () => {
         const routes = NPC_DIALOG_ROUTES.paris_librarian;
         const find = (flags) => routes.find(r => r.condition(flags)).dialog;
 
@@ -197,7 +197,9 @@ describe('NPC Dialog Routing', () => {
         assert.equal(find({ quest_started: true, paris_has_paintbrush: true }), 'librarian_progress');
         assert.equal(find({ quest_started: true, paris_has_paintbrush: true, paris_has_fastpass: true }), 'librarian_progress');
         assert.equal(find({ paris_has_eiffel_letter: true }), 'librarian_with_letter');
-        assert.equal(find({ paris_has_eiffel_letter: true, paris_complete: true }), 'librarian_after_quest');
+        assert.equal(find({ paris_has_eiffel_letter: true, paris_complete: true }), 'librarian_bells_hint');
+        assert.equal(find({ paris_has_eiffel_letter: true, paris_complete: true, paris_bells_solved: true }), 'librarian_bells_done');
+        assert.equal(find({ paris_has_eiffel_letter: true, paris_complete: true, paris_bells_solved: true, paris_bells_acknowledged: true }), 'librarian_after_quest');
     });
 
     it('curator shows intro, then with_letter, then after_quest', () => {
@@ -209,17 +211,19 @@ describe('NPC Dialog Routing', () => {
         assert.equal(find({ paris_complete: true, london_met_curator: true, london_complete: true }), 'curator_after_quest');
     });
 
-    it('rome historian has 4 stages of dialog', () => {
+    it('rome historian has stages: intro, with_map, torch_hint, after_key, torch_done, after_quest', () => {
         const routes = NPC_DIALOG_ROUTES.rome_historian;
         const find = (flags) => routes.find(r => r.condition(flags)).dialog;
 
         assert.equal(find({}), 'rossi_intro');
         assert.equal(find({ london_complete: true }), 'rossi_with_map');
-        assert.equal(find({ london_complete: true, rome_have_key: true }), 'rossi_after_key');
+        assert.equal(find({ london_complete: true, rome_have_key: true }), 'rossi_torch_hint');
+        assert.equal(find({ london_complete: true, rome_have_key: true, rome_torch_solved: true }), 'rossi_torch_done');
+        assert.equal(find({ london_complete: true, rome_have_key: true, rome_torch_solved: true, rome_torch_acknowledged: true }), 'rossi_after_key');
         assert.equal(find({ rome_complete: true }), 'rossi_after_quest');
     });
 
-    it('tokyo gardener has no gap between jade_key and game_complete', () => {
+    it('tokyo gardener has stages: intro, with_journal, cat_hint, after_quest', () => {
         const routes = NPC_DIALOG_ROUTES.tokyo_gardener;
         const find = (flags) => routes.find(r => r.condition(flags)).dialog;
 
@@ -227,10 +231,12 @@ describe('NPC Dialog Routing', () => {
         assert.equal(find({}), 'yuki_intro');
         // With journal
         assert.equal(find({ marrakech_complete: true }), 'yuki_with_journal');
-        // After talking (jade key obtained, game not yet complete)
-        assert.equal(find({ marrakech_complete: true, tokyo_has_jade_key: true }), 'yuki_after_quest');
+        // After talking (jade key obtained, cat not found yet)
+        assert.equal(find({ marrakech_complete: true, tokyo_has_jade_key: true }), 'yuki_cat_hint');
+        // After cat returned
+        assert.equal(find({ marrakech_complete: true, tokyo_has_jade_key: true, side_tokyo_cat_complete: true }), 'yuki_after_quest');
         // After game complete
-        assert.equal(find({ marrakech_complete: true, tokyo_has_jade_key: true, game_complete: true }), 'yuki_after_quest');
+        assert.equal(find({ marrakech_complete: true, tokyo_has_jade_key: true, side_tokyo_cat_complete: true, game_complete: true }), 'yuki_after_quest');
     });
 });
 
@@ -3543,7 +3549,7 @@ describe('i18n Parity for Phase 2 Content', () => {
     });
 
     it('all new sign IDs have en and fr entries', () => {
-        const newSigns = ['paris_sign_4_20', 'london_museum_gallery_sign_5_1'];
+        const newSigns = ['paris_sign_5_29', 'london_museum_gallery_sign_5_1'];
         const missingEn = newSigns.filter(id => !enStrings.signs?.[id]);
         const missingFr = newSigns.filter(id => !frStrings.signs?.[id]);
         assert.deepEqual(missingEn, [], `Missing en sign entries: ${missingEn.join(', ')}`);
@@ -3581,5 +3587,104 @@ describe('Puzzle & Side Quest Journal Entries', () => {
             const entry = LEA_JOURNAL_ENTRIES.find(e => e.trigger === trigger);
             assert.ok(entry, `Missing journal entry for trigger: ${trigger}`);
         }
+    });
+});
+
+// ======================================================================
+describe('Narrative Weaving — Puzzle NPC Setup & Reactions', () => {
+// ======================================================================
+
+    it('all puzzle setup and reaction dialog IDs exist in DIALOGUES', () => {
+        const newIds = [
+            'librarian_bells_hint', 'librarian_bells_done',
+            'higgins_paintings_hint', 'higgins_paintings_done',
+            'rossi_torch_hint', 'rossi_torch_done',
+            'yuki_cat_hint'
+        ];
+        const missing = newIds.filter(id => !DIALOGUES[id]);
+        assert.deepEqual(missing, [], `Missing dialog IDs: ${missing.join(', ')}`);
+    });
+
+    it('puzzle setup dialogs have en i18n entries', () => {
+        const newIds = [
+            'librarian_bells_hint', 'librarian_bells_done',
+            'higgins_paintings_hint', 'higgins_paintings_done',
+            'rossi_torch_hint', 'rossi_torch_done',
+            'yuki_cat_hint'
+        ];
+        const missing = newIds.filter(id => !enStrings.dialogues?.[id]);
+        assert.deepEqual(missing, [], `Missing en dialog entries: ${missing.join(', ')}`);
+    });
+
+    it('puzzle setup dialogs have fr i18n entries', () => {
+        const newIds = [
+            'librarian_bells_hint', 'librarian_bells_done',
+            'higgins_paintings_hint', 'higgins_paintings_done',
+            'rossi_torch_hint', 'rossi_torch_done',
+            'yuki_cat_hint'
+        ];
+        const missing = newIds.filter(id => !frStrings.dialogues?.[id]);
+        assert.deepEqual(missing, [], `Missing fr dialog entries: ${missing.join(', ')}`);
+    });
+
+    it('puzzle reaction dialogs set acknowledgment flags', () => {
+        assert.equal(DIALOGUES.librarian_bells_done.setsFlag, 'paris_bells_acknowledged');
+        assert.equal(DIALOGUES.higgins_paintings_done.setsFlag, 'london_paintings_acknowledged');
+        assert.equal(DIALOGUES.rossi_torch_done.setsFlag, 'rome_torch_acknowledged');
+    });
+
+    it('librarian bells hint route activates after paris_complete', () => {
+        const routes = NPC_DIALOG_ROUTES.paris_librarian;
+        const find = (flags) => routes.find(r => r.condition(flags)).dialog;
+        assert.equal(find({ paris_complete: true }), 'librarian_bells_hint');
+    });
+
+    it('higgins paintings hint route activates after research pass', () => {
+        const routes = NPC_DIALOG_ROUTES.london_professor;
+        const find = (flags) => routes.find(r => r.condition(flags)).dialog;
+        assert.equal(find({ london_has_research_pass: true }), 'higgins_paintings_hint');
+    });
+
+    it('rossi torch hint route activates after getting key', () => {
+        const routes = NPC_DIALOG_ROUTES.rome_historian;
+        const find = (flags) => routes.find(r => r.condition(flags)).dialog;
+        assert.equal(find({ london_complete: true, rome_have_key: true }), 'rossi_torch_hint');
+    });
+
+    it('yuki cat hint route activates after jade key', () => {
+        const routes = NPC_DIALOG_ROUTES.tokyo_gardener;
+        const find = (flags) => routes.find(r => r.condition(flags)).dialog;
+        assert.equal(find({ marrakech_complete: true, tokyo_has_jade_key: true }), 'yuki_cat_hint');
+    });
+
+    it('enriched bells_correct includes Madeleine quote', () => {
+        assert.ok(DIALOGUES.bells_correct.lines.some(l => l.includes('Music connects')),
+            'bells_correct should mention Madeleine quote');
+    });
+
+    it('enriched paintings_correct includes Madeleine quote', () => {
+        assert.ok(DIALOGUES.paintings_correct.lines.some(l => l.includes('Art speaks across centuries')),
+            'paintings_correct should mention Madeleine quote');
+    });
+
+    it('enriched aiko_side_start mentions Madeleine cat', () => {
+        assert.ok(DIALOGUES.aiko_side_start.lines.some(l => l.includes('Madeleine')),
+            'aiko_side_start should reference Madeleine');
+    });
+
+    it('enriched aiko_side_return mentions Hana lineage', () => {
+        assert.ok(DIALOGUES.aiko_side_return.lines.some(l => l.includes('Hana')),
+            'aiko_side_return should reference Hana the cat');
+    });
+
+    it('journal entries reference Madeleine connection', () => {
+        const bellsEntry = LEA_JOURNAL_ENTRIES.find(e => e.id === 'journal_paris_bells');
+        assert.ok(bellsEntry.text.includes('Music connects'), 'Paris bells journal should reference music quote');
+
+        const paintingsEntry = LEA_JOURNAL_ENTRIES.find(e => e.id === 'journal_london_paintings');
+        assert.ok(paintingsEntry.text.includes('Art speaks across centuries'), 'London paintings journal should reference art quote');
+
+        const torchEntry = LEA_JOURNAL_ENTRIES.find(e => e.id === 'journal_rome_torch');
+        assert.ok(torchEntry.text.includes('Madeleine lit'), 'Rome torch journal should reference Madeleine lighting torches');
     });
 });

@@ -21,6 +21,11 @@ export class BootScene extends Phaser.Scene {
 
         // Load external sprite sheets (PNGs) if the provider uses them
         this.provider.loadSpriteSheets();
+
+        // Load bell sprites for Paris puzzle
+        this.load.image('bell_gold', 'src/assets/bells/bell_gold.png');
+        this.load.image('bell_silver', 'src/assets/bells/bell_silver.png');
+        this.load.image('bell_bronze', 'src/assets/bells/bell_bronze.png');
     }
 
     async create() {

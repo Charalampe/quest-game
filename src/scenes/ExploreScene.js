@@ -666,21 +666,25 @@ export class ExploreScene extends Phaser.Scene {
             });
 
             if (obj.type === 'bell') {
-                // Draw visible bell: colored circle with border + label
                 const bellColors = { bell_gold: 0xFFD700, bell_silver: 0xC0C0C0, bell_bronze: 0xCD7F32 };
                 const color = bellColors[obj.id] || 0xFFD700;
-                // Bell base (dark pedestal)
-                const base = this.add.rectangle(worldX, worldY + 6, 20, 10, 0x4a3320);
-                base.setDepth(3);
-                this.envObjects.push(base);
-                // Bell body (colored dome)
-                const bell = this.add.circle(worldX, worldY - 2, 11, color);
-                bell.setDepth(4);
-                this.envObjects.push(bell);
-                // Bell rim
-                const rim = this.add.rectangle(worldX, worldY + 4, 22, 4, color, 0.8);
-                rim.setDepth(4);
-                this.envObjects.push(rim);
+                // Use sprite if available, fall back to procedural
+                if (this.textures.exists(obj.id)) {
+                    const bellSprite = this.add.image(worldX, worldY, obj.id);
+                    bellSprite.setDepth(4);
+                    this.envObjects.push(bellSprite);
+                } else {
+                    // Fallback: simple circle + base
+                    const base = this.add.rectangle(worldX, worldY + 6, 20, 10, 0x4a3320);
+                    base.setDepth(3);
+                    this.envObjects.push(base);
+                    const bell = this.add.circle(worldX, worldY - 2, 11, color);
+                    bell.setDepth(4);
+                    this.envObjects.push(bell);
+                    const rim = this.add.rectangle(worldX, worldY + 4, 22, 4, color, 0.8);
+                    rim.setDepth(4);
+                    this.envObjects.push(rim);
+                }
                 // Subtle glow pulse
                 const glow = this.add.circle(worldX, worldY - 2, 14, color, 0.15);
                 glow.setDepth(3);

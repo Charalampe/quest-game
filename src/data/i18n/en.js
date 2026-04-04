@@ -81,7 +81,7 @@ export default {
         marrakech_sign_23_7: "Merchant of Wonders",
         tokyo_sign_14_5: "Secret Garden - Enter with Care",
         tokyo_shrine_sign_5_4: "'Wisdom completes what patience and courage begin.'",
-        paris_sign_4_20: "The Three Bells: In the park south of the bookshop, ring Gold, then Silver, then Bronze.",
+        paris_sign_5_29: "The Three Bells: Ring Gold, then Silver, then Bronze.",
         london_museum_gallery_sign_5_1: "Gallery Catalog: Greek Vase, Egyptian Mask, Roman Coin, Celtic Shield."
     },
     cities: {
@@ -214,6 +214,18 @@ export default {
             "Safe travels, L\u00E9a! London awaits.",
             "Remember, the British Museum is your destination.",
             "Press M to open the world map when you're ready to travel."
+        ],
+        librarian_bells_hint: [
+            "By the way, Madeleine left something in the park south of here.",
+            "Three bells \u2014 she tuned them herself in 1923!",
+            "Ring them in the right order \u2014 Gold, Silver, Bronze \u2014 and you'll find a hidden note.",
+            "She loved musical puzzles. Said music was her 'first language.'"
+        ],
+        librarian_bells_done: [
+            "You solved Madeleine's bell puzzle! Wonderful!",
+            "She wrote in her diary that music was her 'first language.'",
+            "Before French, before words \u2014 music.",
+            "You truly are following in her footsteps, L\u00E9a."
         ],
         sophie_intro: [
             "Hi there! I'm Sophie. I love exploring Paris!",
@@ -389,6 +401,17 @@ export default {
             "The Beaumont Collection in the basement is fascinating.",
             "Donated anonymously in 1935. Nobody knows who brought it."
         ],
+        higgins_paintings_hint: [
+            "Oh, one more thing! The paintings in the gallery \u2014 the Beaumont Collection ones \u2014",
+            "they're all scrambled! Madeleine rearranged them as a puzzle before she donated them.",
+            "The catalog on the wall shows the correct order.",
+            "Quite the prankster, your ancestor!"
+        ],
+        higgins_paintings_done: [
+            "The paintings are in order! Madeleine would be pleased.",
+            "She always said art was the one thing that could never be lost in translation.",
+            "A woman after my own heart, that Madeleine Beaumont."
+        ],
 
         thomas_intro: [
             "Hey! I'm on a school trip. This museum is HUGE!",
@@ -418,6 +441,17 @@ export default {
         rossi_after_key: [
             "Use the key on the locked door in the Colosseum!",
             "The catacombs beneath should hold Madeleine's secret."
+        ],
+        rossi_torch_hint: [
+            "One more thing \u2014 Madeleine mapped these catacombs in 1925.",
+            "She lit torches along the true path herself.",
+            "If you find Marco down there, ask him about the torch patterns.",
+            "The steady flames are Madeleine's \u2014 still burning after all these years."
+        ],
+        rossi_torch_done: [
+            "You followed Madeleine's torches through the catacombs!",
+            "She mapped every tunnel. The map is still in our archives \u2014 we just never knew it was hers.",
+            "What an incredible woman she was."
         ],
         rossi_after_quest: [
             "Marrakech! What an adventure!",
@@ -578,6 +612,12 @@ export default {
             "She always said the greatest treasure is understanding between people.",
             "Your adventure has just begun, L\u00E9a. The world is full of wonders!"
         ],
+        yuki_cat_hint: [
+            "You know, Madeleine befriended a temple cat when she was here.",
+            "An orange cat named Hana. She loved to explore the bamboo forest.",
+            "The cats here are all Hana's descendants.",
+            "Aiko's cat Mochi looks just like her \u2014 same orange fur, same curious eyes."
+        ],
         takeshi_intro: [
             "Peace be with you, traveler.",
             "This shrine has stood for a thousand years.",
@@ -686,7 +726,8 @@ export default {
         bells_correct: [
             "The three bells ring in perfect harmony!",
             "A hidden compartment opens in the wall nearby...",
-            "Inside, you find a folded note from Madeleine!"
+            "Inside, you find a folded note from Madeleine!",
+            "The note reads: 'Music connects what words cannot. \u2014 Madeleine, 1923'"
         ],
         bells_wrong: [
             "The notes clash discordantly...",
@@ -696,7 +737,7 @@ export default {
         paintings_correct: [
             "The paintings are in the correct order!",
             "A small drawer slides open beneath the display...",
-            "You find a note: 'Order reveals truth \u2014 M.B.'"
+            "You find a note: 'Art speaks across centuries. You see what I saw. \u2014 M.B., 1924'"
         ],
         paintings_wrong: ["The paintings have been swapped, but the order doesn't seem right yet."],
 
@@ -835,11 +876,14 @@ export default {
             "She loves chasing butterflies into the bamboo forest.",
             "But it's dangerous in there \u2014 the paths twist and turn!",
             "Could you bring her back if you find her?",
-            "She's orange and fluffy. You can't miss her!"
+            "She's orange and fluffy. You can't miss her!",
+            "She looks just like the cat in Yuki-san's old photos... the one Madeleine played with!"
         ],
         aiko_side_return: [
             "Mochi! You found her! Oh, thank you, thank you!",
             "She looks like she had quite an adventure.",
+            "Yuki-san says Mochi is descended from Madeleine's cat Hana.",
+            "That's why she always runs to the sacred garden \u2014 it's in her blood!",
             "To say thank you, let me teach you something...",
             "In Japanese, we say 'Arigatou gozaimasu' \u2014 it means 'thank you very much.'",
             "And 'Tomodachi' means 'friend.' You are my tomodachi, L\u00E9a!",
@@ -967,7 +1011,7 @@ export default {
                 "Which path should I recommend?"
             ],
             choices: [
-                { text: "Follow the lit torches on the left.", response: ["The left path! Yes, those torches burn with an ancient flame.", "They've been lit since Roman times \u2014 or so the legend says.", "I followed them once and found an incredible chamber below!", "Go ahead \u2014 the lower catacombs await!"] },
+                { text: "Follow the lit torches on the left.", response: ["The left path! Yes, those torches burn with a steady, ancient flame.", "Madeleine herself lit these torches. They've guided explorers for a hundred years.", "I followed them once and found an incredible chamber below!", "Go ahead \u2014 the lower catacombs await!"] },
                 { text: "Take the dark middle passage.", response: ["The middle passage? I tried that once...", "I walked for ten minutes and ended up right back here!", "The Romans built these tunnels as a maze. The unlit paths loop around.", "Try a path with torches \u2014 the light guides the way."] },
                 { text: "Follow the flickering torches on the right.", response: ["The right path... those torches flicker because of a draft.", "It leads to a dead end near the old ventilation shaft.", "The steady flames are the ones the ancients placed as guides.", "Look for torches that burn steadily \u2014 they mark the true path."] }
             ]
