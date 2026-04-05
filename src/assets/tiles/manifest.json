@@ -131,6 +131,86 @@
     "torii_post": {
       "file": "torii_post.png",
       "index": 98
+    },
+    "door_wooden": {
+      "file": "door_wooden.png",
+      "index": 23
+    },
+    "door_ornate": {
+      "file": "door_ornate.png",
+      "index": 36
+    },
+    "door_panel": {
+      "file": "door_panel.png",
+      "index": 99
+    },
+    "door_arch": {
+      "file": "door_arch.png",
+      "index": 100
+    },
+    "door_iron": {
+      "file": "door_iron.png",
+      "index": 101
+    },
+    "door_golden": {
+      "file": "door_golden.png",
+      "index": 102
+    },
+    "window_4pane": {
+      "file": "window_4pane.png",
+      "index": 30
+    },
+    "roof_shingle": {
+      "file": "roof_shingle.png",
+      "index": 15
+    },
+    "awning_brown": {
+      "file": "awning_brown.png",
+      "index": 29
+    },
+    "roof_mansard": {
+      "file": "roof_mansard.png",
+      "index": 103
+    },
+    "window_french": {
+      "file": "window_french.png",
+      "index": 104
+    },
+    "roof_slate": {
+      "file": "roof_slate.png",
+      "index": 105
+    },
+    "window_sash": {
+      "file": "window_sash.png",
+      "index": 106
+    },
+    "roof_clay": {
+      "file": "roof_clay.png",
+      "index": 107
+    },
+    "window_arched": {
+      "file": "window_arched.png",
+      "index": 108
+    },
+    "roof_parapet": {
+      "file": "roof_parapet.png",
+      "index": 109
+    },
+    "window_mashrabiya": {
+      "file": "window_mashrabiya.png",
+      "index": 110
+    },
+    "roof_kawara": {
+      "file": "roof_kawara.png",
+      "index": 111
+    },
+    "window_lattice": {
+      "file": "window_lattice.png",
+      "index": 112
+    },
+    "awning_cornice": {
+      "file": "awning_cornice.png",
+      "index": 113
     }
   }
 }

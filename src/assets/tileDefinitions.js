@@ -127,5 +127,36 @@ export const TILE_DEFS = [
     { color: '#6B4226', detail: 'cherry_trunk', file: 'cherry_trunk.png' },          // 95
     { color: '#dc7633', detail: 'torii_beam_L', file: 'torii_beam_L.png' },          // 96
     { color: '#dc7633', detail: 'torii_beam_R', file: 'torii_beam_R.png' },          // 97
-    { color: '#dc7633', detail: 'torii_post', file: 'torii_post.png' }               // 98
+    { color: '#dc7633', detail: 'torii_post', file: 'torii_post.png' },              // 98
+
+    // ── City-specific door tiles (indices 99-102) — PNG art in src/assets/tiles/ ──
+    { color: '#8B6914', detail: 'door_panel', file: 'door_panel.png' },             // 99: Paris panel door
+    { color: '#7B3F00', detail: 'door_arch', file: 'door_arch.png' },               // 100: Rome arch door
+    { color: '#4A4A4A', detail: 'door_iron', file: 'door_iron.png' },               // 101: Marrakech iron gate
+    { color: '#DAA520', detail: 'door_golden', file: 'door_golden.png' },           // 102: Tokyo golden door
+
+    // ── City-specific building tiles (indices 103-113) — PNG art in src/assets/tiles/ ──
+
+    // Paris: Haussmannian
+    { color: '#5A6270', detail: 'roof_mansard', file: 'roof_mansard.png' },        // 103: Paris mansard roof
+    { color: '#A0C8E8', detail: 'window_french', file: 'window_french.png' },      // 104: Paris French casement window
+
+    // London: Victorian
+    { color: '#3A4550', detail: 'roof_slate', file: 'roof_slate.png' },            // 105: London slate roof
+    { color: '#E8E0D8', detail: 'window_sash', file: 'window_sash.png' },          // 106: London sash window
+
+    // Rome: Renaissance
+    { color: '#B86B40', detail: 'roof_clay', file: 'roof_clay.png' },              // 107: Rome terracotta roof
+    { color: '#3A6A30', detail: 'window_arched', file: 'window_arched.png' },      // 108: Rome arched window
+
+    // Marrakech: Moroccan
+    { color: '#D0A880', detail: 'roof_parapet', file: 'roof_parapet.png' },        // 109: Marrakech parapet roof
+    { color: '#4A3020', detail: 'window_mashrabiya', file: 'window_mashrabiya.png' }, // 110: Marrakech mashrabiya window
+
+    // Tokyo: Japanese
+    { color: '#2A2E32', detail: 'roof_kawara', file: 'roof_kawara.png' },          // 111: Tokyo kawara roof
+    { color: '#E8D8C0', detail: 'window_lattice', file: 'window_lattice.png' },    // 112: Tokyo lattice window
+
+    // Paris: Stone cornice (replaces cloth awning)
+    { color: '#D4C4A8', detail: 'awning_cornice', file: 'awning_cornice.png' }     // 113: Paris stone cornice
 ];

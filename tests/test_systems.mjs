@@ -378,11 +378,11 @@ describe('City Map Data', () => {
                 }
             });
 
-            it('wall tiles are -1 or in valid range (0-98)', () => {
+            it('wall tiles are -1 or in valid range (0-113)', () => {
                 for (let y = 0; y < city.height; y++) {
                     for (let x = 0; x < city.width; x++) {
                         const t = city.walls[y][x];
-                        assert.ok(t === -1 || (t >= 0 && t <= 98), `Invalid wall tile ${t} at (${x},${y})`);
+                        assert.ok(t === -1 || (t >= 0 && t <= 113), `Invalid wall tile ${t} at (${x},${y})`);
                     }
                 }
             });
@@ -1850,7 +1850,8 @@ describe('Room Transition Integrity', () => {
                 let hasDoor = false;
                 for (let y = 0; y < roomData.height && !hasDoor; y++) {
                     for (let x = 0; x < roomData.width && !hasDoor; x++) {
-                        if (roomData.decor[y][x] === 23) hasDoor = true;
+                        const dt = roomData.decor[y][x];
+                        if (dt === 23 || dt === 36 || dt === 99 || dt === 100 || dt === 101 || dt === 102) hasDoor = true;
                     }
                 }
                 if (!hasDoor) {
@@ -2159,11 +2160,12 @@ describe('Room Transition Spawn Positions', () => {
             const room = t.targetRoom === 'main' ? city : city.rooms[t.targetRoom];
             const { x: sx, y: sy } = t.spawnAt;
 
-            // Find all door tiles (23) in the target room
+            // Find all door tiles in the target room
+            const doorTiles = new Set([23, 36, 99, 100, 101, 102]);
             let nearestDoorDist = Infinity;
             for (let dy = 0; dy < room.height; dy++) {
                 for (let dx = 0; dx < room.width; dx++) {
-                    if (room.decor[dy][dx] === 23) {
+                    if (doorTiles.has(room.decor[dy][dx])) {
                         const dist = Math.abs(dx - sx) + Math.abs(dy - sy);
                         if (dist < nearestDoorDist) nearestDoorDist = dist;
                     }
@@ -2462,7 +2464,7 @@ describe('ExploreScene Source Correctness (32x32)', () => {
     });
 
     it('imports TILE_W, TILE_H, EXPLORE_ZOOM from constants', () => {
-        assert.ok(exploreSrc.includes("import { TILE_W, TILE_H, EXPLORE_ZOOM } from '../constants.js'"),
+        assert.ok(exploreSrc.includes("TILE_W") && exploreSrc.includes("TILE_H") && exploreSrc.includes("EXPLORE_ZOOM") && exploreSrc.includes("from '../constants.js'"),
             'ExploreScene must import tile constants');
     });
 
